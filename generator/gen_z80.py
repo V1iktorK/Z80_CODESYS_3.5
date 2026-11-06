@@ -2456,6 +2456,11 @@ ST_GVL_TESTS_CPM = u'''VAR_GLOBAL
     Cpm_Test_Total_Pass  : INT;
     Cpm_Test_Fail_Count  : INT;
     Cpm_Test_Failed_List : ARRAY[1..16] OF INT;
+    (*  S N I M K I  F A K T A: chto imenno sravnivalos s ozhidaemym. *)
+    Cpm_Act_A            : ARRAY[1..36] OF BYTE;
+    Cpm_Act_W            : ARRAY[1..36] OF WORD;
+    Cpm_Act_MaskA        : ARRAY[1..36] OF BOOL;
+    Cpm_Act_MaskP        : ARRAY[1..36] OF BOOL;
 END_VAR
 '''
 
@@ -2517,13 +2522,13 @@ IF bFirst THEN
 
     (* IO03: IN 02h -- mladshij bajt analogovogo vhoda *)
     GVL_Tests_CPM.Cpm_Tests[3].Enabled := TRUE;
-    GVL_Tests_CPM.Cpm_Tests[3].Kind := 1;
+    GVL_Tests_CPM.Cpm_Tests[3].Kind := 30;   (* otvet IN iz pamyati *)
     GVL_Tests_CPM.Cpm_Tests[3].Mask_Byte := TRUE;
     GVL_Tests_CPM.Cpm_Tests[3].Exp_Byte := 16#34;
 
     (* IO04: IN 03h -- starshij bajt analogovogo vhoda *)
     GVL_Tests_CPM.Cpm_Tests[4].Enabled := TRUE;
-    GVL_Tests_CPM.Cpm_Tests[4].Kind := 1;
+    GVL_Tests_CPM.Cpm_Tests[4].Kind := 31;   (* otvet IN iz pamyati *)
     GVL_Tests_CPM.Cpm_Tests[4].Mask_Byte := TRUE;
     GVL_Tests_CPM.Cpm_Tests[4].Exp_Byte := 16#12;
 
@@ -2535,13 +2540,13 @@ IF bFirst THEN
 
     (* IO06: status konsoli: est simvol -> 0FFh *)
     GVL_Tests_CPM.Cpm_Tests[6].Enabled := TRUE;
-    GVL_Tests_CPM.Cpm_Tests[6].Kind := 1;
+    GVL_Tests_CPM.Cpm_Tests[6].Kind := 34;   (* otvet IN iz pamyati *)
     GVL_Tests_CPM.Cpm_Tests[6].Mask_Byte := TRUE;
     GVL_Tests_CPM.Cpm_Tests[6].Exp_Byte := 16#FF;
 
     (* IO07: IN 21h -- priznak zagruzki CP/M *)
     GVL_Tests_CPM.Cpm_Tests[7].Enabled := TRUE;
-    GVL_Tests_CPM.Cpm_Tests[7].Kind := 1;
+    GVL_Tests_CPM.Cpm_Tests[7].Kind := 35;   (* otvet IN iz pamyati *)
     GVL_Tests_CPM.Cpm_Tests[7].Mask_Byte := TRUE;
     GVL_Tests_CPM.Cpm_Tests[7].Exp_Byte := 16#01;
 
@@ -2646,13 +2651,13 @@ IF bFirst THEN
 
     (* IO08: IN 06h -- mladshij bajt vtorogo analogovogo vhoda (5678h -> 78h) *)
     GVL_Tests_CPM.Cpm_Tests[8].Enabled := TRUE;
-    GVL_Tests_CPM.Cpm_Tests[8].Kind := 1;
+    GVL_Tests_CPM.Cpm_Tests[8].Kind := 32;   (* otvet IN iz pamyati *)
     GVL_Tests_CPM.Cpm_Tests[8].Mask_Byte := TRUE;
     GVL_Tests_CPM.Cpm_Tests[8].Exp_Byte := 16#78;
 
     (* IO09: IN 07h -- starshij bajt vtorogo analogovogo vhoda (56h) *)
     GVL_Tests_CPM.Cpm_Tests[9].Enabled := TRUE;
-    GVL_Tests_CPM.Cpm_Tests[9].Kind := 1;
+    GVL_Tests_CPM.Cpm_Tests[9].Kind := 33;   (* otvet IN iz pamyati *)
     GVL_Tests_CPM.Cpm_Tests[9].Mask_Byte := TRUE;
     GVL_Tests_CPM.Cpm_Tests[9].Exp_Byte := 16#56;
 
@@ -2698,7 +2703,8 @@ END_IF
 (* ============================== PROGON ============================== *)
 IF GVL_Tests_CPM.Cpm_Test_Run THEN
 
-    (* shag 0: podgotovka -- nastrojka vhodov PLK i konsoli *)
+    (* shag 0: podgotovka -- nastrojka vhodov PLK i konsoli, zagruzka
+       korotkoj programmy I/O i eyo progon (sm. kommentarij vyshe) *)
     IF nStage = 0 THEN
         (* podaem na vhody PLK testovyy obraz: 1010 0101 = A5h *)
         GVL_HW_IO.DI_0 := TRUE;
@@ -2716,10 +2722,65 @@ IF GVL_Tests_CPM.Cpm_Test_Run THEN
         GVL_CPM.Console_In := 65;
         GVL_CPM.Console_InEn := TRUE;
 
-        (* na vremya proverok emulyator ostanovlen, chtoby snimki ne menyalis *)
+        (*  K O R O T K A Ya  P R O G R A M M A  V V O D A - V Y V O D A.
+            Bez neyo proverki portov schityvayut nenuzhnye im polya: oni
+            zhdut rezul tat komand IN/OUT, a ne sostoyanie buferov. *)
+        Z80_Mem[0] := 16#C3;   (* JP 4000h *)
+        Z80_Mem[1] := 16#00;
+        Z80_Mem[2] := 16#40;
+        Z80_Mem[16#4000] := 16#26;  Z80_Mem[16#4001] := 16#20;  (* LD H,20h *)
+        (* chtenie vhodnyh portov: (2Eh kk) IN nnn (77h) *)
+        Z80_Mem[16#4002] := 16#2E;  Z80_Mem[16#4003] := 16#00;
+        Z80_Mem[16#4004] := 16#DB;  Z80_Mem[16#4005] := 16#02;
+        Z80_Mem[16#4006] := 16#77;
+        Z80_Mem[16#4007] := 16#2E;  Z80_Mem[16#4008] := 16#01;
+        Z80_Mem[16#4009] := 16#DB;  Z80_Mem[16#400A] := 16#03;
+        Z80_Mem[16#400B] := 16#77;
+        Z80_Mem[16#400C] := 16#2E;  Z80_Mem[16#400D] := 16#02;
+        Z80_Mem[16#400E] := 16#DB;  Z80_Mem[16#400F] := 16#06;
+        Z80_Mem[16#4010] := 16#77;
+        Z80_Mem[16#4011] := 16#2E;  Z80_Mem[16#4012] := 16#03;
+        Z80_Mem[16#4013] := 16#DB;  Z80_Mem[16#4014] := 16#07;
+        Z80_Mem[16#4015] := 16#77;
+        Z80_Mem[16#4016] := 16#2E;  Z80_Mem[16#4017] := 16#04;
+        Z80_Mem[16#4018] := 16#DB;  Z80_Mem[16#4019] := 16#10;
+        Z80_Mem[16#401A] := 16#77;
+        Z80_Mem[16#401B] := 16#2E;  Z80_Mem[16#401C] := 16#05;
+        Z80_Mem[16#401D] := 16#DB;  Z80_Mem[16#401E] := 16#21;
+        Z80_Mem[16#401F] := 16#77;
+        Z80_Mem[16#4020] := 16#2E;  Z80_Mem[16#4021] := 16#06;
+        Z80_Mem[16#4022] := 16#DB;  Z80_Mem[16#4023] := 16#00;
+        Z80_Mem[16#4024] := 16#77;
+        (* vyhodnye porty: LD A,nn ; OUT (n),A *)
+        Z80_Mem[16#4025] := 16#3E;  Z80_Mem[16#4026] := 16#3C;
+        Z80_Mem[16#4027] := 16#D3;  Z80_Mem[16#4028] := 16#01;
+        Z80_Mem[16#4029] := 16#3E;  Z80_Mem[16#402A] := 16#34;
+        Z80_Mem[16#402B] := 16#D3;  Z80_Mem[16#402C] := 16#04;
+        Z80_Mem[16#402D] := 16#3E;  Z80_Mem[16#402E] := 16#12;
+        Z80_Mem[16#402F] := 16#D3;  Z80_Mem[16#4030] := 16#05;
+        Z80_Mem[16#4031] := 16#76;   (* HALT *)
+
+        (* sBros pered zapuskom: PC = 0, registry v nol *)
+        GVL_Control.Emu_Reset := TRUE;
         GVL_Control.Emu_Run := FALSE;
         nCyc := 0;
-        nStage := 1;
+        nStage := 40;
+
+    (* shag 40: snyat sBros i zapustit programmu *)
+    ELSIF nStage = 40 THEN
+        GVL_Control.Emu_Reset := FALSE;
+        GVL_Control.Emu_Run := TRUE;
+        nCyc := 0;
+        nStage := 41;
+
+    (* shag 41: prokrutit programmu (31 komanda po dva skana i zapas) *)
+    ELSIF nStage = 41 THEN
+        nCyc := nCyc + 1;
+        IF nCyc >= 200 THEN
+            GVL_Control.Emu_Run := FALSE;
+            nCyc := 0;
+            nStage := 1;
+        END_IF;
 
     (* shag 1: sdelat neskolko skanov, chtoby bufery i shiny obnovilis *)
     ELSIF nStage = 1 THEN
@@ -2847,6 +2908,36 @@ fbCase.Actual_A := SEL(GVL_HW_IO.DO_2, BYTE#0, BYTE#1);
                         fbCase.Actual_A := Disk_Mem[2];
                         fbCase.Mask_A := TRUE;
 
+                    (*  30..35 -- otvety komand IN, snimaemye programmoj
+                        v pamyat po adresu 2000h + (Kind - 30). *)
+                    30: fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
+                        fbCase.Actual_A := Z80_Mem[16#2000];
+                        fbCase.Mask_A := TRUE;
+
+                    31: fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
+                        fbCase.Actual_A := Z80_Mem[16#2001];
+                        fbCase.Mask_A := TRUE;
+
+                    32: fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
+                        fbCase.Actual_A := Z80_Mem[16#2002];
+                        fbCase.Mask_A := TRUE;
+
+                    33: fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
+                        fbCase.Actual_A := Z80_Mem[16#2003];
+                        fbCase.Mask_A := TRUE;
+
+                    34: fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
+                        fbCase.Actual_A := Z80_Mem[16#2004];
+                        fbCase.Mask_A := TRUE;
+
+                    35: fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
+                        fbCase.Actual_A := Z80_Mem[16#2005];
+                        fbCase.Mask_A := TRUE;
+
+                    36: fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
+                        fbCase.Actual_A := Z80_Mem[16#2006];
+                        fbCase.Mask_A := TRUE;
+
                 ELSE
                     fbCase.Mask_A := FALSE;
                 END_CASE
@@ -2864,7 +2955,10 @@ fbCase.Actual_A := SEL(GVL_HW_IO.DO_2, BYTE#0, BYTE#1);
                 fbCase();
 
                 GVL_Tests_CPM.Cpm_Test_Result[i] := fbCase.Pass;
-                GVL_Tests_CPM.Cpm_Test_Result[i] := fbCase.Pass;
+                GVL_Tests_CPM.Cpm_Act_A[i] := fbCase.Actual_A;
+                GVL_Tests_CPM.Cpm_Act_W[i] := fbCase.Actual_PC;
+                GVL_Tests_CPM.Cpm_Act_MaskA[i] := fbCase.Mask_A;
+                GVL_Tests_CPM.Cpm_Act_MaskP[i] := fbCase.Mask_PC;
                 IF fbCase.Pass THEN
                     GVL_Tests_CPM.Cpm_Test_Total_Pass :=
                         GVL_Tests_CPM.Cpm_Test_Total_Pass + 1;
@@ -4724,7 +4818,7 @@ def mk_plc_prg():
     c_one_b = n8.const(u"BYTE#1", y=390)
     c_one_c = n8.const(u"BYTE#1", y=430)
     #  U  B _ F O R C E D  S V O Ya  K O N S T A N T A. Ona zhe stoyala vetkoj
-    #  u src2, to est odin vyhod pitаl dva vhoda; biblioteka kloniruet vetv',
+    #  u src2, to est odin vyhod pital dva vhoda; biblioteka kloniruet vetv',
     #  i u klona mozhet ostat'sya nepodklyuchennyj vhod -- togda na B_Forced
     #  prihodit 0, i INC/DEC ne uvelichivaet, a prosto perevorachivaet
     #  registr v sebya. Izmereno: u T13 (INC A, A = 0Fh) A ostavalsya 0Fh.
@@ -4791,7 +4885,7 @@ def mk_plc_prg():
               n9.const(u"16#08", y=610))
     #  F L A G  C  D L Ya  I N C / D E C. Po pravilam Z80 eti komandy
     #  perenos N E  M E N Ya Yu T, a nash ALU schitaet ih kak slozhenie ili
-    #  vychitanie edinicy i perenos vyrabatyvaet. Poetomu u INC/DEC bеrem
+    #  vychitanie edinicy i perenos vyrabatyvaet. Poetomu u INC/DEC berem
     #  stoevshee znachenie C iz registra F.
     #  P O R Ya D O K  O B '' Ya V L E N I J  V  S E T I  V A Zh E N.
     #  Esli peremennaya chitaetsya v seti DO togo mesta, gde ona prisvaivaetsya,
@@ -4878,7 +4972,7 @@ def mk_plc_prg():
     #  I M E N N O  wr_val (a ne wr_init): pri rabote eto rezul tat ALU (vY),
     #  pri initsializacii -- Init_Vals. Inache v registr pishetsya ne to.
     #  O T L A D O Ch N Y H  O U T V A R  Z D E S'  B O L Sh E  N E T.
-    #  Oni pitаli odin i tot zhe vyhod (wr_val, clk_wr) v dva vhoda -- to est
+    #  Oni pitali odin i tot zhe vyhod (wr_val, clk_wr) v dva vhoda -- to est
     #  sozdavali fan-out rovno na teh signalah, ot kotoryh zavisit zapis'
     #  registra. Knizhka pravil trebuet odin istochnik -- odno potreblenie.
     #  deystvuyushchij strob zapisi: komanda ILI rezhim initsializacii
@@ -5075,16 +5169,51 @@ def mk_plc_prg():
     # Vse vneshnie dannye prohodyat cherez bufery GVL_HW_Buffer.
     n15 = p.network(u"SET 15: APPARATNYY VVOD PLK: upakovka vhodov")
     hw = n15.block(u"FB_HW_IO_PLC",
-                   [(u"DI_0", n15.invar(u"PLC_DI_0", y=30)),
-                    (u"DI_1", n15.invar(u"PLC_DI_1", y=60)),
-                    (u"DI_2", n15.invar(u"PLC_DI_2", y=90)),
-                    (u"DI_3", n15.invar(u"PLC_DI_3", y=120)),
-                    (u"DI_4", n15.invar(u"PLC_DI_4", y=150)),
-                    (u"DI_5", n15.invar(u"PLC_DI_5", y=180)),
-                    (u"DI_6", n15.invar(u"PLC_DI_6", y=210)),
-                    (u"DI_7", n15.invar(u"PLC_DI_7", y=240)),
-                    (u"AI_0", n15.invar(u"PLC_AI_0", y=270)),
-                    (u"AI_1", n15.invar(u"PLC_AI_1", y=300)),
+                   [#  D I S K R E T N Y E  V H O D Y: fizicheskiy kanal ILI
+                    #  testovyy obraz. V etoj ustanovke moduli vvoda ne
+                    #  skonfigurirovany (%IX ne privyazan), poetomu %IX vsegda 0,
+                    #  i edinstvennyy istochnik -- GVL_HW_IO. Na real noj sborke
+                    #  testovyy obraz raven nulyu, i OR nichego ne menyaet.
+                    (u"DI_0", b_or(n15, F.COL_BLK, 30,
+                                   n15.invar(u"PLC_DI_0", y=30),
+                                   n15.invar(u"GVL_HW_IO.DI_0", y=45))),
+                    (u"DI_1", b_or(n15, F.COL_BLK, 60,
+                                   n15.invar(u"PLC_DI_1", y=60),
+                                   n15.invar(u"GVL_HW_IO.DI_1", y=75))),
+                    (u"DI_2", b_or(n15, F.COL_BLK, 90,
+                                   n15.invar(u"PLC_DI_2", y=90),
+                                   n15.invar(u"GVL_HW_IO.DI_2", y=105))),
+                    (u"DI_3", b_or(n15, F.COL_BLK, 120,
+                                   n15.invar(u"PLC_DI_3", y=120),
+                                   n15.invar(u"GVL_HW_IO.DI_3", y=135))),
+                    (u"DI_4", b_or(n15, F.COL_BLK, 150,
+                                   n15.invar(u"PLC_DI_4", y=150),
+                                   n15.invar(u"GVL_HW_IO.DI_4", y=165))),
+                    (u"DI_5", b_or(n15, F.COL_BLK, 180,
+                                   n15.invar(u"PLC_DI_5", y=180),
+                                   n15.invar(u"GVL_HW_IO.DI_5", y=195))),
+                    (u"DI_6", b_or(n15, F.COL_BLK, 210,
+                                   n15.invar(u"PLC_DI_6", y=210),
+                                   n15.invar(u"GVL_HW_IO.DI_6", y=225))),
+                    (u"DI_7", b_or(n15, F.COL_BLK, 240,
+                                   n15.invar(u"PLC_DI_7", y=240),
+                                   n15.invar(u"GVL_HW_IO.DI_7", y=255))),
+                    #  A N A L O G O V Y E  V H O D Y: esli testovoe znachenie
+                    #  zadano (ne nol) -- berem ego, inache fizicheskiy kanal.
+                    (u"AI_0", b_sel(n15, F.COL_BLK, 270,
+                                    b_eq(n15, F.COL_BLK, 330,
+                                         n15.invar(u"GVL_HW_IO.AI_0", y=330),
+                                         n15.const(u"0", y=344)),
+                                    n15.invar(u"GVL_HW_IO.AI_0", y=300),
+                                    n15.invar(u"PLC_AI_0", y=270),
+                                    tip=u"INT")),
+                    (u"AI_1", b_sel(n15, F.COL_BLK, 400,
+                                    b_eq(n15, F.COL_BLK, 460,
+                                         n15.invar(u"GVL_HW_IO.AI_1", y=460),
+                                         n15.const(u"0", y=474)),
+                                    n15.invar(u"GVL_HW_IO.AI_1", y=430),
+                                    n15.invar(u"PLC_AI_1", y=400),
+                                    tip=u"INT")),
                     (u"Out_DO", n15.invar(u"vOutDO", y=330)),
                     (u"Out_AO0", n15.invar(u"vOutAO0", y=360)),
                     (u"Out_AO1", n15.invar(u"vOutAO1", y=390))],
@@ -5102,15 +5231,26 @@ def mk_plc_prg():
     n15c.outvar(u"vInAI1", hw.out(u"In_AI1"), x=F.COL_OUT + 600, y=30)
 
     n15d = p.network(u"SET 15d: diskretnye vyhody PLK (8 kanalov)")
+    #  Z E R K A L O  V  GVL_HW_IO. Fizicheskie %QX v etoj ustanovke ne
+    #  privyazany (net modulej vyvoda), poetomu dlya nablyudeniya i dlya
+    #  proverok znachenie kanala povtoryaem v GVL_HW_IO.DO_k.
     for k in range(8):
         n15d.outvar(u"PLC_DO_%d" % k, hw.out(u"DO_%d" % k),
                     x=F.COL_OUT + 600, y=30 + k * 30)
+    for k in range(8):
+        nk = p.network(u"SET 15d.%d: zerkalo vyhoda DO_%d" % (k + 1, k))
+        nk.outvar(u"GVL_HW_IO.DO_%d" % k,
+                  nk.invar(u"PLC_DO_%d" % k, y=30), x=F.COL_OUT, y=30)
 
     n15e = p.network(u"SET 15e: analogovye vyhody PLK")
     n15e.outvar(u"PLC_AO_0", hw.out(u"AO_0"), x=F.COL_OUT + 600, y=30)
+    n15e.outvar(u"GVL_HW_IO.AO_0", n15e.invar(u"PLC_AO_0", y=70),
+                x=F.COL_OUT, y=70)
 
     n15f = p.network(u"SET 15f: vtoroy analogovyy vyhod PLK")
     n15f.outvar(u"PLC_AO_1", hw.out(u"AO_1"), x=F.COL_OUT + 600, y=30)
+    n15f.outvar(u"GVL_HW_IO.AO_1", n15f.invar(u"PLC_AO_1", y=70),
+                x=F.COL_OUT, y=70)
 
     # snimok vhodov v bufery (chitaem po imeni, chtoby byl odin potrebitel)
     n15g = p.network(u"SET 15g: bufery vhodov dlya Z80")

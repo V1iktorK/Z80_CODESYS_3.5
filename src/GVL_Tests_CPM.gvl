@@ -12,4 +12,9 @@ VAR_GLOBAL
     Cpm_Test_Total_Pass  : INT;
     Cpm_Test_Fail_Count  : INT;
     Cpm_Test_Failed_List : ARRAY[1..16] OF INT;
+    (*  S N I M K I  F A K T A: chto imenno sravnivalos s ozhidaemym. *)
+    Cpm_Act_A            : ARRAY[1..36] OF BYTE;
+    Cpm_Act_W            : ARRAY[1..36] OF WORD;
+    Cpm_Act_MaskA        : ARRAY[1..36] OF BOOL;
+    Cpm_Act_MaskP        : ARRAY[1..36] OF BOOL;
 END_VAR

@@ -1652,7 +1652,7 @@
               <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
               <expression>WORD#2</expression>
             </inVariable>
-            <inVariable localId="652" height="10" width="146">
+            <inVariable localId="698" height="10" width="146">
               <position x="40" y="42" />
               <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Rs_SP</expression>
@@ -1663,7 +1663,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="652" />
+                    <connection refLocalId="698" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -1703,7 +1703,7 @@
               <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
               <expression>vSP_Dec</expression>
             </inVariable>
-            <inVariable localId="653" height="10" width="146">
+            <inVariable localId="699" height="10" width="146">
               <position x="40" y="42" />
               <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Rs_SP</expression>
@@ -1720,7 +1720,7 @@
                 <variable formalParameter="IN0">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
-                    <connection refLocalId="653" />
+                    <connection refLocalId="699" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN1">
@@ -1752,7 +1752,7 @@
               <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
               <expression>vSP_Inc</expression>
             </inVariable>
-            <inVariable localId="654" height="10" width="146">
+            <inVariable localId="700" height="10" width="146">
               <position x="40" y="42" />
               <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Rs_SP</expression>
@@ -1769,7 +1769,7 @@
                 <variable formalParameter="IN0">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
-                    <connection refLocalId="654" />
+                    <connection refLocalId="700" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN1">
@@ -1793,7 +1793,7 @@
               <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
               <expression>vSP_Dec</expression>
             </inVariable>
-            <inVariable localId="655" height="10" width="128">
+            <inVariable localId="701" height="10" width="128">
               <position x="40" y="82" />
               <connectionPointOut><relPosition x="128" y="5" /></connectionPointOut>
               <expression>vCtl_Is_CALL</expression>
@@ -1804,7 +1804,7 @@
                 <variable formalParameter="G">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="655" />
+                    <connection refLocalId="701" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN0">
@@ -3278,7 +3278,7 @@
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
               <expression>1</expression>
             </inVariable>
-            <inVariable localId="656" height="10" width="245">
+            <inVariable localId="702" height="10" width="245">
               <position x="40" y="612" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
@@ -3289,7 +3289,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="656" />
+                    <connection refLocalId="702" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -3318,7 +3318,7 @@
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
               <expression>2</expression>
             </inVariable>
-            <inVariable localId="657" height="10" width="245">
+            <inVariable localId="703" height="10" width="245">
               <position x="40" y="612" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
@@ -3329,7 +3329,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="657" />
+                    <connection refLocalId="703" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -3358,7 +3358,7 @@
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
               <expression>3</expression>
             </inVariable>
-            <inVariable localId="658" height="10" width="245">
+            <inVariable localId="704" height="10" width="245">
               <position x="40" y="612" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
@@ -3369,7 +3369,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="658" />
+                    <connection refLocalId="704" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -3398,7 +3398,7 @@
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
               <expression>4</expression>
             </inVariable>
-            <inVariable localId="659" height="10" width="245">
+            <inVariable localId="705" height="10" width="245">
               <position x="40" y="612" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
@@ -3409,7 +3409,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="659" />
+                    <connection refLocalId="705" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -3438,7 +3438,7 @@
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
               <expression>5</expression>
             </inVariable>
-            <inVariable localId="660" height="10" width="245">
+            <inVariable localId="706" height="10" width="245">
               <position x="40" y="612" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
@@ -3449,7 +3449,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="660" />
+                    <connection refLocalId="706" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -3478,7 +3478,7 @@
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
               <expression>6</expression>
             </inVariable>
-            <inVariable localId="661" height="10" width="245">
+            <inVariable localId="707" height="10" width="245">
               <position x="40" y="612" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
@@ -3489,7 +3489,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="661" />
+                    <connection refLocalId="707" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -3518,7 +3518,7 @@
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
               <expression>7</expression>
             </inVariable>
-            <inVariable localId="662" height="10" width="245">
+            <inVariable localId="708" height="10" width="245">
               <position x="40" y="612" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
@@ -3529,7 +3529,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="662" />
+                    <connection refLocalId="708" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -3558,7 +3558,7 @@
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
               <expression>8</expression>
             </inVariable>
-            <inVariable localId="663" height="10" width="245">
+            <inVariable localId="709" height="10" width="245">
               <position x="40" y="612" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
@@ -3569,7 +3569,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="663" />
+                    <connection refLocalId="709" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -3598,7 +3598,7 @@
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
               <expression>9</expression>
             </inVariable>
-            <inVariable localId="664" height="10" width="245">
+            <inVariable localId="710" height="10" width="245">
               <position x="40" y="612" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
@@ -3609,7 +3609,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="664" />
+                    <connection refLocalId="710" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -3638,7 +3638,7 @@
               <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
               <expression>10</expression>
             </inVariable>
-            <inVariable localId="665" height="10" width="245">
+            <inVariable localId="711" height="10" width="245">
               <position x="40" y="612" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
@@ -3649,7 +3649,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="665" />
+                    <connection refLocalId="711" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -3678,7 +3678,7 @@
               <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
               <expression>11</expression>
             </inVariable>
-            <inVariable localId="666" height="10" width="245">
+            <inVariable localId="712" height="10" width="245">
               <position x="40" y="612" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
@@ -3689,7 +3689,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="666" />
+                    <connection refLocalId="712" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -3718,7 +3718,7 @@
               <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
               <expression>12</expression>
             </inVariable>
-            <inVariable localId="667" height="10" width="245">
+            <inVariable localId="713" height="10" width="245">
               <position x="40" y="612" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
@@ -3729,7 +3729,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="667" />
+                    <connection refLocalId="713" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -3758,7 +3758,7 @@
               <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
               <expression>13</expression>
             </inVariable>
-            <inVariable localId="668" height="10" width="245">
+            <inVariable localId="714" height="10" width="245">
               <position x="40" y="612" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
@@ -3769,7 +3769,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="668" />
+                    <connection refLocalId="714" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -3798,7 +3798,7 @@
               <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
               <expression>14</expression>
             </inVariable>
-            <inVariable localId="669" height="10" width="245">
+            <inVariable localId="715" height="10" width="245">
               <position x="40" y="612" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
@@ -3809,7 +3809,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="669" />
+                    <connection refLocalId="715" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -3838,7 +3838,7 @@
               <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
               <expression>15</expression>
             </inVariable>
-            <inVariable localId="670" height="10" width="245">
+            <inVariable localId="716" height="10" width="245">
               <position x="40" y="612" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
@@ -3849,7 +3849,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="670" />
+                    <connection refLocalId="716" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -5322,7 +5322,7 @@
                 </variable>
               </outputVariables>
             </block>
-            <inVariable localId="671" height="10" width="65">
+            <inVariable localId="717" height="10" width="65">
               <position x="40" y="122" />
               <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
               <expression>16#40</expression>
@@ -5339,7 +5339,7 @@
                 <variable formalParameter="IN2">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
-                    <connection refLocalId="671" />
+                    <connection refLocalId="717" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -5395,7 +5395,7 @@
               <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
               <expression>16#02</expression>
             </inVariable>
-            <inVariable localId="672" height="10" width="101">
+            <inVariable localId="718" height="10" width="101">
               <position x="40" y="42" />
               <connectionPointOut><relPosition x="101" y="5" /></connectionPointOut>
               <expression>vCtl_Cond</expression>
@@ -5406,7 +5406,7 @@
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="672" />
+                    <connection refLocalId="718" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
@@ -5935,7 +5935,7 @@
               <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
               <expression>vPC_Inc</expression>
             </inVariable>
-            <inVariable localId="673" height="10" width="146">
+            <inVariable localId="719" height="10" width="146">
               <position x="40" y="42" />
               <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Rs_PC</expression>
@@ -5952,7 +5952,7 @@
                 <variable formalParameter="IN0">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
-                    <connection refLocalId="673" />
+                    <connection refLocalId="719" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN1">
@@ -6088,145 +6088,527 @@
               <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
               <expression>PLC_DI_0</expression>
             </inVariable>
-            <inVariable localId="530" height="10" width="92">
-              <position x="40" y="60" />
-              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
-              <expression>PLC_DI_1</expression>
+            <inVariable localId="530" height="10" width="146">
+              <position x="40" y="45" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_HW_IO.DI_0</expression>
             </inVariable>
-            <inVariable localId="531" height="10" width="92">
-              <position x="40" y="90" />
-              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
-              <expression>PLC_DI_2</expression>
-            </inVariable>
-            <inVariable localId="532" height="10" width="92">
-              <position x="40" y="120" />
-              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
-              <expression>PLC_DI_3</expression>
-            </inVariable>
-            <inVariable localId="533" height="10" width="92">
-              <position x="40" y="150" />
-              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
-              <expression>PLC_DI_4</expression>
-            </inVariable>
-            <inVariable localId="534" height="10" width="92">
-              <position x="40" y="180" />
-              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
-              <expression>PLC_DI_5</expression>
-            </inVariable>
-            <inVariable localId="535" height="10" width="92">
-              <position x="40" y="210" />
-              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
-              <expression>PLC_DI_6</expression>
-            </inVariable>
-            <inVariable localId="536" height="10" width="92">
-              <position x="40" y="240" />
-              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
-              <expression>PLC_DI_7</expression>
-            </inVariable>
-            <inVariable localId="537" height="10" width="92">
-              <position x="40" y="270" />
-              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
-              <expression>PLC_AI_0</expression>
-            </inVariable>
-            <inVariable localId="538" height="10" width="92">
-              <position x="40" y="300" />
-              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
-              <expression>PLC_AI_1</expression>
-            </inVariable>
-            <inVariable localId="539" height="10" width="74">
-              <position x="40" y="330" />
-              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
-              <expression>vOutDO</expression>
-            </inVariable>
-            <inVariable localId="540" height="10" width="83">
-              <position x="40" y="360" />
-              <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
-              <expression>vOutAO0</expression>
-            </inVariable>
-            <inVariable localId="541" height="10" width="83">
-              <position x="40" y="390" />
-              <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
-              <expression>vOutAO1</expression>
-            </inVariable>
-            <block localId="542" typeName="FB_HW_IO_PLC" instanceName="fbHW" height="140" width="196">
-              <position x="360" y="30" />
+            <block localId="531" typeName="OR" height="30" width="64">
+              <position x="200" y="30" />
               <inputVariables>
-                <variable formalParameter="DI_0">
+                <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
                     <connection refLocalId="529" />
                   </connectionPointIn>
                 </variable>
-                <variable formalParameter="DI_1">
+                <variable formalParameter="IN2">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
                     <connection refLocalId="530" />
                   </connectionPointIn>
                 </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="532" height="10" width="92">
+              <position x="40" y="60" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_DI_1</expression>
+            </inVariable>
+            <inVariable localId="533" height="10" width="146">
+              <position x="40" y="75" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_HW_IO.DI_1</expression>
+            </inVariable>
+            <block localId="534" typeName="OR" height="30" width="64">
+              <position x="200" y="60" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="532" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="533" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="535" height="10" width="92">
+              <position x="40" y="90" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_DI_2</expression>
+            </inVariable>
+            <inVariable localId="536" height="10" width="146">
+              <position x="40" y="105" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_HW_IO.DI_2</expression>
+            </inVariable>
+            <block localId="537" typeName="OR" height="30" width="64">
+              <position x="200" y="90" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="535" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="536" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="538" height="10" width="92">
+              <position x="40" y="120" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_DI_3</expression>
+            </inVariable>
+            <inVariable localId="539" height="10" width="146">
+              <position x="40" y="135" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_HW_IO.DI_3</expression>
+            </inVariable>
+            <block localId="540" typeName="OR" height="30" width="64">
+              <position x="200" y="120" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="538" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="539" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="541" height="10" width="92">
+              <position x="40" y="150" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_DI_4</expression>
+            </inVariable>
+            <inVariable localId="542" height="10" width="146">
+              <position x="40" y="165" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_HW_IO.DI_4</expression>
+            </inVariable>
+            <block localId="543" typeName="OR" height="30" width="64">
+              <position x="200" y="150" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="541" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="542" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="544" height="10" width="92">
+              <position x="40" y="180" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_DI_5</expression>
+            </inVariable>
+            <inVariable localId="545" height="10" width="146">
+              <position x="40" y="195" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_HW_IO.DI_5</expression>
+            </inVariable>
+            <block localId="546" typeName="OR" height="30" width="64">
+              <position x="200" y="180" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="544" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="545" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="547" height="10" width="92">
+              <position x="40" y="210" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_DI_6</expression>
+            </inVariable>
+            <inVariable localId="548" height="10" width="146">
+              <position x="40" y="225" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_HW_IO.DI_6</expression>
+            </inVariable>
+            <block localId="549" typeName="OR" height="30" width="64">
+              <position x="200" y="210" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="547" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="548" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="550" height="10" width="92">
+              <position x="40" y="240" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_DI_7</expression>
+            </inVariable>
+            <inVariable localId="551" height="10" width="146">
+              <position x="40" y="255" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_HW_IO.DI_7</expression>
+            </inVariable>
+            <block localId="552" typeName="OR" height="30" width="64">
+              <position x="200" y="240" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="550" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="551" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="553" height="10" width="146">
+              <position x="40" y="330" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_HW_IO.AI_0</expression>
+            </inVariable>
+            <inVariable localId="554" height="10" width="29">
+              <position x="40" y="344" />
+              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
+              <expression>0</expression>
+            </inVariable>
+            <block localId="555" typeName="EQ" height="30" width="64">
+              <position x="200" y="330" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="553" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="554" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="556" height="10" width="146">
+              <position x="40" y="300" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_HW_IO.AI_0</expression>
+            </inVariable>
+            <inVariable localId="557" height="10" width="92">
+              <position x="40" y="270" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_AI_0</expression>
+            </inVariable>
+            <block localId="558" typeName="SEL" height="40" width="76">
+              <position x="200" y="270" />
+              <inputVariables>
+                <variable formalParameter="G">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="555" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="556" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="25" />
+                    <connection refLocalId="557" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="76" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="559" height="10" width="146">
+              <position x="40" y="460" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_HW_IO.AI_1</expression>
+            </inVariable>
+            <inVariable localId="560" height="10" width="29">
+              <position x="40" y="474" />
+              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
+              <expression>0</expression>
+            </inVariable>
+            <block localId="561" typeName="EQ" height="30" width="64">
+              <position x="200" y="460" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="559" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="560" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="562" height="10" width="146">
+              <position x="40" y="430" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_HW_IO.AI_1</expression>
+            </inVariable>
+            <inVariable localId="563" height="10" width="92">
+              <position x="40" y="400" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_AI_1</expression>
+            </inVariable>
+            <block localId="564" typeName="SEL" height="40" width="76">
+              <position x="200" y="400" />
+              <inputVariables>
+                <variable formalParameter="G">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="561" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="562" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="25" />
+                    <connection refLocalId="563" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="76" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="565" height="10" width="74">
+              <position x="40" y="330" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>vOutDO</expression>
+            </inVariable>
+            <inVariable localId="566" height="10" width="83">
+              <position x="40" y="360" />
+              <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
+              <expression>vOutAO0</expression>
+            </inVariable>
+            <inVariable localId="567" height="10" width="83">
+              <position x="40" y="390" />
+              <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
+              <expression>vOutAO1</expression>
+            </inVariable>
+            <block localId="568" typeName="FB_HW_IO_PLC" instanceName="fbHW" height="140" width="196">
+              <position x="360" y="30" />
+              <inputVariables>
+                <variable formalParameter="DI_0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="531" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="DI_1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="534" />
+                  </connectionPointIn>
+                </variable>
                 <variable formalParameter="DI_2">
                   <connectionPointIn>
                     <relPosition x="0" y="25" />
-                    <connection refLocalId="531" />
+                    <connection refLocalId="537" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="DI_3">
                   <connectionPointIn>
                     <relPosition x="0" y="35" />
-                    <connection refLocalId="532" />
+                    <connection refLocalId="540" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="DI_4">
                   <connectionPointIn>
                     <relPosition x="0" y="45" />
-                    <connection refLocalId="533" />
+                    <connection refLocalId="543" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="DI_5">
                   <connectionPointIn>
                     <relPosition x="0" y="55" />
-                    <connection refLocalId="534" />
+                    <connection refLocalId="546" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="DI_6">
                   <connectionPointIn>
                     <relPosition x="0" y="65" />
-                    <connection refLocalId="535" />
+                    <connection refLocalId="549" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="DI_7">
                   <connectionPointIn>
                     <relPosition x="0" y="75" />
-                    <connection refLocalId="536" />
+                    <connection refLocalId="552" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="AI_0">
                   <connectionPointIn>
                     <relPosition x="0" y="85" />
-                    <connection refLocalId="537" />
+                    <connection refLocalId="558" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="AI_1">
                   <connectionPointIn>
                     <relPosition x="0" y="95" />
-                    <connection refLocalId="538" />
+                    <connection refLocalId="564" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="Out_DO">
                   <connectionPointIn>
                     <relPosition x="0" y="105" />
-                    <connection refLocalId="539" />
+                    <connection refLocalId="565" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="Out_AO0">
                   <connectionPointIn>
                     <relPosition x="0" y="115" />
-                    <connection refLocalId="540" />
+                    <connection refLocalId="566" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="Out_AO1">
                   <connectionPointIn>
                     <relPosition x="0" y="125" />
-                    <connection refLocalId="541" />
+                    <connection refLocalId="567" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -6299,184 +6681,322 @@
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="543" height="10" width="65">
+            <outVariable localId="569" height="10" width="65">
               <position x="1120" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="542" formalParameter="In_DI" />
+                <connection refLocalId="568" formalParameter="In_DI" />
               </connectionPointIn>
               <expression>vInDi</expression>
             </outVariable>
             <!-- SET 15b: analogovye vhody -->
-            <outVariable localId="544" height="10" width="74">
+            <outVariable localId="570" height="10" width="74">
               <position x="1120" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="542" formalParameter="In_AI0" />
+                <connection refLocalId="568" formalParameter="In_AI0" />
               </connectionPointIn>
               <expression>vInAI0</expression>
             </outVariable>
             <!-- SET 15c: vtoroy analogovyy vhod -->
-            <outVariable localId="545" height="10" width="74">
+            <outVariable localId="571" height="10" width="74">
               <position x="1120" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="542" formalParameter="In_AI1" />
+                <connection refLocalId="568" formalParameter="In_AI1" />
               </connectionPointIn>
               <expression>vInAI1</expression>
             </outVariable>
             <!-- SET 15d: diskretnye vyhody PLK (8 kanalov) -->
-            <outVariable localId="546" height="10" width="92">
+            <outVariable localId="572" height="10" width="92">
               <position x="1120" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="542" formalParameter="DO_0" />
+                <connection refLocalId="568" formalParameter="DO_0" />
               </connectionPointIn>
               <expression>PLC_DO_0</expression>
             </outVariable>
-            <outVariable localId="547" height="10" width="92">
+            <outVariable localId="573" height="10" width="92">
               <position x="1120" y="60" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="542" formalParameter="DO_1" />
+                <connection refLocalId="568" formalParameter="DO_1" />
               </connectionPointIn>
               <expression>PLC_DO_1</expression>
             </outVariable>
-            <outVariable localId="548" height="10" width="92">
+            <outVariable localId="574" height="10" width="92">
               <position x="1120" y="90" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="542" formalParameter="DO_2" />
+                <connection refLocalId="568" formalParameter="DO_2" />
               </connectionPointIn>
               <expression>PLC_DO_2</expression>
             </outVariable>
-            <outVariable localId="549" height="10" width="92">
+            <outVariable localId="575" height="10" width="92">
               <position x="1120" y="120" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="542" formalParameter="DO_3" />
+                <connection refLocalId="568" formalParameter="DO_3" />
               </connectionPointIn>
               <expression>PLC_DO_3</expression>
             </outVariable>
-            <outVariable localId="550" height="10" width="92">
+            <outVariable localId="576" height="10" width="92">
               <position x="1120" y="150" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="542" formalParameter="DO_4" />
+                <connection refLocalId="568" formalParameter="DO_4" />
               </connectionPointIn>
               <expression>PLC_DO_4</expression>
             </outVariable>
-            <outVariable localId="551" height="10" width="92">
+            <outVariable localId="577" height="10" width="92">
               <position x="1120" y="180" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="542" formalParameter="DO_5" />
+                <connection refLocalId="568" formalParameter="DO_5" />
               </connectionPointIn>
               <expression>PLC_DO_5</expression>
             </outVariable>
-            <outVariable localId="552" height="10" width="92">
+            <outVariable localId="578" height="10" width="92">
               <position x="1120" y="210" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="542" formalParameter="DO_6" />
+                <connection refLocalId="568" formalParameter="DO_6" />
               </connectionPointIn>
               <expression>PLC_DO_6</expression>
             </outVariable>
-            <outVariable localId="553" height="10" width="92">
+            <outVariable localId="579" height="10" width="92">
               <position x="1120" y="240" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="542" formalParameter="DO_7" />
+                <connection refLocalId="568" formalParameter="DO_7" />
               </connectionPointIn>
               <expression>PLC_DO_7</expression>
             </outVariable>
+            <!-- SET 15d.1: zerkalo vyhoda DO_0 -->
+            <inVariable localId="580" height="10" width="92">
+              <position x="40" y="30" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_DO_0</expression>
+            </inVariable>
+            <outVariable localId="581" height="10" width="146">
+              <position x="520" y="30" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="580" />
+              </connectionPointIn>
+              <expression>GVL_HW_IO.DO_0</expression>
+            </outVariable>
+            <!-- SET 15d.2: zerkalo vyhoda DO_1 -->
+            <inVariable localId="582" height="10" width="92">
+              <position x="40" y="30" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_DO_1</expression>
+            </inVariable>
+            <outVariable localId="583" height="10" width="146">
+              <position x="520" y="30" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="582" />
+              </connectionPointIn>
+              <expression>GVL_HW_IO.DO_1</expression>
+            </outVariable>
+            <!-- SET 15d.3: zerkalo vyhoda DO_2 -->
+            <inVariable localId="584" height="10" width="92">
+              <position x="40" y="30" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_DO_2</expression>
+            </inVariable>
+            <outVariable localId="585" height="10" width="146">
+              <position x="520" y="30" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="584" />
+              </connectionPointIn>
+              <expression>GVL_HW_IO.DO_2</expression>
+            </outVariable>
+            <!-- SET 15d.4: zerkalo vyhoda DO_3 -->
+            <inVariable localId="586" height="10" width="92">
+              <position x="40" y="30" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_DO_3</expression>
+            </inVariable>
+            <outVariable localId="587" height="10" width="146">
+              <position x="520" y="30" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="586" />
+              </connectionPointIn>
+              <expression>GVL_HW_IO.DO_3</expression>
+            </outVariable>
+            <!-- SET 15d.5: zerkalo vyhoda DO_4 -->
+            <inVariable localId="588" height="10" width="92">
+              <position x="40" y="30" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_DO_4</expression>
+            </inVariable>
+            <outVariable localId="589" height="10" width="146">
+              <position x="520" y="30" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="588" />
+              </connectionPointIn>
+              <expression>GVL_HW_IO.DO_4</expression>
+            </outVariable>
+            <!-- SET 15d.6: zerkalo vyhoda DO_5 -->
+            <inVariable localId="590" height="10" width="92">
+              <position x="40" y="30" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_DO_5</expression>
+            </inVariable>
+            <outVariable localId="591" height="10" width="146">
+              <position x="520" y="30" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="590" />
+              </connectionPointIn>
+              <expression>GVL_HW_IO.DO_5</expression>
+            </outVariable>
+            <!-- SET 15d.7: zerkalo vyhoda DO_6 -->
+            <inVariable localId="592" height="10" width="92">
+              <position x="40" y="30" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_DO_6</expression>
+            </inVariable>
+            <outVariable localId="593" height="10" width="146">
+              <position x="520" y="30" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="592" />
+              </connectionPointIn>
+              <expression>GVL_HW_IO.DO_6</expression>
+            </outVariable>
+            <!-- SET 15d.8: zerkalo vyhoda DO_7 -->
+            <inVariable localId="594" height="10" width="92">
+              <position x="40" y="30" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_DO_7</expression>
+            </inVariable>
+            <outVariable localId="595" height="10" width="146">
+              <position x="520" y="30" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="594" />
+              </connectionPointIn>
+              <expression>GVL_HW_IO.DO_7</expression>
+            </outVariable>
             <!-- SET 15e: analogovye vyhody PLK -->
-            <outVariable localId="554" height="10" width="92">
+            <outVariable localId="596" height="10" width="92">
               <position x="1120" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="542" formalParameter="AO_0" />
+                <connection refLocalId="568" formalParameter="AO_0" />
               </connectionPointIn>
               <expression>PLC_AO_0</expression>
             </outVariable>
+            <inVariable localId="597" height="10" width="92">
+              <position x="40" y="70" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_AO_0</expression>
+            </inVariable>
+            <outVariable localId="598" height="10" width="146">
+              <position x="520" y="70" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="597" />
+              </connectionPointIn>
+              <expression>GVL_HW_IO.AO_0</expression>
+            </outVariable>
             <!-- SET 15f: vtoroy analogovyy vyhod PLK -->
-            <outVariable localId="555" height="10" width="92">
+            <outVariable localId="599" height="10" width="92">
               <position x="1120" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="542" formalParameter="AO_1" />
+                <connection refLocalId="568" formalParameter="AO_1" />
               </connectionPointIn>
               <expression>PLC_AO_1</expression>
             </outVariable>
+            <inVariable localId="600" height="10" width="92">
+              <position x="40" y="70" />
+              <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
+              <expression>PLC_AO_1</expression>
+            </inVariable>
+            <outVariable localId="601" height="10" width="146">
+              <position x="520" y="70" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="600" />
+              </connectionPointIn>
+              <expression>GVL_HW_IO.AO_1</expression>
+            </outVariable>
             <!-- SET 15g: bufery vhodov dlya Z80 -->
-            <inVariable localId="556" height="10" width="65">
+            <inVariable localId="602" height="10" width="65">
               <position x="40" y="30" />
               <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
               <expression>vInDi</expression>
             </inVariable>
-            <outVariable localId="557" height="10" width="218">
+            <outVariable localId="603" height="10" width="218">
               <position x="520" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="556" />
+                <connection refLocalId="602" />
               </connectionPointIn>
               <expression>GVL_HW_Buffer.HW_In_DI</expression>
             </outVariable>
-            <inVariable localId="558" height="10" width="74">
+            <inVariable localId="604" height="10" width="74">
               <position x="40" y="70" />
               <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
               <expression>vInAI0</expression>
             </inVariable>
-            <outVariable localId="559" height="10" width="227">
+            <outVariable localId="605" height="10" width="227">
               <position x="520" y="70" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="558" />
+                <connection refLocalId="604" />
               </connectionPointIn>
               <expression>GVL_HW_Buffer.HW_In_AI0</expression>
             </outVariable>
-            <inVariable localId="560" height="10" width="74">
+            <inVariable localId="606" height="10" width="74">
               <position x="40" y="110" />
               <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
               <expression>vInAI1</expression>
             </inVariable>
-            <outVariable localId="561" height="10" width="227">
+            <outVariable localId="607" height="10" width="227">
               <position x="520" y="110" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="560" />
+                <connection refLocalId="606" />
               </connectionPointIn>
               <expression>GVL_HW_Buffer.HW_In_AI1</expression>
             </outVariable>
             <!-- SET 16: I/O-PORTY: adres porta -->
-            <inVariable localId="562" height="10" width="110">
+            <inVariable localId="608" height="10" width="110">
               <position x="40" y="30" />
               <connectionPointOut><relPosition x="110" y="5" /></connectionPointOut>
               <expression>vCtl_IO_Rd</expression>
             </inVariable>
-            <inVariable localId="563" height="10" width="110">
+            <inVariable localId="609" height="10" width="110">
               <position x="40" y="60" />
               <connectionPointOut><relPosition x="110" y="5" /></connectionPointOut>
               <expression>vCtl_IO_Wr</expression>
             </inVariable>
-            <inVariable localId="564" height="10" width="56">
+            <inVariable localId="610" height="10" width="56">
               <position x="40" y="90" />
               <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
               <expression>vImm</expression>
             </inVariable>
-            <block localId="565" typeName="OR" height="30" width="64">
+            <block localId="611" typeName="OR" height="30" width="64">
               <position x="360" y="30" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="562" />
+                    <connection refLocalId="608" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
-                    <connection refLocalId="563" />
+                    <connection refLocalId="609" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -6489,43 +7009,43 @@
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="566" height="10" width="65">
+            <outVariable localId="612" height="10" width="65">
               <position x="520" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="565" />
+                <connection refLocalId="611" />
               </connectionPointIn>
               <expression>vIOEn</expression>
             </outVariable>
-            <inVariable localId="567" height="10" width="65">
+            <inVariable localId="613" height="10" width="65">
               <position x="40" y="44" />
               <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
               <expression>vIOEn</expression>
             </inVariable>
-            <inVariable localId="568" height="10" width="74">
+            <inVariable localId="614" height="10" width="74">
               <position x="40" y="74" />
               <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
               <expression>BYTE#0</expression>
             </inVariable>
-            <block localId="569" typeName="SEL" height="40" width="76">
+            <block localId="615" typeName="SEL" height="40" width="76">
               <position x="360" y="60" />
               <inputVariables>
                 <variable formalParameter="G">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="567" />
+                    <connection refLocalId="613" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN0">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
-                    <connection refLocalId="568" />
+                    <connection refLocalId="614" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="25" />
-                    <connection refLocalId="564" />
+                    <connection refLocalId="610" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -6538,83 +7058,83 @@
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="570" height="10" width="83">
+            <outVariable localId="616" height="10" width="83">
               <position x="820" y="60" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="569" />
+                <connection refLocalId="615" />
               </connectionPointIn>
               <expression>vIOAddr</expression>
             </outVariable>
-            <inVariable localId="571" height="10" width="74">
+            <inVariable localId="617" height="10" width="74">
               <position x="40" y="120" />
               <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
               <expression>fbRF.A</expression>
             </inVariable>
-            <inVariable localId="572" height="10" width="218">
+            <inVariable localId="618" height="10" width="218">
               <position x="40" y="150" />
               <connectionPointOut><relPosition x="218" y="5" /></connectionPointOut>
               <expression>GVL_HW_Buffer.HW_In_DI</expression>
             </inVariable>
-            <inVariable localId="573" height="10" width="227">
+            <inVariable localId="619" height="10" width="227">
               <position x="40" y="180" />
               <connectionPointOut><relPosition x="227" y="5" /></connectionPointOut>
               <expression>GVL_HW_Buffer.HW_In_AI0</expression>
             </inVariable>
-            <inVariable localId="574" height="10" width="227">
+            <inVariable localId="620" height="10" width="227">
               <position x="40" y="210" />
               <connectionPointOut><relPosition x="227" y="5" /></connectionPointOut>
               <expression>GVL_HW_Buffer.HW_In_AI1</expression>
             </inVariable>
-            <inVariable localId="575" height="10" width="182">
+            <inVariable localId="621" height="10" width="182">
               <position x="40" y="240" />
               <connectionPointOut><relPosition x="182" y="5" /></connectionPointOut>
               <expression>GVL_CPM.Console_In</expression>
             </inVariable>
-            <inVariable localId="576" height="10" width="200">
+            <inVariable localId="622" height="10" width="200">
               <position x="40" y="270" />
               <connectionPointOut><relPosition x="200" y="5" /></connectionPointOut>
               <expression>GVL_CPM.Console_InEn</expression>
             </inVariable>
-            <inVariable localId="577" height="10" width="182">
+            <inVariable localId="623" height="10" width="182">
               <position x="40" y="300" />
               <connectionPointOut><relPosition x="182" y="5" /></connectionPointOut>
               <expression>GVL_CPM.Cpm_Loaded</expression>
             </inVariable>
-            <inVariable localId="674" height="10" width="65">
+            <inVariable localId="720" height="10" width="65">
               <position x="40" y="56" />
               <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
               <expression>vIOEn</expression>
             </inVariable>
-            <inVariable localId="675" height="10" width="74">
+            <inVariable localId="721" height="10" width="74">
               <position x="40" y="86" />
               <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
               <expression>BYTE#0</expression>
             </inVariable>
-            <inVariable localId="676" height="10" width="56">
+            <inVariable localId="722" height="10" width="56">
               <position x="40" y="102" />
               <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
               <expression>vImm</expression>
             </inVariable>
-            <block localId="677" typeName="SEL" height="40" width="76">
+            <block localId="723" typeName="SEL" height="40" width="76">
               <position x="360" y="70" />
               <inputVariables>
                 <variable formalParameter="G">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="674" />
+                    <connection refLocalId="720" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN0">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
-                    <connection refLocalId="675" />
+                    <connection refLocalId="721" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="25" />
-                    <connection refLocalId="676" />
+                    <connection refLocalId="722" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -6627,77 +7147,77 @@
                 </variable>
               </outputVariables>
             </block>
-            <inVariable localId="678" height="10" width="110">
+            <inVariable localId="724" height="10" width="110">
               <position x="40" y="42" />
               <connectionPointOut><relPosition x="110" y="5" /></connectionPointOut>
               <expression>vCtl_IO_Rd</expression>
             </inVariable>
-            <inVariable localId="679" height="10" width="110">
+            <inVariable localId="725" height="10" width="110">
               <position x="40" y="72" />
               <connectionPointOut><relPosition x="110" y="5" /></connectionPointOut>
               <expression>vCtl_IO_Wr</expression>
             </inVariable>
-            <block localId="578" typeName="FB_IO_Ports" instanceName="fbIO" height="110" width="160">
+            <block localId="624" typeName="FB_IO_Ports" instanceName="fbIO" height="110" width="160">
               <position x="520" y="120" />
               <inputVariables>
                 <variable formalParameter="Addr">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="677" />
+                    <connection refLocalId="723" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="D_Write">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
-                    <connection refLocalId="571" />
+                    <connection refLocalId="617" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="Rd">
                   <connectionPointIn>
                     <relPosition x="0" y="25" />
-                    <connection refLocalId="678" />
+                    <connection refLocalId="724" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="Wr">
                   <connectionPointIn>
                     <relPosition x="0" y="35" />
-                    <connection refLocalId="679" />
+                    <connection refLocalId="725" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="In_DI">
                   <connectionPointIn>
                     <relPosition x="0" y="45" />
-                    <connection refLocalId="572" />
+                    <connection refLocalId="618" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="In_AI0">
                   <connectionPointIn>
                     <relPosition x="0" y="55" />
-                    <connection refLocalId="573" />
+                    <connection refLocalId="619" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="In_AI1">
                   <connectionPointIn>
                     <relPosition x="0" y="65" />
-                    <connection refLocalId="574" />
+                    <connection refLocalId="620" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="Con_In">
                   <connectionPointIn>
                     <relPosition x="0" y="75" />
-                    <connection refLocalId="575" />
+                    <connection refLocalId="621" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="Con_Ready">
                   <connectionPointIn>
                     <relPosition x="0" y="85" />
-                    <connection refLocalId="576" />
+                    <connection refLocalId="622" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="Cpm_Ready">
                   <connectionPointIn>
                     <relPosition x="0" y="95" />
-                    <connection refLocalId="577" />
+                    <connection refLocalId="623" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -6745,92 +7265,92 @@
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="579" height="10" width="83">
+            <outVariable localId="625" height="10" width="83">
               <position x="1120" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="578" formalParameter="Rd_Data" />
+                <connection refLocalId="624" formalParameter="Rd_Data" />
               </connectionPointIn>
               <expression>vIOData</expression>
             </outVariable>
-            <inVariable localId="583" height="10" width="83">
+            <inVariable localId="629" height="10" width="83">
               <position x="40" y="30" />
               <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
               <expression>vIOData</expression>
             </inVariable>
-            <inVariable localId="585" height="10" width="83">
+            <inVariable localId="631" height="10" width="83">
               <position x="40" y="70" />
               <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
               <expression>vIOAddr</expression>
             </inVariable>
             <!-- SET 16b: vyhod portov na vyhody PLK -->
-            <outVariable localId="580" height="10" width="74">
+            <outVariable localId="626" height="10" width="74">
               <position x="1120" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="578" formalParameter="Out_DO" />
+                <connection refLocalId="624" formalParameter="Out_DO" />
               </connectionPointIn>
               <expression>vOutDO</expression>
             </outVariable>
             <!-- SET 16c: vyhod portov: analogovyy kanal 0 -->
-            <outVariable localId="581" height="10" width="83">
+            <outVariable localId="627" height="10" width="83">
               <position x="1120" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="578" formalParameter="Out_AO0" />
+                <connection refLocalId="624" formalParameter="Out_AO0" />
               </connectionPointIn>
               <expression>vOutAO0</expression>
             </outVariable>
             <!-- SET 16d: vyhod portov: analogovyy kanal 1 -->
-            <outVariable localId="582" height="10" width="83">
+            <outVariable localId="628" height="10" width="83">
               <position x="1120" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="578" formalParameter="Out_AO1" />
+                <connection refLocalId="624" formalParameter="Out_AO1" />
               </connectionPointIn>
               <expression>vOutAO1</expression>
             </outVariable>
             <!-- SET 16e: konsol CP/M i zerkalo shin -->
-            <outVariable localId="584" height="10" width="182">
+            <outVariable localId="630" height="10" width="182">
               <position x="520" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="583" />
+                <connection refLocalId="629" />
               </connectionPointIn>
               <expression>GVL_IO.Bus_IO_Data</expression>
             </outVariable>
-            <outVariable localId="586" height="10" width="182">
+            <outVariable localId="632" height="10" width="182">
               <position x="520" y="70" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="585" />
+                <connection refLocalId="631" />
               </connectionPointIn>
               <expression>GVL_IO.Bus_IO_Addr</expression>
             </outVariable>
             <!-- SET 17: BIOS: zona adresov i konsol -->
-            <inVariable localId="587" height="10" width="146">
+            <inVariable localId="633" height="10" width="146">
               <position x="40" y="30" />
               <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Rs_PC</expression>
             </inVariable>
-            <inVariable localId="588" height="10" width="128">
+            <inVariable localId="634" height="10" width="128">
               <position x="40" y="44" />
               <connectionPointOut><relPosition x="128" y="5" /></connectionPointOut>
               <expression>WORD#16#FA00</expression>
             </inVariable>
-            <block localId="589" typeName="GE" height="30" width="64">
+            <block localId="635" typeName="GE" height="30" width="64">
               <position x="360" y="30" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="587" />
+                    <connection refLocalId="633" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
-                    <connection refLocalId="588" />
+                    <connection refLocalId="634" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -6843,29 +7363,29 @@
                 </variable>
               </outputVariables>
             </block>
-            <inVariable localId="590" height="10" width="128">
+            <inVariable localId="636" height="10" width="128">
               <position x="40" y="74" />
               <connectionPointOut><relPosition x="128" y="5" /></connectionPointOut>
               <expression>WORD#16#FB00</expression>
             </inVariable>
-            <inVariable localId="680" height="10" width="146">
+            <inVariable localId="726" height="10" width="146">
               <position x="40" y="42" />
               <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Rs_PC</expression>
             </inVariable>
-            <block localId="591" typeName="LT" height="30" width="64">
+            <block localId="637" typeName="LT" height="30" width="64">
               <position x="360" y="60" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="680" />
+                    <connection refLocalId="726" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
-                    <connection refLocalId="590" />
+                    <connection refLocalId="636" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -6878,19 +7398,19 @@
                 </variable>
               </outputVariables>
             </block>
-            <block localId="592" typeName="AND" height="30" width="64">
+            <block localId="638" typeName="AND" height="30" width="64">
               <position x="520" y="45" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="589" />
+                    <connection refLocalId="635" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
-                    <connection refLocalId="591" />
+                    <connection refLocalId="637" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -6903,48 +7423,48 @@
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="593" height="10" width="83">
+            <outVariable localId="639" height="10" width="83">
               <position x="520" y="45" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="592" />
+                <connection refLocalId="638" />
               </connectionPointIn>
               <expression>vIsBIOS</expression>
             </outVariable>
-            <inVariable localId="594" height="10" width="182">
+            <inVariable localId="640" height="10" width="182">
               <position x="40" y="120" />
               <connectionPointOut><relPosition x="182" y="5" /></connectionPointOut>
               <expression>GVL_CPM.Console_In</expression>
             </inVariable>
-            <inVariable localId="595" height="10" width="200">
+            <inVariable localId="641" height="10" width="200">
               <position x="40" y="150" />
               <connectionPointOut><relPosition x="200" y="5" /></connectionPointOut>
               <expression>GVL_CPM.Console_InEn</expression>
             </inVariable>
-            <inVariable localId="681" height="10" width="146">
+            <inVariable localId="727" height="10" width="146">
               <position x="40" y="42" />
               <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Rs_PC</expression>
             </inVariable>
-            <block localId="596" typeName="FB_CPM_BIOS" instanceName="fbBIOS" height="40" width="112">
+            <block localId="642" typeName="FB_CPM_BIOS" instanceName="fbBIOS" height="40" width="112">
               <position x="680" y="120" />
               <inputVariables>
                 <variable formalParameter="Addr">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="681" />
+                    <connection refLocalId="727" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="Con_In">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
-                    <connection refLocalId="594" />
+                    <connection refLocalId="640" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="Con_Rdy">
                   <connectionPointIn>
                     <relPosition x="0" y="25" />
-                    <connection refLocalId="595" />
+                    <connection refLocalId="641" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -6982,291 +7502,291 @@
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="597" height="10" width="92">
+            <outVariable localId="643" height="10" width="92">
               <position x="1120" y="120" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="596" formalParameter="Con_Out" />
+                <connection refLocalId="642" formalParameter="Con_Out" />
               </connectionPointIn>
               <expression>vBiosOut</expression>
             </outVariable>
             <!-- SET 17b: konsol BIOS: strob vyvoda -->
-            <outVariable localId="598" height="10" width="83">
+            <outVariable localId="644" height="10" width="83">
               <position x="1120" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="596" formalParameter="Con_Wr" />
+                <connection refLocalId="642" formalParameter="Con_Wr" />
               </connectionPointIn>
               <expression>vBiosWr</expression>
             </outVariable>
             <!-- SET 17c: konsol BIOS: zapros vvoda -->
-            <outVariable localId="599" height="10" width="83">
+            <outVariable localId="645" height="10" width="83">
               <position x="1120" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="596" formalParameter="Con_Rd" />
+                <connection refLocalId="642" formalParameter="Con_Rd" />
               </connectionPointIn>
               <expression>vBiosRd</expression>
             </outVariable>
             <!-- SET 17b: OTLADKA: Rs_A, Rs_B, Init_Vals -->
-            <inVariable localId="600" height="10" width="137">
+            <inVariable localId="646" height="10" width="137">
               <position x="40" y="30" />
               <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Rs_A</expression>
             </inVariable>
-            <outVariable localId="601" height="10" width="146">
+            <outVariable localId="647" height="10" width="146">
               <position x="520" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="600" />
+                <connection refLocalId="646" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_A</expression>
             </outVariable>
-            <inVariable localId="602" height="10" width="137">
+            <inVariable localId="648" height="10" width="137">
               <position x="40" y="70" />
               <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Rs_B</expression>
             </inVariable>
-            <outVariable localId="603" height="10" width="146">
+            <outVariable localId="649" height="10" width="146">
               <position x="520" y="70" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="602" />
+                <connection refLocalId="648" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_B</expression>
             </outVariable>
-            <inVariable localId="604" height="10" width="137">
+            <inVariable localId="650" height="10" width="137">
               <position x="40" y="110" />
               <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Rs_H</expression>
             </inVariable>
-            <outVariable localId="605" height="10" width="146">
+            <outVariable localId="651" height="10" width="146">
               <position x="520" y="110" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="604" />
+                <connection refLocalId="650" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_H</expression>
             </outVariable>
-            <inVariable localId="606" height="10" width="137">
+            <inVariable localId="652" height="10" width="137">
               <position x="40" y="150" />
               <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Rs_L</expression>
             </inVariable>
-            <outVariable localId="607" height="10" width="146">
+            <outVariable localId="653" height="10" width="146">
               <position x="520" y="150" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="606" />
+                <connection refLocalId="652" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_L</expression>
             </outVariable>
-            <inVariable localId="608" height="10" width="245">
+            <inVariable localId="654" height="10" width="245">
               <position x="40" y="190" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Vals[0]</expression>
             </inVariable>
-            <outVariable localId="609" height="10" width="182">
+            <outVariable localId="655" height="10" width="182">
               <position x="520" y="190" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="608" />
+                <connection refLocalId="654" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_Init0</expression>
             </outVariable>
-            <inVariable localId="610" height="10" width="245">
+            <inVariable localId="656" height="10" width="245">
               <position x="40" y="230" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Vals[1]</expression>
             </inVariable>
-            <outVariable localId="611" height="10" width="182">
+            <outVariable localId="657" height="10" width="182">
               <position x="520" y="230" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="610" />
+                <connection refLocalId="656" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_Init1</expression>
             </outVariable>
-            <inVariable localId="612" height="10" width="245">
+            <inVariable localId="658" height="10" width="245">
               <position x="40" y="270" />
               <connectionPointOut><relPosition x="245" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_Sel_Dst</expression>
             </inVariable>
-            <outVariable localId="613" height="10" width="191">
+            <outVariable localId="659" height="10" width="191">
               <position x="520" y="270" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="612" />
+                <connection refLocalId="658" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_SelDst</expression>
             </outVariable>
-            <inVariable localId="614" height="10" width="200">
+            <inVariable localId="660" height="10" width="200">
               <position x="40" y="310" />
               <connectionPointOut><relPosition x="200" y="5" /></connectionPointOut>
               <expression>GVL_InitRegs.Init_En</expression>
             </inVariable>
-            <outVariable localId="615" height="10" width="191">
+            <outVariable localId="661" height="10" width="191">
               <position x="520" y="310" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="614" />
+                <connection refLocalId="660" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_InitEn</expression>
             </outVariable>
-            <inVariable localId="616" height="10" width="164">
+            <inVariable localId="662" height="10" width="164">
               <position x="40" y="350" />
               <connectionPointOut><relPosition x="164" y="5" /></connectionPointOut>
               <expression>fbClock.Clk_Exec</expression>
             </inVariable>
-            <outVariable localId="617" height="10" width="164">
+            <outVariable localId="663" height="10" width="164">
               <position x="520" y="350" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="616" />
+                <connection refLocalId="662" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_Clk</expression>
             </outVariable>
-            <inVariable localId="618" height="10" width="191">
+            <inVariable localId="664" height="10" width="191">
               <position x="40" y="390" />
               <connectionPointOut><relPosition x="191" y="5" /></connectionPointOut>
               <expression>GVL_Control.Emu_Run</expression>
             </inVariable>
-            <outVariable localId="619" height="10" width="164">
+            <outVariable localId="665" height="10" width="164">
               <position x="520" y="390" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="618" />
+                <connection refLocalId="664" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_Run</expression>
             </outVariable>
-            <inVariable localId="620" height="10" width="119">
+            <inVariable localId="666" height="10" width="119">
               <position x="40" y="430" />
               <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
               <expression>vCtl_Halted</expression>
             </inVariable>
-            <outVariable localId="621" height="10" width="191">
+            <outVariable localId="667" height="10" width="191">
               <position x="520" y="430" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="620" />
+                <connection refLocalId="666" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_Halted</expression>
             </outVariable>
-            <inVariable localId="622" height="10" width="92">
+            <inVariable localId="668" height="10" width="92">
               <position x="40" y="470" />
               <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
               <expression>vWrEnEff</expression>
             </inVariable>
-            <outVariable localId="623" height="10" width="200">
+            <outVariable localId="669" height="10" width="200">
               <position x="520" y="470" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="622" />
+                <connection refLocalId="668" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_WrEnEff</expression>
             </outVariable>
-            <inVariable localId="624" height="10" width="92">
+            <inVariable localId="670" height="10" width="92">
               <position x="40" y="510" />
               <connectionPointOut><relPosition x="92" y="5" /></connectionPointOut>
               <expression>vFlagsEn</expression>
             </inVariable>
-            <outVariable localId="625" height="10" width="200">
+            <outVariable localId="671" height="10" width="200">
               <position x="520" y="510" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="624" />
+                <connection refLocalId="670" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_FlagsEn</expression>
             </outVariable>
-            <inVariable localId="626" height="10" width="38">
+            <inVariable localId="672" height="10" width="38">
               <position x="40" y="550" />
               <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
               <expression>vY</expression>
             </inVariable>
-            <outVariable localId="627" height="10" width="146">
+            <outVariable localId="673" height="10" width="146">
               <position x="520" y="550" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="626" />
+                <connection refLocalId="672" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_Y</expression>
             </outVariable>
-            <inVariable localId="628" height="10" width="83">
+            <inVariable localId="674" height="10" width="83">
               <position x="40" y="590" />
               <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
               <expression>vOpWord</expression>
             </inVariable>
-            <outVariable localId="629" height="10" width="191">
+            <outVariable localId="675" height="10" width="191">
               <position x="520" y="590" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="628" />
+                <connection refLocalId="674" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_OpWord</expression>
             </outVariable>
-            <inVariable localId="630" height="10" width="74">
+            <inVariable localId="676" height="10" width="74">
               <position x="40" y="630" />
               <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
               <expression>vPCNew</expression>
             </inVariable>
-            <outVariable localId="631" height="10" width="182">
+            <outVariable localId="677" height="10" width="182">
               <position x="520" y="630" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="630" />
+                <connection refLocalId="676" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_PCNew</expression>
             </outVariable>
-            <inVariable localId="632" height="10" width="83">
+            <inVariable localId="678" height="10" width="83">
               <position x="40" y="670" />
               <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
               <expression>vPCLoad</expression>
             </inVariable>
-            <outVariable localId="633" height="10" width="191">
+            <outVariable localId="679" height="10" width="191">
               <position x="520" y="670" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="632" />
+                <connection refLocalId="678" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_PCLoad</expression>
             </outVariable>
-            <inVariable localId="634" height="10" width="65">
+            <inVariable localId="680" height="10" width="65">
               <position x="40" y="710" />
               <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
               <expression>vCond</expression>
             </inVariable>
-            <outVariable localId="635" height="10" width="173">
+            <outVariable localId="681" height="10" width="173">
               <position x="520" y="710" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="634" />
+                <connection refLocalId="680" />
               </connectionPointIn>
               <expression>GVL_Regs.Dbg_Cond</expression>
             </outVariable>
             <!-- SET 18: PEREKhVAT BDOS: PC = 0F000h -->
-            <inVariable localId="636" height="10" width="146">
+            <inVariable localId="682" height="10" width="146">
               <position x="40" y="30" />
               <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Rs_PC</expression>
             </inVariable>
-            <inVariable localId="637" height="10" width="128">
+            <inVariable localId="683" height="10" width="128">
               <position x="40" y="44" />
               <connectionPointOut><relPosition x="128" y="5" /></connectionPointOut>
               <expression>WORD#16#F000</expression>
             </inVariable>
-            <block localId="638" typeName="EQ" height="30" width="64">
+            <block localId="684" typeName="EQ" height="30" width="64">
               <position x="360" y="30" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="636" />
+                    <connection refLocalId="682" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
-                    <connection refLocalId="637" />
+                    <connection refLocalId="683" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -7279,27 +7799,27 @@
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="639" height="10" width="164">
+            <outVariable localId="685" height="10" width="164">
               <position x="520" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="638" />
+                <connection refLocalId="684" />
               </connectionPointIn>
               <expression>GVL_CPM.Bdos_Hit</expression>
             </outVariable>
             <!-- SET 14: REGISTR R: inkrementiruetsya kazhduyu komandu -->
-            <inVariable localId="640" height="10" width="137">
+            <inVariable localId="686" height="10" width="137">
               <position x="40" y="30" />
               <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Rs_R</expression>
             </inVariable>
-            <block localId="641" typeName="BYTE_TO_WORD" height="20" width="52">
+            <block localId="687" typeName="BYTE_TO_WORD" height="20" width="52">
               <position x="200" y="30" />
               <inputVariables>
                 <variable formalParameter="IN">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="640" />
+                    <connection refLocalId="686" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -7312,24 +7832,24 @@
                 </variable>
               </outputVariables>
             </block>
-            <inVariable localId="642" height="10" width="74">
+            <inVariable localId="688" height="10" width="74">
               <position x="40" y="44" />
               <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
               <expression>WORD#1</expression>
             </inVariable>
-            <block localId="643" typeName="ADD" height="30" width="64">
+            <block localId="689" typeName="ADD" height="30" width="64">
               <position x="200" y="30" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="641" />
+                    <connection refLocalId="687" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="IN2">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
-                    <connection refLocalId="642" />
+                    <connection refLocalId="688" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -7342,13 +7862,13 @@
                 </variable>
               </outputVariables>
             </block>
-            <block localId="644" typeName="WORD_TO_BYTE" height="20" width="52">
+            <block localId="690" typeName="WORD_TO_BYTE" height="20" width="52">
               <position x="360" y="30" />
               <inputVariables>
                 <variable formalParameter="IN">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="643" />
+                    <connection refLocalId="689" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -7361,35 +7881,35 @@
                 </variable>
               </outputVariables>
             </block>
-            <inVariable localId="645" height="10" width="164">
+            <inVariable localId="691" height="10" width="164">
               <position x="40" y="70" />
               <connectionPointOut><relPosition x="164" y="5" /></connectionPointOut>
               <expression>fbClock.Clk_Exec</expression>
             </inVariable>
-            <inVariable localId="646" height="10" width="209">
+            <inVariable localId="692" height="10" width="209">
               <position x="40" y="110" />
               <connectionPointOut><relPosition x="209" y="5" /></connectionPointOut>
               <expression>GVL_Control.Emu_Reset</expression>
             </inVariable>
-            <block localId="647" typeName="FB_Reg8" instanceName="fbR" height="40" width="76">
+            <block localId="693" typeName="FB_Reg8" instanceName="fbR" height="40" width="76">
               <position x="360" y="30" />
               <inputVariables>
                 <variable formalParameter="D">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
-                    <connection refLocalId="644" />
+                    <connection refLocalId="690" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="EN">
                   <connectionPointIn>
                     <relPosition x="0" y="15" />
-                    <connection refLocalId="645" />
+                    <connection refLocalId="691" />
                   </connectionPointIn>
                 </variable>
                 <variable formalParameter="CLR">
                   <connectionPointIn>
                     <relPosition x="0" y="25" />
-                    <connection refLocalId="646" />
+                    <connection refLocalId="692" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -7402,29 +7922,29 @@
                 </variable>
               </outputVariables>
             </block>
-            <inVariable localId="648" height="10" width="65">
+            <inVariable localId="694" height="10" width="65">
               <position x="40" y="30" />
               <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
               <expression>fbR.Q</expression>
             </inVariable>
-            <outVariable localId="649" height="10" width="56">
+            <outVariable localId="695" height="10" width="56">
               <position x="520" y="40" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="648" />
+                <connection refLocalId="694" />
               </connectionPointIn>
               <expression>vR_Q</expression>
             </outVariable>
-            <inVariable localId="650" height="10" width="56">
+            <inVariable localId="696" height="10" width="56">
               <position x="40" y="60" />
               <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
               <expression>vR_Q</expression>
             </inVariable>
-            <outVariable localId="651" height="10" width="137">
+            <outVariable localId="697" height="10" width="137">
               <position x="520" y="150" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="650" />
+                <connection refLocalId="696" />
               </connectionPointIn>
               <expression>GVL_Regs.Nx_R</expression>
             </outVariable>
