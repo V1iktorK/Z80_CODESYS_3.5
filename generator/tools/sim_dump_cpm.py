@@ -56,7 +56,10 @@ def main():
                u"GVL_PLCVisu.PC", u"GVL_PLCVisu.Halted",
                u"GVL_HW_IO.AI_0", u"GVL_HW_IO.AI_1",
                u"GVL_HW_Buffer.HW_In_AI0", u"GVL_HW_Buffer.HW_In_AI1",
-               u"GVL_HW_Buffer.HW_In_DI", u"GVL_IO.Bus_IO_Addr"):
+               u"GVL_HW_Buffer.HW_In_DI", u"GVL_IO.Bus_IO_Addr",
+               u"Z80_Mem[0]", u"Z80_Mem[1]", u"Z80_Mem[2]",
+               u"Z80_Mem[4000h]", u"GVL_Control.Emu_Run",
+               u"GVL_Control.Emu_Reset", u"GVL_CPM.Cpm_Loaded"):
         try:
             log(u"  %s = %s" % (nm, onl.read_value(nm)))
         except Exception as exc:                               # noqa: BLE001

@@ -4495,6 +4495,7 @@ def mk_plc_prg():
     p.var(u"vDstValW", u"BYTE", u"to zhe u ekzemplyara zapisi (ne ispol zuetsya)")
     p.var(u"vALU_A", u"BYTE", u"pervyj operand ALU")
     p.var(u"vPCPlus1", u"WORD", u"PC + 1: adres operanda")
+    p.var(u"vImmEff", u"BYTE", u"operand dlya ALU: pamyat ili dannye porta")
     p.var(u"vWrEnEff", u"BOOL", u"zapis registra: komanda ili initsializaciya")
     p.var(u"vC_Eff", u"BOOL", u"flag C dlya zapisi: u INC/DEC staryj")
     p.var(u"vFlagsEn", u"BOOL", u"zapis flagov: gruppa komandy i takt")
@@ -4793,6 +4794,58 @@ def mk_plc_prg():
     n7.outvar(u"vMem_SP_Out", n7.invar(u"fbMem.SP_Out", y=30))
     n7.outvar(u"vSpRd", n7.invar(u"vMem_SP_Out", y=60), x=F.COL_OUT, y=520)
 
+    # ================= 16. I/O-PORTY Z80 =================
+    n16 = p.network(u"SET 16: I/O-PORTY: adres porta")
+    c_ioen = n16.invar(u"vCtl_IO_Rd", y=30)
+    c_iowr = n16.invar(u"vCtl_IO_Wr", y=60)
+    c_n = n16.invar(u"vImm", y=90)
+    #  P O Ch E M U  ZDES' OTDEL'NAYa PEREMENNAYa, A NE b_or(...) NAPRYaMUYu.
+    #  Usloviem SEL dolzhno byt znachenie tipa BOOL. Esli podat' tuda rezul'tat
+    #  bloka OR nad dvumya BOOL, CODESYS vyvodit tip OR kak BYTE (blok OR
+    #  obobshchennyy, ANY_BIT) i otvergaet ego kak uslovie:
+    #      C32: Nevozmozhno konvertirovat tip 'USINT' v tip 'BOOL'
+    #  Eto byli 12 oshibok iz 17. Cherez obychnuyu peremennuyu BOOL takogo
+    #  ne proishodit: prisvaivanie srazu zadaet tip.
+    n16.outvar(u"vIOEn", b_or(n16, F.COL_BLK2, 30, c_ioen, c_iowr),
+               x=F.COL_OUT, y=30)
+    io_addr = b_sel(n16, F.COL_BLK2, 60,
+                    n16.invar(u"vIOEn", y=44),
+                    n16.const(u"0", y=74), c_n)
+    n16.outvar(u"vIOAddr", io_addr, x=F.COL_OUT + 300, y=60)
+    io = n16.block(u"FB_IO_Ports",
+                   [(u"Addr", io_addr),
+                    #  dlya zapisi v port nuzhno T E K U Shch E E znachenie A:
+                    #  vyhod registrovogo fajla k etomu momentu uzhe
+                    #  soderzhit novoe (selektoru zapisi ono i nuzhno, a nam -- net).
+                    (u"D_Write", n16.invar(u"GVL_Regs.Rs_A", y=120)),
+                    (u"Rd", c_ioen),
+                    (u"Wr", c_iowr),
+                    (u"In_DI", n16.invar(u"GVL_HW_Buffer.HW_In_DI", y=150)),
+                    (u"In_AI0", n16.invar(u"GVL_HW_Buffer.HW_In_AI0", y=180)),
+                    (u"In_AI1", n16.invar(u"GVL_HW_Buffer.HW_In_AI1", y=210)),
+                    (u"Con_In", n16.invar(u"GVL_CPM.Console_In", y=240)),
+                    (u"Con_Ready", n16.invar(u"GVL_CPM.Console_InEn", y=270)),
+                    (u"Cpm_Ready", n16.invar(u"GVL_CPM.Cpm_Loaded", y=300))],
+                   [u"Rd_Data", u"Out_DO", u"Out_AO0", u"Out_AO1",
+                    u"Con_Out", u"Con_Wr", u"Con_Port", u"Halt_Req"],
+                   x=F.COL_BLK2 + 160, y=120, instance=u"fbIO")
+    n16.outvar(u"vIOData", io.out(u"Rd_Data"), x=F.COL_OUT + 600, y=30)
+
+    n16b = p.network(u"SET 16b: vyhod portov na vyhody PLK")
+    n16b.outvar(u"vOutDO", io.out(u"Out_DO"), x=F.COL_OUT + 600, y=30)
+
+    n16c = p.network(u"SET 16c: vyhod portov: analogovyy kanal 0")
+    n16c.outvar(u"vOutAO0", io.out(u"Out_AO0"), x=F.COL_OUT + 600, y=30)
+
+    n16d = p.network(u"SET 16d: vyhod portov: analogovyy kanal 1")
+    n16d.outvar(u"vOutAO1", io.out(u"Out_AO1"), x=F.COL_OUT + 600, y=30)
+
+    n16e = p.network(u"SET 16e: konsol CP/M i zerkalo shin")
+    n16e.outvar(u"GVL_IO.Bus_IO_Data", n16.invar(u"vIOData", y=30),
+                x=F.COL_OUT, y=30)
+    n16e.outvar(u"GVL_IO.Bus_IO_Addr", n16.invar(u"vIOAddr", y=70),
+                x=F.COL_OUT, y=70)
+
     # ================= 8. ALU =================
     n8 = p.network(u"SET 8: ALU")
     c_rd8 = n8.invar(u"vCtl_Mem_Rd", y=30)
@@ -4826,7 +4879,18 @@ def mk_plc_prg():
     c_f = n8.invar(u"GVL_Regs.Rs_F", y=270)
     #  Ctl_Mem_Rd ILI Ctl_Imm_Mode -- priznak "operand ne iz registra"
     c_src_mem = b_or(n8, F.COL_BLK, 330, c_rd8, c_mi)
-    src1 = b_sel(n8, F.COL_BLK, 70, c_src_mem, c_sv, c_mv)
+    #  I N  A , ( n ): operand -- dannye porta, a NE nomer porta.
+    #  Dlya etogo iz Mem[PC+1] uzhe izvlechen nomer porta, i set 16
+    #  (ona teper stoit VYShE) otvechaet znacheniem porta.
+    c8_in = n8.invar(u"vCtl_Is_IN", y=700)
+    #  P O M N I T': b_sel(G, IN0, IN1) daet IN1 pri G = TRUE. Obychnyj
+    #  sluchaj (operand iz pamyati) -- IN0, dannye porta (IN A,(n)) -- IN1.
+    imm_eff = b_sel(n8, F.COL_BLK, 700, c8_in,
+                     n8.invar(u"vImm", y=714),
+                     n8.invar(u"vIOData", y=700))
+    n8.outvar(u"vImmEff", imm_eff, x=F.COL_OUT, y=700)
+    src1 = b_sel(n8, F.COL_BLK, 70, c_src_mem, c_sv,
+                 n8.invar(u"vImmEff", y=744))
     src2 = b_sel(n8, F.COL_BLK2, 120, c_iv, src1, c_one)
     n8.outvar(u"vSrc", src2, x=F.COL_OUT, y=120)
     cbit = n8.block(u"AND", [(PIN1, c_f), (PIN2, c_one_b)], [POUT],
@@ -5260,55 +5324,6 @@ def mk_plc_prg():
                 n15g.invar(u"vInAI0", y=70), x=F.COL_OUT, y=70)
     n15g.outvar(u"GVL_HW_Buffer.HW_In_AI1",
                 n15g.invar(u"vInAI1", y=110), x=F.COL_OUT, y=110)
-
-    # ================= 16. I/O-PORTY Z80 =================
-    n16 = p.network(u"SET 16: I/O-PORTY: adres porta")
-    c_ioen = n16.invar(u"vCtl_IO_Rd", y=30)
-    c_iowr = n16.invar(u"vCtl_IO_Wr", y=60)
-    c_n = n16.invar(u"vImm", y=90)
-    #  P O Ch E M U  ZDES' OTDEL'NAYa PEREMENNAYa, A NE b_or(...) NAPRYaMUYu.
-    #  Usloviem SEL dolzhno byt znachenie tipa BOOL. Esli podat' tuda rezul'tat
-    #  bloka OR nad dvumya BOOL, CODESYS vyvodit tip OR kak BYTE (blok OR
-    #  obobshchennyy, ANY_BIT) i otvergaet ego kak uslovie:
-    #      C32: Nevozmozhno konvertirovat tip 'USINT' v tip 'BOOL'
-    #  Eto byli 12 oshibok iz 17. Cherez obychnuyu peremennuyu BOOL takogo
-    #  ne proishodit: prisvaivanie srazu zadaet tip.
-    n16.outvar(u"vIOEn", b_or(n16, F.COL_BLK2, 30, c_ioen, c_iowr),
-               x=F.COL_OUT, y=30)
-    io_addr = b_sel(n16, F.COL_BLK2, 60,
-                    n16.invar(u"vIOEn", y=44),
-                    n16.const(u"0", y=74), c_n)
-    n16.outvar(u"vIOAddr", io_addr, x=F.COL_OUT + 300, y=60)
-    io = n16.block(u"FB_IO_Ports",
-                   [(u"Addr", io_addr),
-                    (u"D_Write", n16.invar(u"fbRF.A", y=120)),
-                    (u"Rd", c_ioen),
-                    (u"Wr", c_iowr),
-                    (u"In_DI", n16.invar(u"GVL_HW_Buffer.HW_In_DI", y=150)),
-                    (u"In_AI0", n16.invar(u"GVL_HW_Buffer.HW_In_AI0", y=180)),
-                    (u"In_AI1", n16.invar(u"GVL_HW_Buffer.HW_In_AI1", y=210)),
-                    (u"Con_In", n16.invar(u"GVL_CPM.Console_In", y=240)),
-                    (u"Con_Ready", n16.invar(u"GVL_CPM.Console_InEn", y=270)),
-                    (u"Cpm_Ready", n16.invar(u"GVL_CPM.Cpm_Loaded", y=300))],
-                   [u"Rd_Data", u"Out_DO", u"Out_AO0", u"Out_AO1",
-                    u"Con_Out", u"Con_Wr", u"Con_Port", u"Halt_Req"],
-                   x=F.COL_BLK2 + 160, y=120, instance=u"fbIO")
-    n16.outvar(u"vIOData", io.out(u"Rd_Data"), x=F.COL_OUT + 600, y=30)
-
-    n16b = p.network(u"SET 16b: vyhod portov na vyhody PLK")
-    n16b.outvar(u"vOutDO", io.out(u"Out_DO"), x=F.COL_OUT + 600, y=30)
-
-    n16c = p.network(u"SET 16c: vyhod portov: analogovyy kanal 0")
-    n16c.outvar(u"vOutAO0", io.out(u"Out_AO0"), x=F.COL_OUT + 600, y=30)
-
-    n16d = p.network(u"SET 16d: vyhod portov: analogovyy kanal 1")
-    n16d.outvar(u"vOutAO1", io.out(u"Out_AO1"), x=F.COL_OUT + 600, y=30)
-
-    n16e = p.network(u"SET 16e: konsol CP/M i zerkalo shin")
-    n16e.outvar(u"GVL_IO.Bus_IO_Data", n16.invar(u"vIOData", y=30),
-                x=F.COL_OUT, y=30)
-    n16e.outvar(u"GVL_IO.Bus_IO_Addr", n16.invar(u"vIOAddr", y=70),
-                x=F.COL_OUT, y=70)
 
     # ================= 17. BIOS =================
     n17 = p.network(u"SET 17: BIOS: zona adresov i konsol")
