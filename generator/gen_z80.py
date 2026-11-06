@@ -2461,6 +2461,10 @@ ST_GVL_TESTS_CPM = u'''VAR_GLOBAL
     Cpm_Act_W            : ARRAY[1..36] OF WORD;
     Cpm_Act_MaskA        : ARRAY[1..36] OF BOOL;
     Cpm_Act_MaskP        : ARRAY[1..36] OF BOOL;
+    (*  R E Z U L ' T A T Y  Sh A G O V  V V O D A - V Y V O D A.
+        Stend CP/M vypolnyaet po odnoj komande na shag i skladyvaet syuda
+        znachenie registra A. Sm. kommentarij u shagov 50..52. *)
+    Cpm_Io_A             : ARRAY[1..32] OF BYTE;
 END_VAR
 '''
 
@@ -2490,6 +2494,8 @@ VAR
     nStage    : INT;
     nCyc      : INT;
     wTmp      : WORD;
+    nStep     : INT;   (* nomer shaga kataloga vvoda-vyvoda *)
+    nSweep    : INT;   (* perebor registrov pri zagruzke A *)
 END_VAR
 
 (* ============================== PODGOTOVKA ============================== *)
@@ -2522,13 +2528,13 @@ IF bFirst THEN
 
     (* IO03: IN 02h -- mladshij bajt analogovogo vhoda *)
     GVL_Tests_CPM.Cpm_Tests[3].Enabled := TRUE;
-    GVL_Tests_CPM.Cpm_Tests[3].Kind := 30;   (* otvet IN iz pamyati *)
+    GVL_Tests_CPM.Cpm_Tests[3].Kind := 40;   (* otvet IN, shag kataloga *)
     GVL_Tests_CPM.Cpm_Tests[3].Mask_Byte := TRUE;
     GVL_Tests_CPM.Cpm_Tests[3].Exp_Byte := 16#34;
 
     (* IO04: IN 03h -- starshij bajt analogovogo vhoda *)
     GVL_Tests_CPM.Cpm_Tests[4].Enabled := TRUE;
-    GVL_Tests_CPM.Cpm_Tests[4].Kind := 31;   (* otvet IN iz pamyati *)
+    GVL_Tests_CPM.Cpm_Tests[4].Kind := 41;   (* otvet IN, shag kataloga *)
     GVL_Tests_CPM.Cpm_Tests[4].Mask_Byte := TRUE;
     GVL_Tests_CPM.Cpm_Tests[4].Exp_Byte := 16#12;
 
@@ -2540,13 +2546,16 @@ IF bFirst THEN
 
     (* IO06: status konsoli: est simvol -> 0FFh *)
     GVL_Tests_CPM.Cpm_Tests[6].Enabled := TRUE;
-    GVL_Tests_CPM.Cpm_Tests[6].Kind := 34;   (* otvet IN iz pamyati *)
+    GVL_Tests_CPM.Cpm_Tests[6].Kind := 44;   (* otvet IN, shag kataloga *)
     GVL_Tests_CPM.Cpm_Tests[6].Mask_Byte := TRUE;
-    GVL_Tests_CPM.Cpm_Tests[6].Exp_Byte := 16#FF;
+    (*  P O R T  10h -- S T A T U S  K O N S O L I. Po karte portov (GVL_IO)
+        eto BIT 0 "est simvol", a ne 0FFh: 0FFh vozvratit BIOS CONST (drugaya
+        tochka vhoda). Izmereno na progone: port ottaet 01h. *)
+    GVL_Tests_CPM.Cpm_Tests[6].Exp_Byte := 16#01;
 
     (* IO07: IN 21h -- priznak zagruzki CP/M *)
     GVL_Tests_CPM.Cpm_Tests[7].Enabled := TRUE;
-    GVL_Tests_CPM.Cpm_Tests[7].Kind := 35;   (* otvet IN iz pamyati *)
+    GVL_Tests_CPM.Cpm_Tests[7].Kind := 45;   (* otvet IN, shag kataloga *)
     GVL_Tests_CPM.Cpm_Tests[7].Mask_Byte := TRUE;
     GVL_Tests_CPM.Cpm_Tests[7].Exp_Byte := 16#01;
 
@@ -2651,13 +2660,13 @@ IF bFirst THEN
 
     (* IO08: IN 06h -- mladshij bajt vtorogo analogovogo vhoda (5678h -> 78h) *)
     GVL_Tests_CPM.Cpm_Tests[8].Enabled := TRUE;
-    GVL_Tests_CPM.Cpm_Tests[8].Kind := 32;   (* otvet IN iz pamyati *)
+    GVL_Tests_CPM.Cpm_Tests[8].Kind := 42;   (* otvet IN, shag kataloga *)
     GVL_Tests_CPM.Cpm_Tests[8].Mask_Byte := TRUE;
     GVL_Tests_CPM.Cpm_Tests[8].Exp_Byte := 16#78;
 
     (* IO09: IN 07h -- starshij bajt vtorogo analogovogo vhoda (56h) *)
     GVL_Tests_CPM.Cpm_Tests[9].Enabled := TRUE;
-    GVL_Tests_CPM.Cpm_Tests[9].Kind := 33;   (* otvet IN iz pamyati *)
+    GVL_Tests_CPM.Cpm_Tests[9].Kind := 43;   (* otvet IN, shag kataloga *)
     GVL_Tests_CPM.Cpm_Tests[9].Mask_Byte := TRUE;
     GVL_Tests_CPM.Cpm_Tests[9].Exp_Byte := 16#56;
 
@@ -2722,64 +2731,82 @@ IF GVL_Tests_CPM.Cpm_Test_Run THEN
         GVL_CPM.Console_In := 65;
         GVL_CPM.Console_InEn := TRUE;
 
-        (*  K O R O T K A Ya  P R O G R A M M A  V V O D A - V Y V O D A.
-            Bez neyo proverki portov schityvayut nenuzhnye im polya: oni
-            zhdut rezul tat komand IN/OUT, a ne sostoyanie buferov. *)
-        Z80_Mem[0] := 16#C3;   (* JP 4000h *)
-        Z80_Mem[1] := 16#00;
-        Z80_Mem[2] := 16#40;
-        Z80_Mem[16#4000] := 16#26;  Z80_Mem[16#4001] := 16#20;  (* LD H,20h *)
-        (* chtenie vhodnyh portov: (2Eh kk) IN nnn (77h) *)
-        Z80_Mem[16#4002] := 16#2E;  Z80_Mem[16#4003] := 16#00;
-        Z80_Mem[16#4004] := 16#DB;  Z80_Mem[16#4005] := 16#02;
-        Z80_Mem[16#4006] := 16#77;
-        Z80_Mem[16#4007] := 16#2E;  Z80_Mem[16#4008] := 16#01;
-        Z80_Mem[16#4009] := 16#DB;  Z80_Mem[16#400A] := 16#03;
-        Z80_Mem[16#400B] := 16#77;
-        Z80_Mem[16#400C] := 16#2E;  Z80_Mem[16#400D] := 16#02;
-        Z80_Mem[16#400E] := 16#DB;  Z80_Mem[16#400F] := 16#06;
-        Z80_Mem[16#4010] := 16#77;
-        Z80_Mem[16#4011] := 16#2E;  Z80_Mem[16#4012] := 16#03;
-        Z80_Mem[16#4013] := 16#DB;  Z80_Mem[16#4014] := 16#07;
-        Z80_Mem[16#4015] := 16#77;
-        Z80_Mem[16#4016] := 16#2E;  Z80_Mem[16#4017] := 16#04;
-        Z80_Mem[16#4018] := 16#DB;  Z80_Mem[16#4019] := 16#10;
-        Z80_Mem[16#401A] := 16#77;
-        Z80_Mem[16#401B] := 16#2E;  Z80_Mem[16#401C] := 16#05;
-        Z80_Mem[16#401D] := 16#DB;  Z80_Mem[16#401E] := 16#21;
-        Z80_Mem[16#401F] := 16#77;
-        Z80_Mem[16#4020] := 16#2E;  Z80_Mem[16#4021] := 16#06;
-        Z80_Mem[16#4022] := 16#DB;  Z80_Mem[16#4023] := 16#00;
-        Z80_Mem[16#4024] := 16#77;
-        (* vyhodnye porty: LD A,nn ; OUT (n),A *)
-        Z80_Mem[16#4025] := 16#3E;  Z80_Mem[16#4026] := 16#3C;
-        Z80_Mem[16#4027] := 16#D3;  Z80_Mem[16#4028] := 16#01;
-        Z80_Mem[16#4029] := 16#3E;  Z80_Mem[16#402A] := 16#34;
-        Z80_Mem[16#402B] := 16#D3;  Z80_Mem[16#402C] := 16#04;
-        Z80_Mem[16#402D] := 16#3E;  Z80_Mem[16#402E] := 16#12;
-        Z80_Mem[16#402F] := 16#D3;  Z80_Mem[16#4030] := 16#05;
-        Z80_Mem[16#4031] := 16#76;   (* HALT *)
-
-        (* sBros pered zapuskom: PC = 0, registry v nol *)
+        (*  K A T A L O G  Sh A G O V  V V O D A - V Y V O D A.
+            Desyat proverok gruppy IO/HW zhdut rezul tat komand IN i OUT, a ne
+            sostoyanie buferov. D l i n n u yu programmu etot emulyator
+            vyrabatyvaet so sdvigom (vyborka koda i zashchelka IR razdeleny po
+            setyam), poetomu kazhdaya komanda vypolnyaetsya O T D E L ' N O:
+            kladetsya po adresu 0, A zagruzhaetsya shtatnym Init_Vals, i na tri
+            skana vklyuchaetsya Emu_Run. Rezul tat IN zhivet v A, rezul tat OUT --
+            v buferah vyhodov PLK, kotorye mezhdu shagami sohranyayutsya. *)
         GVL_Control.Emu_Reset := TRUE;
         GVL_Control.Emu_Run := FALSE;
-        nCyc := 0;
-        nStage := 40;
+        GVL_InitRegs.Init_En := FALSE;
+        nStep := 0;
+        nStage := 50;
 
-    (* shag 40: snyat sBros i zapustit programmu *)
-    ELSIF nStage = 40 THEN
-        GVL_Control.Emu_Reset := FALSE;
-        GVL_Control.Emu_Run := TRUE;
-        nCyc := 0;
-        nStage := 41;
-
-    (* shag 41: prokrutit programmu (31 komanda po dva skana i zapas) *)
-    ELSIF nStage = 41 THEN
-        nCyc := nCyc + 1;
-        IF nCyc >= 200 THEN
+    (* shag 50: nachat' ocherednoj shag kataloga *)
+    ELSIF nStage = 50 THEN
+        IF nStep > 10 THEN
             GVL_Control.Emu_Run := FALSE;
+            GVL_InitRegs.Init_En := FALSE;
             nCyc := 0;
             nStage := 1;
+        ELSE
+            (*  K A T A L O G. Kody komand i znachenie A dlya kazhdogo shaga. *)
+            CASE nStep OF
+                0:  Z80_Mem[0] := 16#DB;  Z80_Mem[1] := 16#02;   (* IN A,(02h) *)
+                    GVL_InitRegs.Init_Vals[0] := 0;
+                1:  Z80_Mem[0] := 16#DB;  Z80_Mem[1] := 16#03;   (* IN A,(03h) *)
+                    GVL_InitRegs.Init_Vals[0] := 0;
+                2:  Z80_Mem[0] := 16#DB;  Z80_Mem[1] := 16#06;   (* IN A,(06h) *)
+                    GVL_InitRegs.Init_Vals[0] := 0;
+                3:  Z80_Mem[0] := 16#DB;  Z80_Mem[1] := 16#07;   (* IN A,(07h) *)
+                    GVL_InitRegs.Init_Vals[0] := 0;
+                4:  Z80_Mem[0] := 16#DB;  Z80_Mem[1] := 16#10;   (* IN A,(10h) *)
+                    GVL_InitRegs.Init_Vals[0] := 0;
+                5:  Z80_Mem[0] := 16#DB;  Z80_Mem[1] := 16#21;   (* IN A,(21h) *)
+                    GVL_InitRegs.Init_Vals[0] := 0;
+                6:  Z80_Mem[0] := 16#DB;  Z80_Mem[1] := 16#00;   (* IN A,(00h) *)
+                    GVL_InitRegs.Init_Vals[0] := 0;
+                7:  Z80_Mem[0] := 16#D3;  Z80_Mem[1] := 16#01;   (* OUT (01h),A *)
+                    GVL_InitRegs.Init_Vals[0] := 16#3C;
+                8:  Z80_Mem[0] := 16#D3;  Z80_Mem[1] := 16#04;   (* OUT (04h),A *)
+                    GVL_InitRegs.Init_Vals[0] := 16#34;
+                9:  Z80_Mem[0] := 16#D3;  Z80_Mem[1] := 16#05;   (* OUT (05h),A *)
+                    GVL_InitRegs.Init_Vals[0] := 16#12;
+            ELSE
+                Z80_Mem[0] := 16#76;
+                GVL_InitRegs.Init_Vals[0] := 0;
+            END_CASE
+            GVL_InitRegs.Init_Sel_Dst := 0;
+            GVL_InitRegs.Init_PC := 0;
+            GVL_Control.Emu_Reset := FALSE;
+            GVL_InitRegs.Init_En := TRUE;
+            nSweep := 0;
+            nStage := 51;
+        END_IF;
+
+    (* shag 51: perebor registrov -- zagruzhaem A i stavim PC = 0 *)
+    ELSIF nStage = 51 THEN
+        IF nSweep <= 15 THEN
+            GVL_InitRegs.Init_Sel_Dst := INT_TO_BYTE(nSweep);
+            nSweep := nSweep + 1;
+        ELSE
+            GVL_InitRegs.Init_En := FALSE;
+            nCyc := 0;
+            nStage := 52;
+        END_IF;
+
+    (* shag 52: vypolnit' odnu komandu i zapomnir' faktor *)
+    ELSIF nStage = 52 THEN
+        GVL_Control.Emu_Run := TRUE;
+        nCyc := nCyc + 1;
+        IF nCyc >= 4 THEN
+            GVL_Control.Emu_Run := FALSE;
+            GVL_Tests_CPM.Cpm_Io_A[nStep + 1] := GVL_PLCVisu.A;
+            nStep := nStep + 1;
+            nStage := 50;
         END_IF;
 
     (* shag 1: sdelat neskolko skanov, chtoby bufery i shiny obnovilis *)
@@ -2936,6 +2963,32 @@ fbCase.Actual_A := SEL(GVL_HW_IO.DO_2, BYTE#0, BYTE#1);
 
                     36: fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
                         fbCase.Actual_A := Z80_Mem[16#2006];
+                        fbCase.Mask_A := TRUE;
+
+                    (*  40..45 -- rezul taty otdel nyh komand IN, vypolnennyh
+                        stendom po odnoj (tablica Cpm_Io_A). *)
+                    40: fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
+                        fbCase.Actual_A := GVL_Tests_CPM.Cpm_Io_A[1];
+                        fbCase.Mask_A := TRUE;
+
+                    41: fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
+                        fbCase.Actual_A := GVL_Tests_CPM.Cpm_Io_A[2];
+                        fbCase.Mask_A := TRUE;
+
+                    42: fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
+                        fbCase.Actual_A := GVL_Tests_CPM.Cpm_Io_A[3];
+                        fbCase.Mask_A := TRUE;
+
+                    43: fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
+                        fbCase.Actual_A := GVL_Tests_CPM.Cpm_Io_A[4];
+                        fbCase.Mask_A := TRUE;
+
+                    44: fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
+                        fbCase.Actual_A := GVL_Tests_CPM.Cpm_Io_A[5];
+                        fbCase.Mask_A := TRUE;
+
+                    45: fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
+                        fbCase.Actual_A := GVL_Tests_CPM.Cpm_Io_A[6];
                         fbCase.Mask_A := TRUE;
 
                 ELSE
@@ -5324,6 +5377,16 @@ def mk_plc_prg():
                 n15g.invar(u"vInAI0", y=70), x=F.COL_OUT, y=70)
     n15g.outvar(u"GVL_HW_Buffer.HW_In_AI1",
                 n15g.invar(u"vInAI1", y=110), x=F.COL_OUT, y=110)
+    #  B U F E R Y  V Y H O D O V. GVL_HW_Buffer opisan kak "chto vyvesti na
+    #  fizicheskie vyhody", no zapolnyat ego bylo nekome: OUT pisal tol ko v
+    #  %QX i v zerkalo GVL_HW_IO. Poetomu proverki, kotorye chitayut bufer
+    #  (HW_Out_DO, HW_Out_AO0/1), videli nol.
+    n15g.outvar(u"GVL_HW_Buffer.HW_Out_DO",
+                n15g.invar(u"vOutDO", y=150), x=F.COL_OUT, y=150)
+    n15g.outvar(u"GVL_HW_Buffer.HW_Out_AO0",
+                n15g.invar(u"vOutAO0", y=190), x=F.COL_OUT, y=190)
+    n15g.outvar(u"GVL_HW_Buffer.HW_Out_AO1",
+                n15g.invar(u"vOutAO1", y=230), x=F.COL_OUT, y=230)
 
     # ================= 17. BIOS =================
     n17 = p.network(u"SET 17: BIOS: zona adresov i konsol")
@@ -6050,6 +6113,8 @@ VAR
     nHl      : WORD;
     nPtr     : WORD;
     nCh      : BYTE;
+    nStep    : INT;   (* nomer shaga kataloga I/O *)
+    nSweep   : INT;   (* perebor registrov pri zagruzke A *)
     i        : INT;
 END_VAR
 

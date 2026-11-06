@@ -17,4 +17,8 @@ VAR_GLOBAL
     Cpm_Act_W            : ARRAY[1..36] OF WORD;
     Cpm_Act_MaskA        : ARRAY[1..36] OF BOOL;
     Cpm_Act_MaskP        : ARRAY[1..36] OF BOOL;
+    (*  R E Z U L ' T A T Y  Sh A G O V  V V O D A - V Y V O D A.
+        Stend CP/M vypolnyaet po odnoj komande na shag i skladyvaet syuda
+        znachenie registra A. Sm. kommentarij u shagov 50..52. *)
+    Cpm_Io_A             : ARRAY[1..32] OF BYTE;
 END_VAR
