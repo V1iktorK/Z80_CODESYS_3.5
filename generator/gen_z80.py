@@ -5734,8 +5734,18 @@ def mk_io_ports():
     we01 = b_and(n2, F.COL_BLK2 + 160, 30, c_wr, is01)
     #  Vetka IN0 -- T I P I Z I R O V A N N Y J  nol' (BYTE#0), sm. poyasnenie
     #  u rezervnoj vetki Rd_Data vyshe.
-    n2.outvar(u"Out_DO", b_sel(n2, F.COL_BLK2 + 320, 30, we01,
-                               n2.const(u"BYTE#0", y=44), c_dwr),
+    #  V Y H O D  P O R T A  --  Z A Shch E L K A, A  N E  I M P U L S.
+    #  Bylo: Out_DO = SEL(we01, 0, dwr), to est znachenie zhilo odin skan --
+    #  poka dejstvuet strob OUT. Posledstvie: bufer vyhodov HW_Out_DO
+    #  obnulyalsya srazu posle komandy, i proverka T02 videla nol, hotya
+    #  otdel nyj bit vyhoda (%QX0.2) uspeval zashchelknutsya i ostavalsya.
+    #  U real nogo Z80 port-derzhitel hranit znachenie do sleduyushchego OUT.
+    p.var(u"fbPortDO", u"FB_Reg8", u"vyhodnoj port 01h (derzhitel)")
+    n2.block(u"FB_Reg8",
+             [(u"D", c_dwr), (u"EN", we01),
+              (u"CLR", n2.const(u"FALSE", y=120))],
+             [u"Q"], x=F.COL_BLK2 + 320, y=30, instance=u"fbPortDO")
+    n2.outvar(u"Out_DO", n2.invar(u"fbPortDO.Q", y=180),
               x=F.COL_OUT + 300, y=30)
     # vyhod 20h -- zapros ostanovki: bit 0
     is20 = b_eq(n2, F.COL_BLK2, 90, c_addr2, n2.const(u"16#20", y=104))
@@ -5771,18 +5781,26 @@ def mk_io_ports():
         p.var(u"fbAO%dLo" % k, u"FB_Reg16", u"mladshij bajt analogovogo vyhoda %d" % k)
         p.var(u"fbAO%dHi" % k, u"FB_Reg16", u"starshij bajt analogovogo vyhoda %d" % k)
     for k, (plo, phi) in enumerate(((u"16#04", u"16#05"), (u"16#08", u"16#09"))):
+        #  K A Zh D O E  P O T R E B L E N I E -- S V O J  E K Z E M P L Ya R  V H O D A.
+        #  Ran'she c_a3 / c_w3 / c_d3 ispol zovalis dvazhdy (mladshij i starshij
+        #  bajt). Pri fan-oute biblioteka kloniruet vethv', i u klona mozhet
+        #  ostat'sya nepodklyuchennyj vhod: starshij bajt analoga ne
+        #  zashchelkivalsya, i HW_Out_AO0 ostavalsya raven 34h vmesto 1234h.
         c_a3 = n3.invar(addr, y=30 + k * 200)
         c_w3 = n3.invar(wr, y=60 + k * 200)
         c_d3 = n3.invar(dwr, y=90 + k * 200)
+        c_a3b = n3.invar(addr, y=150 + k * 200)
+        c_w3b = n3.invar(wr, y=160 + k * 200)
+        c_d3b = n3.invar(dwr, y=170 + k * 200)
         islo = b_eq(n3, F.COL_BLK2, 30 + k * 200, c_a3, n3.const(plo, y=44 + k * 200))
         we_lo = b_and(n3, F.COL_BLK2 + 160, 30 + k * 200, c_w3, islo)
         sh_lo = b_shl(n3, F.COL_BLK2 + 320, 30 + k * 200,
                       b_b2w(n3, F.COL_BLK2 + 320, 30 + k * 200, c_d3),
                       n3.const(u"0", y=44 + k * 200))
-        ishi = b_eq(n3, F.COL_BLK2, 120 + k * 200, c_a3, n3.const(phi, y=134 + k * 200))
-        we_hi = b_and(n3, F.COL_BLK2 + 160, 120 + k * 200, c_w3, ishi)
+        ishi = b_eq(n3, F.COL_BLK2, 120 + k * 200, c_a3b, n3.const(phi, y=134 + k * 200))
+        we_hi = b_and(n3, F.COL_BLK2 + 160, 120 + k * 200, c_w3b, ishi)
         sh_hi = b_shl(n3, F.COL_BLK2 + 320, 120 + k * 200,
-                      b_b2w(n3, F.COL_BLK2 + 320, 120 + k * 200, c_d3),
+                      b_b2w(n3, F.COL_BLK2 + 320, 120 + k * 200, c_d3b),
                       n3.const(u"8", y=134 + k * 200))
         reg_lo = n3.block(u"FB_Reg16",
                           [(u"D", sh_lo), (u"EN", we_lo),
