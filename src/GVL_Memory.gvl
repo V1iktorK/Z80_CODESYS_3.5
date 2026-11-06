@@ -1,0 +1,7 @@
+VAR_GLOBAL
+    (* PAMYaT' 64 KB. Vynesena v GVL, a ne vnutr' FB_Memory64K, po dvum prichinam:
+       1) programmam inicializacii (ST) nuzhen dostup k nej dlya zagruzki proshivki;
+       2) tak pamyat' vidna v HMI i Watch-okne bez ekzemplarov FB.
+       Po zadaniyu ST razreshen imenno dlya inicializacii massiva -- eto ona. *)
+    Z80_Mem : ARRAY[0..65535] OF BYTE;
+END_VAR

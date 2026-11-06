@@ -1,0 +1,16 @@
+VAR_GLOBAL
+    (* Flagowie peremennye odnorazovoj inicializacii.
+       Zhivut v GVL, chtoby programmy inicializacii ne trebovali ekzemplyarov. *)
+    InitDone  : BOOL;
+    TestLoaded : BOOL;
+    GVL_Test_Load : BOOL;
+    (* Priznak, chto tablitsa proverok emulyatora uzhe zapolnena.
+       Ego vystavlyaet POU TEST_Z80_PREP, a chitaet TEST_Z80.
+       Ch T O  Z D E S', A  N E  V  P O U: ranshe eto byl lokalnyj
+       bFirstScan vnutri TEST_Z80, i poka tablitsa i obrabotchik byli
+       odnim POU, etogo hvatalo. Kogda tablitsu vynesli v TEST_Z80_PREP,
+       lokalnaya peremennaya stala nevidima -- znachit priznak dolzhen
+       zhit v GVL. Zavedeno, chtoby poryadok POU v zadache ne vliyal. *)
+    TestTableDone : BOOL;
+    TestTableCnt  : INT;    (* skolko proverok vklyucheno -- dlya HMI *)
+END_VAR

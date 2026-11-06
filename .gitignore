@@ -1,0 +1,48 @@
+# ============================================================================
+#  .gitignore dlya Z80_EMU
+#
+#  Ch T O  N E  K H R A N I M  I  P O Ch E M U.
+#
+#  * build/ -- rezultat sborki CODESYS. On polnostyu vosproizvoditsya
+#    komandoy generator\run_build_log.cmd iz src/. Vnyom lezhit 1.5 MB
+#    sluzhebnyh fajlov (.bootinfo, .compileinfo), kotorye menyayutsya pri
+#    kazhdoy sborke i tolko zasoryayut istoriyu.
+#  * log/ -- zhurnaly progonov. Oni nuzhny tolko dlya razbora K O N K R E T N O J
+#    sborki; posle razbora ih smysl propadaet.
+#  * *.project i *.~u -- sami fajly proekta i blokirovki. Proekt sozdaetsya
+#    zanovo pri kazhdoy sborke, poetomu v git emu ne mesto.
+#  * __pycache__ -- kes Python.
+#  * *.bak*, *.copy -- rezervnye kopii, kotorye delalis pri otladke.
+#    Oni uzhe sygrali svoyu rol, no istoriyu zahlamlyat ne dolzhny.
+#
+#  Ch T O  K H R A N I M. Vse, chto nelzya vosstanovit: src/ (sgenerirovannye
+#  shemy i GVL -- eto vhod dlya sborki), generator/ (sam generator i
+#  instrumenty proverki), docs/ (dokumentaciya).
+# ============================================================================
+
+# --- rezultaty sborki CODESYS ---
+build/
+*.project
+*.~u
+*.simulation.bootinfo
+*.simulation.compileinfo
+*.precompilecache
+*.opt
+
+# --- zhurnaly progonov ---
+log/
+
+# --- kes Python ---
+__pycache__/
+*.pyc
+*.pyo
+
+# --- rezervnye kopii, ostavshiesya ot otladki ---
+*.bak
+*.bak_*
+*.copy
+generator/probe/artifacts/
+
+# --- sluzhebnoe Windows ---
+Thumbs.db
+desktop.ini

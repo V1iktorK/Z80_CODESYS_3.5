@@ -1,0 +1,49 @@
+VAR_GLOBAL
+    (* ZERKALO DLYa VIZUALIZACII (tol'ko chtenie).
+       HMI privyazyvaetsya TOL'KO k etomu GVL -- inache vizualizaciya nachnet
+       vliyat' na ispolnenie. *)
+    A  : BYTE;
+    B  : BYTE;
+    C  : BYTE;
+    D  : BYTE;
+    E  : BYTE;
+    H  : BYTE;
+    L  : BYTE;
+
+    AltA : BYTE;
+    AltB : BYTE;
+    AltC : BYTE;
+    AltD : BYTE;
+    AltE : BYTE;
+    AltH : BYTE;
+    AltL : BYTE;
+
+    F      : BYTE;
+    PC     : WORD;
+    SP     : WORD;
+    IX     : WORD;
+    IY     : WORD;
+    I      : BYTE;
+    R_Reg  : BYTE;
+    IR     : BYTE;
+    Halted : BOOL;
+
+
+    (* raspakovannye flagi dlya lampochek HMI *)
+    FlagS  : BOOL;
+    FlagZ  : BOOL;
+    FlagH  : BOOL;
+    FlagPV : BOOL;
+    FlagN  : BOOL;
+    FlagC  : BOOL;
+
+    (* okno dampa pamyati *)
+    Dump_Base : WORD;
+    (* itogi testov dlya HMI. ETO ZERKALA: ih pishet TEST_Z80 iz GVL_Tests,
+       HMI tolko chitaet. Imena s prefiksom Visu_ -- chtoby ne stolknovilis s
+       GVL_Tests / GVL_Tests_CPM (kolliziya imen kompilyatorom ne lovitsya). *)
+    Visu_Test_Total_Pass : INT;
+    Visu_Test_Fail_Count : INT;
+    Visu_Test_Stage      : INT;
+    Visu_Test_Active     : INT;
+END_VAR

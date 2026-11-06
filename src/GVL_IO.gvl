@@ -1,0 +1,21 @@
+VAR_GLOBAL
+    (* ==========================================================================
+       256 I/O-PORTOV Z80 (ARRAY[0..255] OF BYTE) i I/O-ShINY.
+
+       Karta portov (soglasno zadaniyu):
+         00h      IN  -- diskretnye vhody PLK (%IX0.0..%IX0.7)
+         01h      OUT -- diskretnye vyhody PLK (%QX0.0..%QX0.7)
+         02h/03h  IN  -- analogovyy vhod 0: mladshiy / starshij bajt (%IW0)
+         04h/05h  OUT -- analogovyy vyhod 0: mladshiy / starshij bajt (%QW0)
+         06h/07h  IN  -- analogovyy vhod 1
+         08h/09h  OUT -- analogovyy vyhod 1
+         10h      IN  -- konsol CP/M: status (bit 0 = est simvol)
+         11h      IN  -- konsol CP/M: prinyat simvol
+         12h      OUT -- konsol CP/M: vyvesti simvol
+         20h      OUT -- upravlenie: bit 0 = zapros na HALT
+         21h      IN  -- sostoyanie: bit 0 = CP/M zagruzhen
+       ========================================================================== *)
+    Bus_IO_Addr : BYTE;                (* adresnaya shina I/O *)
+    Bus_IO_Data : BYTE;                (* shina dannyh I/O *)
+    IO_Ports    : ARRAY[0..255] OF BYTE;   (* zerkalo vseh portov dlya HMI *)
+END_VAR

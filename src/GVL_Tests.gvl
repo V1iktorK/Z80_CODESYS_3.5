@@ -1,0 +1,27 @@
+VAR_GLOBAL
+    (* ================== DANNYE TESTIROVANIYa ==================
+       Struktura odnogo testa -- tip ST_TestCase. Rezul'tat -- BOOL:
+       TRUE = PASS, FALSE = FAIL. Nikakih isklyuchenij: proverka delaetsya
+       blokom EQ vnutri FB_TestCase. *)
+    Cpu_Test_Run         : BOOL;
+    Cpu_Test_Stage       : INT;
+    Cpu_Test_Active      : INT;
+    Cpu_Test_Count       : INT;
+
+    (* OPISANIE PROVEROK: odna stroka -- odin test.
+       R A Z M E R  O B Ya Z A N  S O V P A D A T'  S  C I K L A M I.
+       Ranshe zdes' stoyalo [1..40], a v TEST_Z80 obrabotchik hodil po
+       WHILE i <= 75 -- to est' chital elementy ZA GRANITSEJ massiva.
+       Emulyator na real nom progone zastrel na Cpu_Test_Active = 44:
+       vseh testov 40, a on pytalsya vz yat' sorok chetvertyj. V CODESYS
+       vyhod za granitsu massiva ne dayot oshibki kompilyatsii i mozhet
+       nichego ne soobshchit' vo vremya raboty -- poetomu eto stoyalo
+       незамеченным. Teper' granitsy sovpadayut: 1..75 i <= 75. *)
+    Cpu_Tests            : ARRAY[1..75] OF ST_TestCase;
+
+    Cpu_Test_Result      : ARRAY[1..75] OF BOOL;
+    Cpu_Test_Executed    : ARRAY[1..75] OF BOOL;
+    Cpu_Test_Total_Pass  : INT;
+    Cpu_Test_Fail_Count  : INT;
+    Cpu_Test_Failed_List : ARRAY[1..16] OF INT;
+END_VAR

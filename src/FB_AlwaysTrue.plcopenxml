@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0200">
+  <fileHeader companyName="" productName="CODESYS" productVersion="CODESYS V3.5 SP17 Patch 3" creationDateTime="2026-01-01T00:00:00" />  <contentHeader name="FB_AlwaysTrue">
+    <coordinateInfo>
+      <fbd><scaling x="1" y="1" /></fbd>
+      <ld><scaling x="1" y="1" /></ld>
+      <sfc><scaling x="1" y="1" /></sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes />
+    <pous>
+      <pou name="FB_AlwaysTrue" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="Dummy"><type><BOOL /></type></variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q"><type><BOOL /></type></variable>
+          </outputVars>
+        </interface>
+        <body>
+          <FBD>
+            <!-- Q := TRUE -->
+            <inVariable localId="1" height="10" width="65">
+              <position x="40" y="30" />
+              <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
+              <expression>Dummy</expression>
+            </inVariable>
+            <block localId="2" typeName="NOT" height="20" width="52">
+              <position x="200" y="30" />
+              <inputVariables>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="1" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="52" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="3" typeName="NOT" height="20" width="52">
+              <position x="360" y="30" />
+              <inputVariables>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="2" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="52" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <outVariable localId="4" height="10" width="29">
+              <position x="520" y="30" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="3" />
+              </connectionPointIn>
+              <expression>Q</expression>
+            </outVariable>
+          </FBD>
+        </body>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">FUNCTION_BLOCK FB_AlwaysTrue&#xA;(* Postoyanno TRUE. Ispol'zuetsya kak signal 'novyj skan'. *)&#xA;VAR_INPUT&#xA;	Dummy : BOOL; (* ne ispolzuetsya (nuzhen dlya neputstogo interfejsa) *)&#xA;END_VAR&#xA;VAR_OUTPUT&#xA;	Q : BOOL; (* vsegda TRUE *)&#xA;END_VAR&#xA;</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+        </addData>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations />
+  </instances>
+</project>

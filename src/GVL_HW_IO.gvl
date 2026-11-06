@@ -1,0 +1,46 @@
+VAR_GLOBAL
+    (* ==========================================================================
+       APPARATNYY VVOD/VYVOD PLK -- TESTOVYE ZNAChENIYa KANALOV.
+
+       POCHEMU ZDES' NET AT %. Direktiva privyazki k fizicheskim adresam
+       (%IX0.0 i t. d.) dopustima v obyavleniyah PROGRAM ili FB, no NE v
+       global'nom spiske peremennyh: kogda ona stoyala tut, kompilyator dal
+       40 oshibok "C6: ';, :=, REF=, ( ili [' trebuetsya vmesto 'AT'".
+       Poetomu privyazka zhivet v PLC_PRG (peremennye PLC_DI_0 ... PLC_AO_1),
+       a zdes' -- obychnye peremennye dlya PROVERKI bez zheleza:
+       TEST_Z80_CPM zapisyvaet syuda obraz vhodov, i vsya logika rabotaet
+       v simulyatsii, kogda moduli vvoda/vyvoda eshche ne dobavleny.
+
+       KAK PEREEHAT' NA REAL'NOE ZHELEZO: dobavit v Device Tree moduli
+       vvoda/vyvoda i v PLC_PRG zamenit' istochnik vhodov PLC_DI_* / PLC_AI_*
+       na eti peremennye. Karta portov -- docs/05_APPARATNYJ_VVOD_VYVOD.md.
+       ========================================================================== *)
+
+    (* --- diskretnye vhody: IN 00h chitaet etot bajt --- *)
+    DI_0 : BOOL;
+    DI_1 : BOOL;
+    DI_2 : BOOL;
+    DI_3 : BOOL;
+    DI_4 : BOOL;
+    DI_5 : BOOL;
+    DI_6 : BOOL;
+    DI_7 : BOOL;
+
+    (* --- diskretnye vyhody: OUT 01h pishet etot bajt --- *)
+    DO_0 : BOOL;
+    DO_1 : BOOL;
+    DO_2 : BOOL;
+    DO_3 : BOOL;
+    DO_4 : BOOL;
+    DO_5 : BOOL;
+    DO_6 : BOOL;
+    DO_7 : BOOL;
+
+    (* --- analogovye vhody: IN 02h/03h chitayut eto slovo --- *)
+    AI_0 : INT;
+    AI_1 : INT;
+
+    (* --- analogovye vyhody: OUT 04h/05h pishut eto slovo --- *)
+    AO_0 : INT;
+    AO_1 : INT;
+END_VAR

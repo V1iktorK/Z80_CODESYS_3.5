@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0200">
+  <fileHeader companyName="" productName="CODESYS" productVersion="CODESYS V3.5 SP17 Patch 3" creationDateTime="2026-01-01T00:00:00" />  <contentHeader name="PRG_InitMemory">
+    <coordinateInfo>
+      <fbd><scaling x="1" y="1" /></fbd>
+      <ld><scaling x="1" y="1" /></ld>
+      <sfc><scaling x="1" y="1" /></sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes />
+    <pous>
+      <pou name="PRG_InitMemory" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="i"><type><DINT /></type></variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml">IF (NOT InitDone) OR Emu_Init THEN&#xA;    (* --- ochistka vsej pamyati --- *)&#xA;    FOR i := 0 TO 65535 DO&#xA;        Z80_Mem[i] := 0;&#xA;    END_FOR&#xA;&#xA;    (* --- tablica perehodov v nulevoj stranice ---&#xA;       Po adresu 2*n lezhit komanda JP (2*n + 0100h): odin bajt &quot;n&quot; na vhode&#xA;       ravnocenen komande JP po nuzhnomu adresu. Eto uproshchaet ruchnuyu&#xA;       otladku s HMI. *)&#xA;    FOR i := 0 TO 100 DO&#xA;        Z80_Mem[2 * i]     := 16#C3;              (* JP nn *)&#xA;        Z80_Mem[2 * i + 1] := DINT_TO_BYTE(i);&#xA;        Z80_Mem[2 * i + 2] := 16#01;&#xA;    END_FOR&#xA;&#xA;    InitDone := TRUE;&#xA;    Emu_Init := FALSE;&#xA;END_IF&#xA;</xhtml>
+          </ST>
+        </body>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">PROGRAM PRG_InitMemory&#xA;(* =========================================================================&#xA;   PRG_InitMemory -- INICIALIZACIYa MASSIVA PAMYaTI 64 KB.&#xA;   ETO ODNA IZ DVUH RAZRESHENNYH ZADANIEM TOCHEK PRIMENENIYa ST&#xA;   (vtoraya -- generaciya testovyh dannyh). VsyA logika processora -- v FBD.&#xA;&#xA;   Vypolnyaetsya odin raz pri pervoj progonke (flag InitDone) ili povtorno&#xA;   po komande Emu_Init s HMI.&#xA;   ========================================================================= *)&#xA;VAR&#xA;    (*  P O Ch E M U  Z D E S  I M E N N O  DINT.&#xA;        Cikl idet do 65535, a eto bol she INT (maksimum 32767):&#xA;        s schetchikom INT on posle 32767 ushel by v otricatel nye&#xA;        chisla. DINT vmeshchaet 0..65535 celikom, poetomu schetchik&#xA;        cikla obyavlen kak DINT. Proverено otdel nym opytom&#xA;        (generator/tools/probe_index.py): massiv ARRAY[0..65535]&#xA;        prinimaet indeks lyubogo cislovogo tipa bez preduprezhdenij. *)&#xA;    i : DINT;&#xA;END_VAR</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+        </addData>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations />
+  </instances>
+</project>

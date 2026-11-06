@@ -1,0 +1,5 @@
+VAR_GLOBAL
+    (* Flagowie peremennye zagruzki CP/M. *)
+    Cpm_Booted : BOOL;   (* nachalnaya zagruzka uzhe sdelana *)
+    Cpm_Reboot : BOOL;   (* zapros na povtornuyu zagruzku *)
+END_VAR

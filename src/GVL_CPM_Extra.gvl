@@ -1,0 +1,17 @@
+VAR_GLOBAL
+    (* ==========================================================================
+       IMENNO ZDES LEZHAT IMENA, KOTORYE NIKOMU NE NUZHNY.
+
+       E T O T  S P I S O K  P U S T  N A M E R E N N O.
+
+       Ranshe zdes lezhali File_*, In_*, Out_*, Bdos_* i Cpm_Msg -- no vse
+       eti imena U Zh E  E S T  v GVL_CPM, i ni odna shema na nih ne
+       ssylaetsya (provereno poiskom po vsem src/*.plcopenxml). Dublirovanie
+       opasno: imenno tak poyavilas oshibka
+           C77: Neizvestnyj tip: 'GVL_CPM.Out_Count'
+       -- imya bylo v GVL_CPM_Extra, a ssylalis na nego cherez GVL_CPM.
+
+       Spisok ostavlen (a ne udalen) namerenno: on chitaem, i v HMI ego
+       vidno kak pustuyu gruppu.
+       ========================================================================== *)
+END_VAR

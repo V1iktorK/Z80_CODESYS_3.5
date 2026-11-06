@@ -1,0 +1,44 @@
+VAR_GLOBAL
+    (* UPRAVLENIE EMULYaTOROM (knopki HMI) *)
+    Emu_Run   : BOOL;   (* razreshenie raboty *)
+    Emu_Step  : BOOL;   (* odin shag v ruchnom rezhime *)
+    Emu_Reset : BOOL;   (* sBros processora *)
+    Emu_Init  : BOOL;   (* zapros na povtornuyu inicializaciyu pamyati *)
+
+    (* SIGNALY UPRAVLENIYa OT DEKODERA (vyhody FB_DecoderZ80).
+       Chteniyu v PLC_PRG ikh peredaet GVL -- tak shema ostaetsya chitaemoj. *)
+    Ctl_Is_CALL   : BOOL;   (* komanda CALL *)
+    Ctl_Is_RET    : BOOL;   (* komanda RET *)
+    Ctl_Is_DJNZ   : BOOL;   (* komanda DJNZ *)
+    Ctl_Is_HALT   : BOOL;   (* komanda HALT *)
+    Ctl_Is_Jump   : BOOL;   (* JP / JP cc *)
+    Ctl_Is_IN     : BOOL;   (* IN A,(n) *)
+    Ctl_Is_OUT    : BOOL;   (* OUT (n),A *)
+    Ctl_Imm_Mode  : BOOL;   (* operand beretsya iz IR (n ili nn) *)
+    Ctl_Flags_En  : BOOL;   (* razreshenie zapisi flagov *)
+    Ctl_Wr_Enable : BOOL;   (* razreshenie zapisi v registr *)
+    Ctl_Mem_Rd    : BOOL;   (* chtenie pamyati *)
+    Ctl_Mem_Wr    : BOOL;   (* zapis' v pamyat' *)
+    Ctl_IO_Rd     : BOOL;   (* chtenie porta I/O *)
+    Ctl_IO_Wr     : BOOL;   (* zapis' v port I/O *)
+    Ctl_IncDec    : BOOL;   (* INC/DEC: operand = 1 *)
+    Ctl_Is_Jr     : BOOL;   (* JR -- perehod otnositelnyy *)
+    Ctl_Sel_Dst   : BYTE;   (* nomer registra-priemnika *)
+    Ctl_Sel_Src   : BYTE;   (* nomer registra-istochnika *)
+    Ctl_ALU_Op    : BYTE;   (* kod operatsii ALU 0..7 *)
+    Ctl_Cond      : BYTE;   (* uslovie perehoda *)
+
+    (* N A S T R A I V A E M O E  Ch I S L O  I N S T R U K C I J  Z A  S K A N.
+       Tochka rasshireniya iz zadaniya. Bazovyj variant -- odna komanda za
+       skan; Scan_Insns = 1 imenno eto i znachit.
+       CHto delaet bolshee znachenie: takt v PLC_PRG (SET 1) idet v dva
+       polutakta za skan, i posle fazy ispolneniya schetchik SCAN_CNT
+       sravnivaetsya s etim chislom. Poka schetchik menshe -- komanda
+       schitaetsya zavershennoy i takt zapuskaetsya snova; kak tolko
+       schetchik dohodit do Scan_Insns, on obnulyaetsya i zhdet novogo
+       skana PLK. Takim obrazom odin skan PLK uspevaet vypolnit neskolko
+       komand, i shemu peredelyvat ne nuzhno.
+       Granicy: 0 i 1 dayut odinakovyy rezul tat -- odna komanda za skan. *)
+    Scan_Insns  : BYTE := 1;
+    Scan_Cnt    : BYTE;     (* skolko komand uzhe vypolneno v etom skane *)
+END_VAR

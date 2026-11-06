@@ -1,0 +1,15 @@
+VAR_GLOBAL
+    (* ================== DANNYE TESTIROVANIYa CP/M ==================
+       Otdel nyy nabor, chtoby testy protsessora i testy CP/M mozhno bylo
+       zapuskat nezavisimo. Rezul tat kazhdogo -- BOOL: TRUE = PASS. *)
+    Cpm_Test_Run         : BOOL;
+    Cpm_Test_Count       : INT;
+
+    (* OPISANIE PROVEROK CP/M: 40 strok. *)
+    Cpm_Tests            : ARRAY[1..36] OF ST_TestCase_CPM;
+
+    Cpm_Test_Result      : ARRAY[1..36] OF BOOL;
+    Cpm_Test_Total_Pass  : INT;
+    Cpm_Test_Fail_Count  : INT;
+    Cpm_Test_Failed_List : ARRAY[1..16] OF INT;
+END_VAR

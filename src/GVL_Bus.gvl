@@ -1,0 +1,14 @@
+VAR_GLOBAL
+    (* OBShchIE ShINY: edinstvennaya svyaz' blokov.
+       Provodami takuyu svyaz' tyanut' nel'zya -- poluchitsya nechitaemaya pautina.
+       E D I N S T V E N N Y J   V L A D E L E C shin: nikto drugoj ih ne
+       ob''yavlyaet (ranshe dubl byl v GVL_PLCVisu -- ubran). *)
+    Bus_Data : BYTE;    (* 8-bitnaya shina dannyh *)
+    Bus_Addr : WORD;    (* 16-bitnaya adresnaya shina *)
+
+    (* Adresa, kotorye shema PLC_PRG publikuet cherez GVL dlya potrebitelej.
+       Bez ih ob''yavleniya kompilyator daet
+       "C4: 'Bus_Addr_HL' ne yavlyaetsya komponentom 'GVL_Bus'". *)
+    Bus_Addr_HL : WORD; (* adres pary HL -- dlya kosvennoj adresatsii (HL) *)
+    Bus_Addr_Op : WORD; (* adres operanda iz IR (n ili nn) *)
+END_VAR

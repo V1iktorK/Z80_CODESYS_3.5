@@ -1,0 +1,33 @@
+VAR_GLOBAL
+    (* ==========================================================================
+       RAM-DISK A: dlya CP/M 2.2.
+
+       Parametry diska (standartnye dlya odnogo ekstenta):
+         128 bayt v zapisi, 4 zapisi v bloke -- znachit blok = 512 bayt;
+         katalog -- 64 zapisi po 32 bayta = 2 KB = 4 bloka;
+         vsego 1024 bloka po 512 bayt = 512 KB.
+
+       Raspolozhenie:
+           00h..7FFh   -- katalog (64 zapisi po 32 bajta)
+         800h..FFFFFh  -- dannye (blok N nachinaetsya so smeshcheniya
+                          800h + (N-1)*200h; nomera blokov nachinayutsya s 1)
+       ========================================================================== *)
+    Disk_Mem      : ARRAY[0..524287] OF BYTE;   (* 512 KB *)
+    Disk_Entries  : INT := 64;                  (* zapisey v kataloge *)
+    Disk_MaxBlk   : INT := 1024;                (* vsego blokov *)
+
+    (* --- parametry tekushchey operatsii --- *)
+    Dir_Name      : ARRAY[0..10] OF BYTE;   (* imya fajla dlya poiska (8+3) *)
+    Dir_Index     : INT;                    (* najdennyy nomer zapisi *)
+    Dir_Found     : BOOL;                   (* fajl najden *)
+    Dir_Free      : INT;                    (* nomer svobodnoy zapisi *)
+    Dir_FreeFound : BOOL;                   (* est svobodnaya zapis *)
+
+    Disk_Addr     : INT;                    (* nomer bloka dlya chteniya/zapisi *)
+    Disk_CurRec   : INT;                    (* tekushchaya zapis 0..3 v bloke *)
+    Disk_DMA      : WORD;                   (* adres peredachi v TPA *)
+
+    (* --- schetchiki dlya HMI --- *)
+    Disk_Ops      : DWORD;                  (* skolko operatsiy obmena *)
+    Disk_LastErr  : BYTE;                   (* kod posledney oshibki *)
+END_VAR

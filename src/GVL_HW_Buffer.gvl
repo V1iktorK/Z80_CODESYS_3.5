@@ -1,0 +1,20 @@
+VAR_GLOBAL
+    (* ==========================================================================
+       BUFERY OBVENA S ZHELEZOM.
+
+       V nachale skana FB_HW_IO_PLC kopiruet syuda fizicheskie vhody,
+       v konce skana -- otpravlyaet otsyuda na fizicheskie vyhody.
+       Instruktsii Z80 rabotayut TOLKO s etimi buferami, poetomu
+       povedenie vnutri skana determinovano i ne zavisit ot togo,
+       kogda runtime PLK obnovit %I/%Q.
+       ========================================================================== *)
+    HW_In_DI   : BYTE;   (* snimok diskretnyh vhodov *)
+    HW_In_AI0  : WORD;   (* snimok analogovogo vhoda 0 *)
+    HW_In_AI1  : WORD;   (* snimok analogovogo vhoda 1 *)
+
+    HW_Out_DO  : BYTE;   (* chto vyvesti na diskretnye vyhody *)
+    HW_Out_AO0 : WORD;   (* chto vyvesti na analogovyy vyhod 0 *)
+    HW_Out_AO1 : WORD;   (* chto vyvesti na analogovyy vyhod 1 *)
+
+    HW_Scan_Cnt : DWORD; (* schetchik skanov -- dlya diagnostiki *)
+END_VAR

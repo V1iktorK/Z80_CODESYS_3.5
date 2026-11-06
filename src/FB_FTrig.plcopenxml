@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0200">
+  <fileHeader companyName="" productName="CODESYS" productVersion="CODESYS V3.5 SP17 Patch 3" creationDateTime="2026-01-01T00:00:00" />  <contentHeader name="FB_FTrig">
+    <coordinateInfo>
+      <fbd><scaling x="1" y="1" /></fbd>
+      <ld><scaling x="1" y="1" /></ld>
+      <sfc><scaling x="1" y="1" /></sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes />
+    <pous>
+      <pou name="FB_FTrig" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="CLK"><type><BOOL /></type></variable>
+            <variable name="CLR"><type><BOOL /></type></variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Q"><type><BOOL /></type></variable>
+            <variable name="M"><type><BOOL /></type></variable>
+          </outputVars>
+        </interface>
+        <body>
+          <FBD>
+            <!-- zadnij front: NE CLK i M -->
+            <inVariable localId="1" height="10" width="47">
+              <position x="40" y="40" />
+              <connectionPointOut><relPosition x="47" y="5" /></connectionPointOut>
+              <expression>CLK</expression>
+            </inVariable>
+            <inVariable localId="2" height="10" width="47">
+              <position x="40" y="140" />
+              <connectionPointOut><relPosition x="47" y="5" /></connectionPointOut>
+              <expression>CLR</expression>
+            </inVariable>
+            <inVariable localId="3" height="10" width="29">
+              <position x="40" y="90" />
+              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
+              <expression>M</expression>
+            </inVariable>
+            <block localId="4" typeName="NOT" height="20" width="52">
+              <position x="200" y="40" />
+              <inputVariables>
+                <variable formalParameter="IN">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="1" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="52" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="5" typeName="AND" height="30" width="64">
+              <position x="360" y="60" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="4" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="3" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <outVariable localId="6" height="10" width="29">
+              <position x="520" y="60" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="5" />
+              </connectionPointIn>
+              <expression>Q</expression>
+            </outVariable>
+            <inVariable localId="9" height="10" width="29">
+              <position x="40" y="102" />
+              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
+              <expression>M</expression>
+            </inVariable>
+            <inVariable localId="10" height="10" width="47">
+              <position x="40" y="52" />
+              <connectionPointOut><relPosition x="47" y="5" /></connectionPointOut>
+              <expression>CLK</expression>
+            </inVariable>
+            <block localId="7" typeName="SEL" height="40" width="76">
+              <position x="360" y="120" />
+              <inputVariables>
+                <variable formalParameter="G">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="2" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="9" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="25" />
+                    <connection refLocalId="10" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="76" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <outVariable localId="8" height="10" width="29">
+              <position x="520" y="120" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="7" />
+              </connectionPointIn>
+              <expression>M</expression>
+            </outVariable>
+          </FBD>
+        </body>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">FUNCTION_BLOCK FB_FTrig&#xA;(* Detektor zadnego fronta.&#xA;Q := NOT CLK AND M, gde M -- predydushchij CLK. *)&#xA;VAR_INPUT&#xA;	CLK : BOOL; (* vhodnoj signal *)&#xA;	CLR : BOOL; (* sBros pamyati *)&#xA;END_VAR&#xA;VAR_OUTPUT&#xA;	Q : BOOL; (* impul's odin skan pri 1-&gt;0 *)&#xA;	M : BOOL; (* predydushchee znachenie CLK *)&#xA;END_VAR&#xA;</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+        </addData>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations />
+  </instances>
+</project>

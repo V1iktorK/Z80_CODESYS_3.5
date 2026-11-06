@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0200">
+  <fileHeader companyName="" productName="CODESYS" productVersion="CODESYS V3.5 SP17 Patch 3" creationDateTime="2026-01-01T00:00:00" />  <contentHeader name="PRG_LoadTestProgram">
+    <coordinateInfo>
+      <fbd><scaling x="1" y="1" /></fbd>
+      <ld><scaling x="1" y="1" /></ld>
+      <sfc><scaling x="1" y="1" /></sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes />
+    <pous>
+      <pou name="PRG_LoadTestProgram" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="i"><type><INT /></type></variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml">IF GVL_Test_Load OR (NOT TestLoaded) THEN&#xA;&#xA;    (* ---------- programma 1: slozhenie dvuh chisel iz pamyati ---------- *)&#xA;    Z80_Mem[16#0100] := 16#3A;  (* LD A,(2000h) *)&#xA;    Z80_Mem[16#0101] := 16#00;&#xA;    Z80_Mem[16#0102] := 16#20;&#xA;    Z80_Mem[16#0103] := 16#47;  (* LD B,A       *)&#xA;    Z80_Mem[16#0104] := 16#3A;  (* LD A,(2001h) *)&#xA;    Z80_Mem[16#0105] := 16#01;&#xA;    Z80_Mem[16#0106] := 16#20;&#xA;    Z80_Mem[16#0107] := 16#80;  (* ADD A,B      *)&#xA;    Z80_Mem[16#0108] := 16#32;  (* LD (2002h),A *)&#xA;    Z80_Mem[16#0109] := 16#02;&#xA;    Z80_Mem[16#010A] := 16#20;&#xA;&#xA;    Z80_Mem[16#2000] := 16#25;  (* pervoe slagaemoe *)&#xA;    Z80_Mem[16#2001] := 16#10;  (* vtoroe slagaemoe *)&#xA;    Z80_Mem[16#2002] := 16#00;  (* kuda zapishetsya rezul'tat *)&#xA;&#xA;    (* ---------- programma 2: cikl DJNZ ---------- *)&#xA;    Z80_Mem[16#0120] := 16#06;  (* LD B,05h *)&#xA;    Z80_Mem[16#0121] := 16#05;&#xA;    Z80_Mem[16#0122] := 16#AF;  (* XOR A    *)&#xA;    Z80_Mem[16#0123] := 16#80;  (* ADD A,B  &lt;- tochka vozvrata *)&#xA;    Z80_Mem[16#0124] := 16#10;  (* DJNZ 0123h *)&#xA;    Z80_Mem[16#0125] := 16#FD;  (* smeshchenie -3 ot sleduyushchej komandy *)&#xA;    Z80_Mem[16#0126] := 16#32;  (* LD (2000h),A *)&#xA;    Z80_Mem[16#0127] := 16#00;&#xA;    Z80_Mem[16#0128] := 16#20;&#xA;&#xA;    (* ---------- programma 3: cikl DEC B + JP NZ ---------- *)&#xA;    Z80_Mem[16#0140] := 16#06;  (* LD B,03h *)&#xA;    Z80_Mem[16#0141] := 16#03;&#xA;    Z80_Mem[16#0142] := 16#AF;  (* XOR A    *)&#xA;    Z80_Mem[16#0143] := 16#80;  (* ADD A,B  &lt;- tochka vozvrata *)&#xA;    Z80_Mem[16#0144] := 16#05;  (* DEC B    *)&#xA;    Z80_Mem[16#0145] := 16#C2;  (* JP NZ,0143h *)&#xA;    Z80_Mem[16#0146] := 16#43;&#xA;    Z80_Mem[16#0147] := 16#01;&#xA;    Z80_Mem[16#0148] := 16#32;  (* LD (2001h),A *)&#xA;    Z80_Mem[16#0149] := 16#01;&#xA;    Z80_Mem[16#014A] := 16#20;&#xA;&#xA;    TestLoaded := TRUE;&#xA;    GVL_Test_Load := FALSE;&#xA;END_IF&#xA;</xhtml>
+          </ST>
+        </body>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">PROGRAM PRG_LoadTestProgram&#xA;(* =========================================================================&#xA;   PRG_LoadTestProgram -- GENERACIYa TEST OVYH DANNYH.&#xA;   Vtoraya razreshennaya zadaniem tochka primeneniya ST.&#xA;   Zagruzhaet tri testovye programmy:&#xA;     0100h -- slozhenie dvuh chisel iz pamyati   (testy P01..P05)&#xA;     0120h -- cikl DJNZ                          (testy L01..L05)&#xA;     0140h -- cikl DEC B + JP NZ                 (testy L06..L08)&#xA;   ========================================================================= *)&#xA;VAR&#xA;    (*  P O Ch E M U  INT, A  N E  DINT: neyavnoe suzhenie DINT -&gt; INT&#xA;        v CODESYS zapreshcheno, a indeks idet v ARRAY- massivy pamyati. *)&#xA;    i : INT;&#xA;END_VAR</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+        </addData>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations />
+  </instances>
+</project>

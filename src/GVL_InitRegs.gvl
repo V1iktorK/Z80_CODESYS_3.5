@@ -1,0 +1,12 @@
+VAR_GLOBAL
+    (* ============ INICIALIZACIYa REGISTROV (dlya testov i sbrosa) ============
+       Testam nuzhno zadat proizvol'nye znacheniya registrov, poetomu vse oni
+       vyvedeny syuda. Poryadok sovpadaet s kodami Sel_Dst:
+           0=A 1=B 2=C 3=D 4=E 5=H 6=L 7=F 8=A' ... 15=F' *)
+    Init_En      : BOOL;                    (* nachat initsializatsiyu *)
+    Init_Busy    : BOOL;                    (* perebor registrov eshhe idet *)
+    Init_Sel_Dst : BYTE;                    (* nomer registra 0..15 *)
+    Init_Vals    : ARRAY[0..15] OF BYTE;    (* chto zapisat *)
+    Init_SP      : WORD;                    (* nachal'noe znachenie steka *)
+    Init_PC      : WORD;                    (* nachal'nyj schetchik komand *)
+END_VAR

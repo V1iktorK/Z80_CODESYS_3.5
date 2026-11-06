@@ -1,0 +1,79 @@
+VAR_GLOBAL
+    (* ==========================================================================
+       SOSTOYaNIE CP/M 2.2.
+       ========================================================================== *)
+
+    (* --- konsol --- *)
+    Console_In   : BYTE;      (* simvol ot terminala (0 = net) *)
+    Console_InEn : BOOL;      (* est neprinyatyy simvol *)
+    Console_Line : BOOL;      (* stroka vvedena (dlya BDOS 10) *)
+    Console_Out  : BYTE;      (* simvol dlya terminala *)
+    Console_OutEn : BOOL;     (* strobe: est novyj simvol dlya vyvoda *)
+    Con_InBuf    : ARRAY[0..127] OF BYTE;  (* stroka, vvedennaya stroku BDOS 10 *)
+    Con_InLen    : INT;
+    Con_LineReady : BOOL;
+
+    (* --- obshchee --- *)
+    Cpm_Loaded   : BOOL;      (* zagruzhen li .COM *)
+    Cpm_Running  : BOOL;      (* programmnyy rezhim: shag bez ostanovki *)
+    Cpm_Exit     : BOOL;      (* programma zavershilas (JP 0000h) *)
+    Cpm_LastFunc : BYTE;      (* poslednyaya funktsiya BDOS -- dlya otladki *)
+    Cpm_LastRet  : WORD;      (* ee rezul tat *)
+    Cpm_FuncCnt  : DWORD;     (* skolko vyzovov BDOS obsluzheno *)
+    Bd_invoc_Addr : WORD;     (* adres, s kotorogo prishli (dlya HMI) *)
+
+    (* --- BDOS / BIOS adresa --- *)
+    BDOS_Entry   : WORD;      (* 0F000h *)
+    BIOS_Base    : WORD;      (* 0FA00h *)
+    TPA_Base     : WORD;      (* 0100h *)
+
+    (* --- RAM-disk A: --- *)
+    Disk_Err     : BYTE;      (* kod oshibki posledney operatsii *)
+    Disk_Record  : BYTE;      (* nomer tekushchey 128-baytovoy zapisi *)
+    Disk_Track   : BYTE;
+    Disk_Sector  : BYTE;
+
+    (* --- statistika dlya HMI --- *)
+    Cpm_Insn_Cnt : DWORD;     (* skolko instruktsiy vypolneno *)
+
+    (* --- P E R E Kh V A T  B D O S ---
+       P O Ch E M U  Z D E S', A  N E  V  PLC_PRG. Set 18 glavnoj shemy
+       raspoznaet, chto PC ukazyvaet na tochku vhoda BDOS (0F000h). Sama
+       PLC_PRG eto znachenie potreblyaet, no N U Zh N O  O N O  I  programu
+       PRG_CPM_BDOS, a lokalnaya peremennaya odnoj programmy dlya drugoj
+       ne vidna. Kogda my ssylalis na "vIsBDOS" iz PRG_CPM_BDOS, kompilyator
+       soobshchal:
+           C77: Neizvestnyj tip: 'vIsBDOS'
+       Teper signal idet cherez GVL -- tak zhe, kak signaly dekodera
+       (Ctl_...) i adres vyzova Bd_invoc_Addr.
+
+       V N I M A N I E, L O V U Sh K A. Zdes bylo napisano imya signala
+       dekodera s obrazcom "Ctl_" i zakryvayushchej zvezdochkoj. Eto L O M A L O
+       sborku: posledovatelnost "zvezdochka + zakryvayushchaya skobka"
+       zakryvaet kommentariy D O S R O Ch N O, i ves dalneyshij tekst
+       kommentariya CODESYS chitaet kak KOD:
+           C9:   Obnaruzhen nedopustimyj simvol '-'
+           C189: ';' trebuetsya vmesto '-'
+       Ni imeni POU, ni nomera stroki v soobshchenii net, poetomu iskat
+       eto privelos ochen dolgo.
+       P R A V I L O: vnutri kommentariya nikogda ne dolzhno byt
+       posledovatelnosti iz zvezdochki i zakryvayushchej skobki -- dazhe
+       kak chasti imeni ili shablona. Pisat nado "Ctl_..." ili "Ctl_xx".
+       Proverka -- generator\tools\check_comments.py. *)
+    Bdos_Hit      : BOOL;     (* PC ukazyvaet na tochku vhoda BDOS *)
+    Bdos_Count    : DWORD;    (* skolko raz perehvatili upravlenie *)
+    Out_Count     : INT;      (* skolko simvolov vyvedeno v konsol *)
+    In_Cnt        : BYTE;     (* skolko simvolov prinyato (funktsiya 10) *)
+    Cpm_MsgLen    : INT;      (* dlina soobshcheniya dlya HMI *)
+    File_Open     : BOOL;     (* est otkrytyj fajl *)
+
+    (*  P O Ch E M U  E T I  T R I  I M E N I  Z D E S'.
+        Imenno iz-za nih kompilyator soobshchal
+            C46: Identifikator 'File_Open' ne zadan
+            C4:  'In_Cnt' ne yavlyaetsya komponentom 'GVL_CPM'
+        Oni lezhali v GVL_CPM_Extra i potomu byli vidny BEZ kvalifikatora:
+        programma pishet prosto "File_Open", i eto razreshaetsya v lyuboj GVL.
+        No odna programma obrashchalas k nim s yavnym imenem spiska --
+        "GVL_CPM.In_Cnt" -- i poluchala otkaz. Teper oni obyyavleny v GVL_CPM,
+        i rabotayut oba napisaniya. *)
+END_VAR

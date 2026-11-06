@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0200">
+  <fileHeader companyName="" productName="CODESYS" productVersion="CODESYS V3.5 SP17 Patch 3" creationDateTime="2026-01-01T00:00:00" />  <contentHeader name="LANG_PROBE">
+    <coordinateInfo>
+      <fbd><scaling x="1" y="1" /></fbd>
+      <ld><scaling x="1" y="1" /></ld>
+      <sfc><scaling x="1" y="1" /></sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes />
+    <pous>
+      <pou name="P1_ORD_A" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="b"><type><BYTE /></type></variable>
+            <variable name="s"><type><derived name="STRING(16)" /></type></variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml">b := ORD('A');&#xA;</xhtml>
+          </ST>
+        </body>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">PROGRAM P1_ORD_A
+(* proverka: est li funkciya ORD *)
+VAR
+    b : BYTE;
+    s : STRING(16);
+END_VAR</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+        </addData>
+      </pou>
+      <pou name="P2_ORD_DOLLAR" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="b"><type><BYTE /></type></variable>
+            <variable name="s"><type><derived name="STRING(16)" /></type></variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml">b := ORD('$');&#xA;</xhtml>
+          </ST>
+        </body>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">PROGRAM P2_ORD_DOLLAR
+(* proverka: simvol $ v kavychkah *)
+VAR
+    b : BYTE;
+    s : STRING(16);
+END_VAR</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+        </addData>
+      </pou>
+      <pou name="P3_HEX" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="b"><type><BYTE /></type></variable>
+            <variable name="s"><type><derived name="STRING(16)" /></type></variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml">b := 16#24;&#xA;</xhtml>
+          </ST>
+        </body>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">PROGRAM P3_HEX
+(* proverka: to zhe chislo bez literala *)
+VAR
+    b : BYTE;
+    s : STRING(16);
+END_VAR</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+        </addData>
+      </pou>
+      <pou name="P4_STRING" pouType="program">
+        <interface>
+          <localVars>
+            <variable name="b"><type><BYTE /></type></variable>
+            <variable name="s"><type><derived name="STRING(16)" /></type></variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml">s := 'HELLO$';&#xA;</xhtml>
+          </ST>
+        </body>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">PROGRAM P4_STRING
+(* proverka: stroka s $ vnutri *)
+VAR
+    b : BYTE;
+    s : STRING(16);
+END_VAR</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+        </addData>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations />
+  </instances>
+</project>

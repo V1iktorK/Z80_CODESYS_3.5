@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0200">
+  <fileHeader companyName="" productName="CODESYS" productVersion="CODESYS V3.5 SP17 Patch 3" creationDateTime="2026-01-01T00:00:00" />  <contentHeader name="FB_CPM_Disk">
+    <coordinateInfo>
+      <fbd><scaling x="1" y="1" /></fbd>
+      <ld><scaling x="1" y="1" /></ld>
+      <sfc><scaling x="1" y="1" /></sfc>
+    </coordinateInfo>
+  </contentHeader>
+  <types>
+    <dataTypes />
+    <pous>
+      <pou name="FB_CPM_Disk" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="Op"><type><BYTE /></type></variable>
+            <variable name="Index"><type><INT /></type></variable>
+            <variable name="Block"><type><INT /></type></variable>
+            <variable name="Rec"><type><INT /></type></variable>
+            <variable name="DMA"><type><WORD /></type></variable>
+            <variable name="En"><type><BOOL /></type></variable>
+          </inputVars>
+          <outputVars>
+            <variable name="Found"><type><BOOL /></type></variable>
+            <variable name="FreeIdx"><type><INT /></type></variable>
+            <variable name="FreeFound"><type><BOOL /></type></variable>
+            <variable name="Done"><type><BOOL /></type></variable>
+            <variable name="Err"><type><BYTE /></type></variable>
+            <variable name="Out_Mode"><type><BYTE /></type></variable>
+          </outputVars>
+        </interface>
+        <body>
+          <FBD>
+            <!-- POISK v kataloge: sravnenie imen zapisey -->
+            <inVariable localId="1" height="10" width="38">
+              <position x="40" y="30" />
+              <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
+              <expression>Op</expression>
+            </inVariable>
+            <inVariable localId="2" height="10" width="38">
+              <position x="40" y="60" />
+              <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
+              <expression>En</expression>
+            </inVariable>
+            <inVariable localId="3" height="10" width="29">
+              <position x="40" y="44" />
+              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
+              <expression>0</expression>
+            </inVariable>
+            <block localId="4" typeName="EQ" height="30" width="64">
+              <position x="360" y="30" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="1" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="3" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="5" typeName="AND" height="30" width="64">
+              <position x="520" y="30" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="2" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="4" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <outVariable localId="6" height="10" width="56">
+              <position x="520" y="30" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="5" />
+              </connectionPointIn>
+              <expression>Done</expression>
+            </outVariable>
+            <inVariable localId="7" height="10" width="119">
+              <position x="40" y="100" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Dir_Name[0]</expression>
+            </inVariable>
+            <inVariable localId="8" height="10" width="119">
+              <position x="40" y="115" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Disk_Mem[0]</expression>
+            </inVariable>
+            <block localId="9" typeName="EQ" height="30" width="64">
+              <position x="680" y="100" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="7" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="8" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="10" height="10" width="119">
+              <position x="40" y="135" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Dir_Name[1]</expression>
+            </inVariable>
+            <inVariable localId="11" height="10" width="119">
+              <position x="40" y="150" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Disk_Mem[1]</expression>
+            </inVariable>
+            <block localId="12" typeName="EQ" height="30" width="64">
+              <position x="680" y="135" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="10" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="11" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="13" typeName="AND" height="30" width="64">
+              <position x="840" y="135" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="9" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="12" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="14" height="10" width="119">
+              <position x="40" y="170" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Dir_Name[2]</expression>
+            </inVariable>
+            <inVariable localId="15" height="10" width="119">
+              <position x="40" y="185" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Disk_Mem[2]</expression>
+            </inVariable>
+            <block localId="16" typeName="EQ" height="30" width="64">
+              <position x="680" y="170" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="14" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="15" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="17" typeName="AND" height="30" width="64">
+              <position x="840" y="170" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="13" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="16" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="18" height="10" width="119">
+              <position x="40" y="205" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Dir_Name[3]</expression>
+            </inVariable>
+            <inVariable localId="19" height="10" width="119">
+              <position x="40" y="220" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Disk_Mem[3]</expression>
+            </inVariable>
+            <block localId="20" typeName="EQ" height="30" width="64">
+              <position x="680" y="205" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="18" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="19" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="21" typeName="AND" height="30" width="64">
+              <position x="840" y="205" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="17" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="20" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="22" height="10" width="119">
+              <position x="40" y="240" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Dir_Name[4]</expression>
+            </inVariable>
+            <inVariable localId="23" height="10" width="119">
+              <position x="40" y="255" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Disk_Mem[4]</expression>
+            </inVariable>
+            <block localId="24" typeName="EQ" height="30" width="64">
+              <position x="680" y="240" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="22" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="23" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="25" typeName="AND" height="30" width="64">
+              <position x="840" y="240" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="21" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="24" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="26" height="10" width="119">
+              <position x="40" y="275" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Dir_Name[5]</expression>
+            </inVariable>
+            <inVariable localId="27" height="10" width="119">
+              <position x="40" y="290" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Disk_Mem[5]</expression>
+            </inVariable>
+            <block localId="28" typeName="EQ" height="30" width="64">
+              <position x="680" y="275" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="26" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="27" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="29" typeName="AND" height="30" width="64">
+              <position x="840" y="275" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="25" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="28" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="30" height="10" width="119">
+              <position x="40" y="310" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Dir_Name[6]</expression>
+            </inVariable>
+            <inVariable localId="31" height="10" width="119">
+              <position x="40" y="325" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Disk_Mem[6]</expression>
+            </inVariable>
+            <block localId="32" typeName="EQ" height="30" width="64">
+              <position x="680" y="310" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="30" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="31" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="33" typeName="AND" height="30" width="64">
+              <position x="840" y="310" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="29" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="32" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="34" height="10" width="119">
+              <position x="40" y="345" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Dir_Name[7]</expression>
+            </inVariable>
+            <inVariable localId="35" height="10" width="119">
+              <position x="40" y="360" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Disk_Mem[7]</expression>
+            </inVariable>
+            <block localId="36" typeName="EQ" height="30" width="64">
+              <position x="680" y="345" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="34" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="35" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="37" typeName="AND" height="30" width="64">
+              <position x="840" y="345" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="33" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="36" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="38" height="10" width="119">
+              <position x="40" y="380" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Dir_Name[8]</expression>
+            </inVariable>
+            <inVariable localId="39" height="10" width="119">
+              <position x="40" y="395" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Disk_Mem[8]</expression>
+            </inVariable>
+            <block localId="40" typeName="EQ" height="30" width="64">
+              <position x="680" y="380" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="38" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="39" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="41" typeName="AND" height="30" width="64">
+              <position x="840" y="380" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="37" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="40" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="42" height="10" width="119">
+              <position x="40" y="415" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Dir_Name[9]</expression>
+            </inVariable>
+            <inVariable localId="43" height="10" width="119">
+              <position x="40" y="430" />
+              <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
+              <expression>Disk_Mem[9]</expression>
+            </inVariable>
+            <block localId="44" typeName="EQ" height="30" width="64">
+              <position x="680" y="415" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="42" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="43" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="45" typeName="AND" height="30" width="64">
+              <position x="840" y="415" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="41" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="44" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="46" height="10" width="128">
+              <position x="40" y="450" />
+              <connectionPointOut><relPosition x="128" y="5" /></connectionPointOut>
+              <expression>Dir_Name[10]</expression>
+            </inVariable>
+            <inVariable localId="47" height="10" width="128">
+              <position x="40" y="465" />
+              <connectionPointOut><relPosition x="128" y="5" /></connectionPointOut>
+              <expression>Disk_Mem[10]</expression>
+            </inVariable>
+            <block localId="48" typeName="EQ" height="30" width="64">
+              <position x="680" y="450" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="46" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="47" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <block localId="49" typeName="AND" height="30" width="64">
+              <position x="840" y="450" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="45" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="48" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <outVariable localId="50" height="10" width="65">
+              <position x="920" y="100" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="49" />
+              </connectionPointIn>
+              <expression>Found</expression>
+            </outVariable>
+          </FBD>
+        </body>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">FUNCTION_BLOCK FB_CPM_Disk&#xA;(* Operatsii s RAM-diskom A: poisk v kataloge, chtenie i zapis zapisey.&#xA;Adres dannych: 800h + (blok-1)*200h + zapis*80h. *)&#xA;VAR_INPUT&#xA;	Op : BYTE; (* 0 poisk, 1 chtenie, 2 zapis, 3 udalenie *)&#xA;	Index : INT; (* nomer zapisi kataloga *)&#xA;	Block : INT; (* nomer bloka dannyh *)&#xA;	Rec : INT; (* zapis vnutri bloka *)&#xA;	DMA : WORD; (* adres peredachi *)&#xA;	En : BOOL; (* strob *)&#xA;END_VAR&#xA;VAR_OUTPUT&#xA;	Found : BOOL; (* fajl najden *)&#xA;	FreeIdx : INT; (* svobodnaya zapis *)&#xA;	FreeFound : BOOL; (* svobodnaya zapis est *)&#xA;	Done : BOOL; (* operatsiya zavershena *)&#xA;	Err : BYTE; (* kod oshibki *)&#xA;	Out_Mode : BYTE; (* rezhim vyvoda: 0 net, 1 odin simvol, 2 stroka do priznak konca *)&#xA;END_VAR&#xA;</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+        </addData>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations />
+  </instances>
+</project>
