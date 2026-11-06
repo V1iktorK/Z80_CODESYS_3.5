@@ -42,16 +42,6 @@
             <variable name="AO_0"><type><INT /></type></variable>
             <variable name="AO_1"><type><INT /></type></variable>
           </outputVars>
-          <localVars>
-            <variable name="vPack_0"><type><BYTE /></type></variable>
-            <variable name="vPack_1"><type><BYTE /></type></variable>
-            <variable name="vPack_2"><type><BYTE /></type></variable>
-            <variable name="vPack_3"><type><BYTE /></type></variable>
-            <variable name="vPack_4"><type><BYTE /></type></variable>
-            <variable name="vPack_5"><type><BYTE /></type></variable>
-            <variable name="vPack_6"><type><BYTE /></type></variable>
-            <variable name="vPack_7"><type><BYTE /></type></variable>
-          </localVars>
         </interface>
         <body>
           <FBD>
@@ -61,50 +51,35 @@
               <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
               <expression>DI_0</expression>
             </inVariable>
-            <block localId="2" typeName="BOOL_TO_BYTE" height="20" width="52">
+            <inVariable localId="2" height="10" width="74">
+              <position x="40" y="30" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#0</expression>
+            </inVariable>
+            <inVariable localId="3" height="10" width="74">
+              <position x="40" y="44" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#1</expression>
+            </inVariable>
+            <block localId="4" typeName="SEL" height="40" width="76">
               <position x="200" y="30" />
               <inputVariables>
-                <variable formalParameter="IN">
+                <variable formalParameter="G">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
                     <connection refLocalId="1" />
                   </connectionPointIn>
                 </variable>
-              </inputVariables>
-              <inOutVariables />
-              <outputVariables>
-                <variable formalParameter="OUT">
-                  <connectionPointOut>
-                    <relPosition x="52" y="5" />
-                  </connectionPointOut>
-                </variable>
-              </outputVariables>
-            </block>
-            <outVariable localId="3" height="10" width="83">
-              <position x="320" y="30" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="2" />
-              </connectionPointIn>
-              <expression>vPack_0</expression>
-            </outVariable>
-            <inVariable localId="4" height="10" width="83">
-              <position x="440" y="30" />
-              <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
-              <expression>vPack_0</expression>
-            </inVariable>
-            <inVariable localId="5" height="10" width="56">
-              <position x="40" y="70" />
-              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
-              <expression>DI_1</expression>
-            </inVariable>
-            <block localId="6" typeName="BOOL_TO_BYTE" height="20" width="52">
-              <position x="200" y="70" />
-              <inputVariables>
-                <variable formalParameter="IN">
+                <variable formalParameter="IN0">
                   <connectionPointIn>
-                    <relPosition x="0" y="5" />
-                    <connection refLocalId="5" />
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="2" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="25" />
+                    <connection refLocalId="3" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -112,24 +87,57 @@
               <outputVariables>
                 <variable formalParameter="OUT">
                   <connectionPointOut>
-                    <relPosition x="52" y="5" />
+                    <relPosition x="76" y="5" />
                   </connectionPointOut>
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="7" height="10" width="83">
-              <position x="320" y="70" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="6" />
-              </connectionPointIn>
-              <expression>vPack_1</expression>
-            </outVariable>
-            <inVariable localId="8" height="10" width="83">
-              <position x="440" y="70" />
-              <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
-              <expression>vPack_1</expression>
+            <inVariable localId="5" height="10" width="56">
+              <position x="40" y="70" />
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>DI_1</expression>
             </inVariable>
+            <inVariable localId="6" height="10" width="74">
+              <position x="40" y="70" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#0</expression>
+            </inVariable>
+            <inVariable localId="7" height="10" width="74">
+              <position x="40" y="84" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#1</expression>
+            </inVariable>
+            <block localId="8" typeName="SEL" height="40" width="76">
+              <position x="200" y="70" />
+              <inputVariables>
+                <variable formalParameter="G">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="5" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="6" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="25" />
+                    <connection refLocalId="7" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="76" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
             <inVariable localId="9" height="10" width="29">
               <position x="40" y="84" />
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
@@ -190,13 +198,35 @@
               <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
               <expression>DI_2</expression>
             </inVariable>
-            <block localId="13" typeName="BOOL_TO_BYTE" height="20" width="52">
+            <inVariable localId="13" height="10" width="74">
+              <position x="40" y="110" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#0</expression>
+            </inVariable>
+            <inVariable localId="14" height="10" width="74">
+              <position x="40" y="124" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#1</expression>
+            </inVariable>
+            <block localId="15" typeName="SEL" height="40" width="76">
               <position x="200" y="110" />
               <inputVariables>
-                <variable formalParameter="IN">
+                <variable formalParameter="G">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
                     <connection refLocalId="12" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="13" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="25" />
+                    <connection refLocalId="14" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -204,24 +234,11 @@
               <outputVariables>
                 <variable formalParameter="OUT">
                   <connectionPointOut>
-                    <relPosition x="52" y="5" />
+                    <relPosition x="76" y="5" />
                   </connectionPointOut>
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="14" height="10" width="83">
-              <position x="320" y="110" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="13" />
-              </connectionPointIn>
-              <expression>vPack_2</expression>
-            </outVariable>
-            <inVariable localId="15" height="10" width="83">
-              <position x="440" y="110" />
-              <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
-              <expression>vPack_2</expression>
-            </inVariable>
             <inVariable localId="16" height="10" width="29">
               <position x="40" y="124" />
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
@@ -282,13 +299,35 @@
               <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
               <expression>DI_3</expression>
             </inVariable>
-            <block localId="20" typeName="BOOL_TO_BYTE" height="20" width="52">
+            <inVariable localId="20" height="10" width="74">
+              <position x="40" y="150" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#0</expression>
+            </inVariable>
+            <inVariable localId="21" height="10" width="74">
+              <position x="40" y="164" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#1</expression>
+            </inVariable>
+            <block localId="22" typeName="SEL" height="40" width="76">
               <position x="200" y="150" />
               <inputVariables>
-                <variable formalParameter="IN">
+                <variable formalParameter="G">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
                     <connection refLocalId="19" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="20" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="25" />
+                    <connection refLocalId="21" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -296,24 +335,11 @@
               <outputVariables>
                 <variable formalParameter="OUT">
                   <connectionPointOut>
-                    <relPosition x="52" y="5" />
+                    <relPosition x="76" y="5" />
                   </connectionPointOut>
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="21" height="10" width="83">
-              <position x="320" y="150" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="20" />
-              </connectionPointIn>
-              <expression>vPack_3</expression>
-            </outVariable>
-            <inVariable localId="22" height="10" width="83">
-              <position x="440" y="150" />
-              <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
-              <expression>vPack_3</expression>
-            </inVariable>
             <inVariable localId="23" height="10" width="29">
               <position x="40" y="164" />
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
@@ -374,13 +400,35 @@
               <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
               <expression>DI_4</expression>
             </inVariable>
-            <block localId="27" typeName="BOOL_TO_BYTE" height="20" width="52">
+            <inVariable localId="27" height="10" width="74">
+              <position x="40" y="190" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#0</expression>
+            </inVariable>
+            <inVariable localId="28" height="10" width="74">
+              <position x="40" y="204" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#1</expression>
+            </inVariable>
+            <block localId="29" typeName="SEL" height="40" width="76">
               <position x="200" y="190" />
               <inputVariables>
-                <variable formalParameter="IN">
+                <variable formalParameter="G">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
                     <connection refLocalId="26" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="27" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="25" />
+                    <connection refLocalId="28" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -388,24 +436,11 @@
               <outputVariables>
                 <variable formalParameter="OUT">
                   <connectionPointOut>
-                    <relPosition x="52" y="5" />
+                    <relPosition x="76" y="5" />
                   </connectionPointOut>
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="28" height="10" width="83">
-              <position x="320" y="190" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="27" />
-              </connectionPointIn>
-              <expression>vPack_4</expression>
-            </outVariable>
-            <inVariable localId="29" height="10" width="83">
-              <position x="440" y="190" />
-              <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
-              <expression>vPack_4</expression>
-            </inVariable>
             <inVariable localId="30" height="10" width="29">
               <position x="40" y="204" />
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
@@ -466,13 +501,35 @@
               <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
               <expression>DI_5</expression>
             </inVariable>
-            <block localId="34" typeName="BOOL_TO_BYTE" height="20" width="52">
+            <inVariable localId="34" height="10" width="74">
+              <position x="40" y="230" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#0</expression>
+            </inVariable>
+            <inVariable localId="35" height="10" width="74">
+              <position x="40" y="244" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#1</expression>
+            </inVariable>
+            <block localId="36" typeName="SEL" height="40" width="76">
               <position x="200" y="230" />
               <inputVariables>
-                <variable formalParameter="IN">
+                <variable formalParameter="G">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
                     <connection refLocalId="33" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="34" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="25" />
+                    <connection refLocalId="35" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -480,24 +537,11 @@
               <outputVariables>
                 <variable formalParameter="OUT">
                   <connectionPointOut>
-                    <relPosition x="52" y="5" />
+                    <relPosition x="76" y="5" />
                   </connectionPointOut>
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="35" height="10" width="83">
-              <position x="320" y="230" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="34" />
-              </connectionPointIn>
-              <expression>vPack_5</expression>
-            </outVariable>
-            <inVariable localId="36" height="10" width="83">
-              <position x="440" y="230" />
-              <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
-              <expression>vPack_5</expression>
-            </inVariable>
             <inVariable localId="37" height="10" width="29">
               <position x="40" y="244" />
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
@@ -558,13 +602,35 @@
               <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
               <expression>DI_6</expression>
             </inVariable>
-            <block localId="41" typeName="BOOL_TO_BYTE" height="20" width="52">
+            <inVariable localId="41" height="10" width="74">
+              <position x="40" y="270" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#0</expression>
+            </inVariable>
+            <inVariable localId="42" height="10" width="74">
+              <position x="40" y="284" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#1</expression>
+            </inVariable>
+            <block localId="43" typeName="SEL" height="40" width="76">
               <position x="200" y="270" />
               <inputVariables>
-                <variable formalParameter="IN">
+                <variable formalParameter="G">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
                     <connection refLocalId="40" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="41" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="25" />
+                    <connection refLocalId="42" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -572,24 +638,11 @@
               <outputVariables>
                 <variable formalParameter="OUT">
                   <connectionPointOut>
-                    <relPosition x="52" y="5" />
+                    <relPosition x="76" y="5" />
                   </connectionPointOut>
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="42" height="10" width="83">
-              <position x="320" y="270" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="41" />
-              </connectionPointIn>
-              <expression>vPack_6</expression>
-            </outVariable>
-            <inVariable localId="43" height="10" width="83">
-              <position x="440" y="270" />
-              <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
-              <expression>vPack_6</expression>
-            </inVariable>
             <inVariable localId="44" height="10" width="29">
               <position x="40" y="284" />
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
@@ -650,13 +703,35 @@
               <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
               <expression>DI_7</expression>
             </inVariable>
-            <block localId="48" typeName="BOOL_TO_BYTE" height="20" width="52">
+            <inVariable localId="48" height="10" width="74">
+              <position x="40" y="310" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#0</expression>
+            </inVariable>
+            <inVariable localId="49" height="10" width="74">
+              <position x="40" y="324" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#1</expression>
+            </inVariable>
+            <block localId="50" typeName="SEL" height="40" width="76">
               <position x="200" y="310" />
               <inputVariables>
-                <variable formalParameter="IN">
+                <variable formalParameter="G">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
                     <connection refLocalId="47" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="48" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="25" />
+                    <connection refLocalId="49" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -664,24 +739,11 @@
               <outputVariables>
                 <variable formalParameter="OUT">
                   <connectionPointOut>
-                    <relPosition x="52" y="5" />
+                    <relPosition x="76" y="5" />
                   </connectionPointOut>
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="49" height="10" width="83">
-              <position x="320" y="310" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="48" />
-              </connectionPointIn>
-              <expression>vPack_7</expression>
-            </outVariable>
-            <inVariable localId="50" height="10" width="83">
-              <position x="440" y="310" />
-              <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
-              <expression>vPack_7</expression>
-            </inVariable>
             <inVariable localId="51" height="10" width="29">
               <position x="40" y="324" />
               <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
@@ -1465,7 +1527,7 @@
         <addData>
           <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
             <InterfaceAsPlainText>
-              <xhtml xmlns="http://www.w3.org/1999/xhtml">FUNCTION_BLOCK FB_HW_IO_PLC&#xA;(* Apparatnyy interfeys PLK: upakovka vhodov i raspredelenie vyhodov.&#xA;Vse obmen s %I/%Q prohodit cherez etot blok. *)&#xA;VAR_INPUT&#xA;	DI_0 : BOOL; (* diskretnyy vhod %IX0.0 *)&#xA;	DI_1 : BOOL; (* diskretnyy vhod %IX0.1 *)&#xA;	DI_2 : BOOL; (* diskretnyy vhod %IX0.2 *)&#xA;	DI_3 : BOOL; (* diskretnyy vhod %IX0.3 *)&#xA;	DI_4 : BOOL; (* diskretnyy vhod %IX0.4 *)&#xA;	DI_5 : BOOL; (* diskretnyy vhod %IX0.5 *)&#xA;	DI_6 : BOOL; (* diskretnyy vhod %IX0.6 *)&#xA;	DI_7 : BOOL; (* diskretnyy vhod %IX0.7 *)&#xA;	AI_0 : INT; (* analogovyy vhod %%IW0 *)&#xA;	AI_1 : INT; (* analogovyy vhod %%IW1 *)&#xA;	Out_DO : BYTE; (* znachenie dlya diskretnyh vyhodov *)&#xA;	Out_AO0 : WORD; (* znachenie dlya %%QW0 *)&#xA;	Out_AO1 : WORD; (* znachenie dlya %%QW1 *)&#xA;END_VAR&#xA;VAR_OUTPUT&#xA;	In_DI : BYTE; (* upakovannye diskretnye vhody *)&#xA;	In_AI0 : WORD; (* analogovyy vhod 0 *)&#xA;	In_AI1 : WORD; (* analogovyy vhod 1 *)&#xA;	DO_0 : BOOL; (* diskretnyy vyhod %QX0.0 *)&#xA;	DO_1 : BOOL; (* diskretnyy vyhod %QX0.1 *)&#xA;	DO_2 : BOOL; (* diskretnyy vyhod %QX0.2 *)&#xA;	DO_3 : BOOL; (* diskretnyy vyhod %QX0.3 *)&#xA;	DO_4 : BOOL; (* diskretnyy vyhod %QX0.4 *)&#xA;	DO_5 : BOOL; (* diskretnyy vyhod %QX0.5 *)&#xA;	DO_6 : BOOL; (* diskretnyy vyhod %QX0.6 *)&#xA;	DO_7 : BOOL; (* diskretnyy vyhod %QX0.7 *)&#xA;	AO_0 : INT; (* analogovyy vyhod %%QW0 *)&#xA;	AO_1 : INT; (* analogovyy vyhod %%QW1 *)&#xA;END_VAR&#xA;VAR&#xA;	vPack_0 : BYTE;&#xA;	vPack_1 : BYTE;&#xA;	vPack_2 : BYTE;&#xA;	vPack_3 : BYTE;&#xA;	vPack_4 : BYTE;&#xA;	vPack_5 : BYTE;&#xA;	vPack_6 : BYTE;&#xA;	vPack_7 : BYTE;&#xA;END_VAR&#xA;</xhtml>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">FUNCTION_BLOCK FB_HW_IO_PLC&#xA;(* Apparatnyy interfeys PLK: upakovka vhodov i raspredelenie vyhodov.&#xA;Vse obmen s %I/%Q prohodit cherez etot blok. *)&#xA;VAR_INPUT&#xA;	DI_0 : BOOL; (* diskretnyy vhod %IX0.0 *)&#xA;	DI_1 : BOOL; (* diskretnyy vhod %IX0.1 *)&#xA;	DI_2 : BOOL; (* diskretnyy vhod %IX0.2 *)&#xA;	DI_3 : BOOL; (* diskretnyy vhod %IX0.3 *)&#xA;	DI_4 : BOOL; (* diskretnyy vhod %IX0.4 *)&#xA;	DI_5 : BOOL; (* diskretnyy vhod %IX0.5 *)&#xA;	DI_6 : BOOL; (* diskretnyy vhod %IX0.6 *)&#xA;	DI_7 : BOOL; (* diskretnyy vhod %IX0.7 *)&#xA;	AI_0 : INT; (* analogovyy vhod %%IW0 *)&#xA;	AI_1 : INT; (* analogovyy vhod %%IW1 *)&#xA;	Out_DO : BYTE; (* znachenie dlya diskretnyh vyhodov *)&#xA;	Out_AO0 : WORD; (* znachenie dlya %%QW0 *)&#xA;	Out_AO1 : WORD; (* znachenie dlya %%QW1 *)&#xA;END_VAR&#xA;VAR_OUTPUT&#xA;	In_DI : BYTE; (* upakovannye diskretnye vhody *)&#xA;	In_AI0 : WORD; (* analogovyy vhod 0 *)&#xA;	In_AI1 : WORD; (* analogovyy vhod 1 *)&#xA;	DO_0 : BOOL; (* diskretnyy vyhod %QX0.0 *)&#xA;	DO_1 : BOOL; (* diskretnyy vyhod %QX0.1 *)&#xA;	DO_2 : BOOL; (* diskretnyy vyhod %QX0.2 *)&#xA;	DO_3 : BOOL; (* diskretnyy vyhod %QX0.3 *)&#xA;	DO_4 : BOOL; (* diskretnyy vyhod %QX0.4 *)&#xA;	DO_5 : BOOL; (* diskretnyy vyhod %QX0.5 *)&#xA;	DO_6 : BOOL; (* diskretnyy vyhod %QX0.6 *)&#xA;	DO_7 : BOOL; (* diskretnyy vyhod %QX0.7 *)&#xA;	AO_0 : INT; (* analogovyy vyhod %%QW0 *)&#xA;	AO_1 : INT; (* analogovyy vyhod %%QW1 *)&#xA;END_VAR&#xA;</xhtml>
             </InterfaceAsPlainText>
           </data>
         </addData>

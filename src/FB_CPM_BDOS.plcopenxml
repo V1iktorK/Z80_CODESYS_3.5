@@ -297,15 +297,15 @@
               </connectionPointIn>
               <expression>Con_Wr</expression>
             </outVariable>
-            <inVariable localId="21" height="10" width="29">
+            <inVariable localId="21" height="10" width="74">
               <position x="40" y="204" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>2</expression>
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#2</expression>
             </inVariable>
-            <inVariable localId="22" height="10" width="29">
+            <inVariable localId="22" height="10" width="74">
               <position x="40" y="234" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>0</expression>
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#0</expression>
             </inVariable>
             <block localId="23" typeName="SEL" height="40" width="76">
               <position x="680" y="190" />
@@ -338,10 +338,10 @@
                 </variable>
               </outputVariables>
             </block>
-            <inVariable localId="24" height="10" width="29">
+            <inVariable localId="24" height="10" width="74">
               <position x="40" y="204" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>1</expression>
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#1</expression>
             </inVariable>
             <inVariable localId="78" height="10" width="65">
               <position x="40" y="42" />
@@ -417,15 +417,15 @@
               </connectionPointIn>
               <expression>Out_Mode</expression>
             </outVariable>
-            <inVariable localId="27" height="10" width="65">
+            <inVariable localId="27" height="10" width="110">
               <position x="40" y="204" />
-              <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
-              <expression>16#00</expression>
+              <connectionPointOut><relPosition x="110" y="5" /></connectionPointOut>
+              <expression>BYTE#16#00</expression>
             </inVariable>
-            <inVariable localId="28" height="10" width="65">
+            <inVariable localId="28" height="10" width="110">
               <position x="40" y="234" />
-              <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
-              <expression>16#FF</expression>
+              <connectionPointOut><relPosition x="110" y="5" /></connectionPointOut>
+              <expression>BYTE#16#FF</expression>
             </inVariable>
             <block localId="29" typeName="SEL" height="40" width="76">
               <position x="680" y="190" />

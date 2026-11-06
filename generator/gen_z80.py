@@ -237,28 +237,23 @@ def sel_chain(n, g, in0, cases, x=200, y0=40, ystep=55, tip=None):
     kogda do nee dohodit ochered.
     """
     tip = (tip or u"BYTE").upper()
-    #  P R I M E Ch A N I E  D L Ya  S L E D U Yu Shch E G O  Sh A G A.
-    #  Zdes stoit PROSTAYA cepochka SEL -- vyhod bloka pitayot sleduyushchij.
-    #  Ona rabotaet, no u nee est izvestnyj defekt tipizacii: kogda v odnoj
-    #  cepochke vstrechayutsya vetki i usloviya raznogo tipa, CODESYS bere
-    #  USINT dlya vseh i daet pary
-    #      C32: Nevozmozhno konvertirovat tip 'BOOL' v tip 'USINT'
-    #      C32: Nevzmozhno konvertirovat tip 'USINT' v tip 'BOOL'
-    #  (po odnoj pare na kazhduyu smeshannuyu cepochku, bez imeni POU).
+    #  T I P I Z A C I Ya  V E T O K -- sm. Network.typed() v fbd_xml.py.
+    #  U kazhdoj vetki tip zadayotsya Y A V N O (BYTE#16#00 vmesto 16#00),
+    #  poetomu obobshchennyj SEL poluchaet odnoznachnyj tip i pary oshibok
+    #  "C32: BOOL <-> USINT" ischezayut.
     #
-    #  Chto U Zh E  P R O V E R E N O  I  N E  P O D O Sh L O:
-    #   1) konversiya vida "BYTE_TO_BYTE" dlya vetok -- v CODESYS takoy
-    #      funkcii NET, sborka padaet s "C46: Identifikator 'BYTE_TO_BYTE'";
-    #   2) promezhutochnye peremennye v T E L E seti -- CODESYS schitaet ih
-    #      "lazy" i otkazyvaetsya vyvodit tip: "Tip lazy peremennoj
-    #      '__FB_IO_Ports__ImpVarN' ne mozhet byt razreshen";
-    #   3) promezhutochnye peremennye, obyavlennye v POU, so vsemi
-    #      prisvoeniyami v odnoj seti -- kompilyator na etom ZAVISAET
-    #      (proverено dvazhdy: CPU stoit, vyvod pust).
-    #
-    #  P R A V I L N O E  R E Sh E N I E -- otkazatsya ot cepochki SEL
-    #  v polzu MUX: u nego odin vyhod, odin tip i chislennyj vybor, poetomu
-    #  smeshivat tipy prosto nechem. Eto sleduyushchij shag raboty.
+    #  Chto bylo pereprobovano ranee i N E  P O D O Sh L O (chtoby ne
+    #  povtoryat):
+    #   1) konversiya "BYTE_TO_BYTE" dlya vetok -- v CODESYS takoy funkcii
+    #      NET: 76 oshibok "C46: Identifikator 'BYTE_TO_BYTE' ne zadan";
+    #   2) promezhutochnye peremennye v T E L E seti -- CODESYS obyavlyaet
+    #      ih "lazy" i ne vyvodit tip;
+    #   3) promezhutochnye peremennye v obyavlenii POU so vsemi
+    #      prisvoeniyami v odnoj seti -- kompilyator na etom ZAVISAET.
+    #  Rabotaet imenno yavnaya tipizaciya literala: vybora u kompilyatora
+    #  ne ostayotsya.
+    in0 = n.typed(in0, tip)
+    cases = [(cond, n.typed(val, tip)) for cond, val in cases]
     cur = in0
     y = y0
     for cond, val in cases:
@@ -288,9 +283,30 @@ def b_not(n, x, y, a):
     return n.block(u"NOT", [(PINU, a)], [POUT], x=x, y=y)
 
 
-def b_sel(n, x, y, g, in0, in1):
-    return n.block(u"SEL", [(u"G", g), (u"IN0", in0), (u"IN1", in1)], [POUT],
-                   x=x, y=y)
+def b_sel(n, x, y, g, in0, in1, tip=u"BYTE"):
+    u"""Vybor iz dvuh: G=0 -> in0, G=1 -> in1.
+
+    tip -- tip rezul tata, po umolchaniyu u"BYTE".
+
+    P O Ch E M U  T I P  Z A D A E T S Ya  В С Е Г Д А. Blok SEL
+    obobshchennyj (ANY): ego tip vyvoditsya po vetkam IN0/IN1.
+    Esli odna vetka -- peremennaya BYTE, a drugaya -- «golyj»
+    literal 1, kompilyator sam vybiraet tip literala i v cepochke
+    iz neskolkih SEL oshibaetsya. V otchyote eto vyglyadit kak pary
+        C32: Nevozmozhno konvertirovat tip BOOL v tip USINT
+        C32: Nevozmozhno konvertirovat tip USINT v tip BOOL
+    bez imeni POU i nomera seti.
+
+    Kak tolko tip peredan, kazhdyj CHISLOVOJ literal v vetke
+    perepisyvaetsya v yavnom vide (1 -> BYTE#1), i vybora
+    u kompilyatora ne ostayotsya. Peremennye i vyhody blokov
+    ne tronutsya: u nih tip uzhe est.
+    """
+    if tip:
+        in0 = n.typed(in0, tip)
+        in1 = n.typed(in1, tip)
+    return n.block(u"SEL", [(u"G", g), (u"IN0", in0), (u"IN1", in1)],
+                    [POUT], x=x, y=y)
 
 
 def b_add(n, x, y, a, b):
@@ -302,20 +318,30 @@ def b_sub(n, x, y, a, b):
 
 
 def b_bool2byte(n, name, x, y, src):
-    u"""BOOL -> BYTE s YaVNOJ peremennoj BYTE.
+    u"""BOOL -> BYTE, rezul tat GARANTIROVANNO tipa BYTE.
 
-    P O Ch E M U  Ch E R E Z  P E R E M E N N U Yu. Vyhod BOOL_TO_BYTE --
-    eto USINT, a ne BYTE (v IEC 61131-3 BYTE -- eto bitovaya stroka, i
-    obobshchennye bloki vyvodyat dlya nee USINT). Kogda takoy vyhod idet
-    pryamo v obobshchennyj blok (AND, OR, SEL, ADD), CODESYS ne mozhet
-    soglasovat tipy i soobshchaet
+    P O Ch E M U  N E  BOOL_TO_BYTE. Standartnaya konversiya BOOL_TO_BYTE
+    v CODESYS daet USINT, a ne BYTE (BYTE -- eto bitovaya stroka, dlya nee
+    obobshchennye bloki vyvodyat USINT). Kak tolko takoy vyhod popadaet
+    v cepochku SEL, tipy vetok raskhodyatsya, i sborka padaet s
         C32: Nevozmozhno konvertirovat tip 'BOOL' v tip 'USINT'
-        C32: Nevozmozhno konvertirovat tip 'USINT' v tip 'BOOL'
-    Yavnaya peremennaya BYTE mezhdu nimi tip zakreplyaet.
+        C32: Nevozmozhno konvertirovat tip 'USINT' v tip 'BOOL'.
+
+    Zdes strob 0/1 sobiraetsya cherez SEL, u kotorogo OBE vetki --
+    yavno tipizirovannye literaly BYTE#0 i BYTE#1. Tip vyvoda
+    odnoznachen, poetomu rezul tat mozhno bez opasenij stavit v lyubuyu
+    cepochku BYTE.
+
+    P A R A M E T R  name ostavlen radi sovmestimosti vyzovov i bolshe
+    ne trebuet obyavleniya peremennoj: ran'she zdes delalas zapis
+    v obyavlennyj BYTE, i CODESYS schital takuyu peremennuyu "lazy"
+    ("Tip lazy peremennoj ... ne mozhet byt razreshen").
     """
-    t = n.block(u"BOOL_TO_BYTE", [(PINU, src)], [POUT], x=x, y=y)
-    n.outvar(name, t, x=x + 120, y=y)
-    return n.invar(name, x=x + 240, y=y)
+    return n.block(u"SEL",
+                   [(u"G", src),
+                    (u"IN0", n.const(u"BYTE#0", y=y)),
+                    (u"IN1", n.const(u"BYTE#1", y=y + 14))],
+                   [POUT], x=x, y=y)
 
 
 def b_eq(n, x, y, a, b):
@@ -663,7 +689,7 @@ def mk_alu():
     # dlya INC/DEC operand -- edinitsa (B_Forced), inache -- registr B
     b_eff = b_sel(n1, F.COL_BLK, 400, c_incdec, c_b, c_bfor)
     c_cin = n1.invar(cin, y=120)
-    c1 = n1.const(u"1", y=160)
+    c1 = n1.const(u"BYTE#1", y=160)
     y = 40
     c_op = n1.invar(op, y=200)
     # ADC: pribavit perenos
@@ -929,8 +955,6 @@ def mk_flagsreg():
     #  Ikh trebuet konversiya BOOL -> BYTE: dlya CODESYS rezul tat etoy
     #  konversii -- USINT, a ne BYTE, i pryamaya podacha ego v SHL/ADD
     #  (obobshchennye bloki) daet C32. Sm. b_bool2byte() nizhe.
-    for _sh in (7, 6, 5, 4, 3, 2, 1, 0):
-        p.var(u"vBit_%d" % _sh, u"BYTE")
 
     n = p.network(u"Sborka F: SHL + ADD")
     items = [(p.var_in.__self__ if False else u"Flag_S", 7),
@@ -1347,11 +1371,14 @@ def mk_control():
     three = b_or(n, F.COL_BLK2, 400, c_jmp,
                  b_or(n, F.COL_BLK2, 440, c_call, n.const(u"0", y=454)))
     two = b_or(n, F.COL_BLK2, 480, c_djnz, c_ret)
-    inc = n.block(u"SEL", [(u"G", two), (u"IN0", n.const(u"1", y=490)),
-                           (u"IN1", n.const(u"2", y=520))], [POUT],
+    #  V E T K I  T I P I Z I R O V A N Y  Ya V N O: u bloka SEL tip
+    #  vyvoditsya po vetkam, i «golyj» literal 1 ryadom s peremennoj BYTE
+    #  zastavlyaet kompilyator gadat. Rezul tat pitayot Inc_By tipa BYTE.
+    inc = n.block(u"SEL", [(u"G", two), (u"IN0", n.const(u"BYTE#1", y=490)),
+                           (u"IN1", n.const(u"BYTE#2", y=520))], [POUT],
                   x=F.COL_BLK2 + 320, y=400)
     inc2 = n.block(u"SEL", [(u"G", three), (u"IN0", inc),
-                            (u"IN1", n.const(u"3", y=560))], [POUT],
+                            (u"IN1", n.const(u"BYTE#3", y=560))], [POUT],
                    x=F.COL_BLK2 + 480, y=400)
     n.outvar(u"Inc_By", inc2, x=F.COL_OUT + 300, y=400)
     return p
@@ -4218,8 +4245,6 @@ def mk_fb_hw_io():
     #  Promezhutochnye peremennye tipa BYTE: konversiya BOOL -> BYTE daet
     #  USINT, i pryamaya podacha ego v SHL/ADD (obobshchennye bloki)
     #  privodit k C32. Sm. b_bool2byte().
-    for k in range(8):
-        p.var(u"vPack_%d" % k, u"BYTE")
     n1 = p.network(u"Upakovka diskretnyh vhodov: BOOL -> BYTE")
     acc = None
     for k in range(8):
@@ -4316,8 +4341,6 @@ def mk_io_ports():
     p.var_out(u"Halt_Req", u"BOOL", u"zapros ostanovki")
     #  Promezhutochnye BYTE dlya konversii BOOL -> BYTE: inache
     #  vyhod USINT ne soglasuetsya s BYTE vetok v cepochke SEL (C32).
-    p.var(u"vConRdy", u"BYTE")
-    p.var(u"vCpmRdy", u"BYTE")
 
     # ================= SET 1: CHTENIE PORTOV =================
     # Cepochka SEL po adresu: kazhdyy port -- otdel noe uslovie.
@@ -4713,20 +4736,21 @@ def mk_cpm_bios():
                  n.const(u"16#00", y=84), n.const(u"16#FF", y=114))
     stat_w = b_b2w(n, F.COL_BLK2 + 480, 70, stat)
     st_ret = b_sel(n, F.COL_BLK2 + 640, 70, is_const,
-                   n.const(u"0", y=84), stat_w)
+                   n.const(u"0", y=84), stat_w, tip=u"WORD")
     # CONIN -- 0FA29h: prinyat simvol
     is_conin = b_eq(n, F.COL_BLK2, 150, c_a, n.const(u"WORD#16#FA29", y=164))
     n.outvar(u"Con_Rd", is_conin, x=F.COL_OUT, y=150)
     in_w = b_b2w(n, F.COL_BLK2 + 320, 150, c_cin)
     in_ret = b_sel(n, F.COL_BLK2 + 480, 150, is_conin,
-                   n.const(u"0", y=164), in_w)
+                   n.const(u"0", y=164), in_w, tip=u"WORD")
     #  O T V E T  S O B I R A E T S Ya  V  O D N O J  T O Ch K E.
     #  Ran'she zdes byli DVA outVariable s imenem Ret_HL: odin dlya
     #  CONST/CONIN, vtoroj -- s imenem Ret_HL2, kotorogo ne bylo v
     #  obyavleniyah. Eto huzhe, chem prosto opechatka: dvojnaya zapis v odin
     #  vyhod oznachaet, chto pobedit tot, kto idet nizhe, i otvet CONST
     #  Molcha podmenyalsya otvetom CONIN. Teper vybor po dvum sravneniyam.
-    ret_hl = b_sel(n, F.COL_BLK2 + 800, 70, is_conin, st_ret, in_ret)
+    ret_hl = b_sel(n, F.COL_BLK2 + 800, 70, is_conin, st_ret, in_ret,
+                   tip=u"WORD")
     n.outvar(u"Ret_HL", ret_hl, x=F.COL_OUT + 600, y=70)
     # CONOUT -- 0FA2Ch: vyvesti simvol
     is_conout = b_eq(n, F.COL_BLK2, 230, c_a, n.const(u"WORD#16#FA2C", y=244))

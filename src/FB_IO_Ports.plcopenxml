@@ -35,8 +35,6 @@
             <variable name="Halt_Req"><type><BOOL /></type></variable>
           </outputVars>
           <localVars>
-            <variable name="vConRdy"><type><BYTE /></type></variable>
-            <variable name="vCpmRdy"><type><BYTE /></type></variable>
             <variable name="fbAO0Lo"><type><derived name="FB_Reg16" /></type></variable>
             <variable name="fbAO0Hi"><type><derived name="FB_Reg16" /></type></variable>
             <variable name="fbAO1Lo"><type><derived name="FB_Reg16" /></type></variable>
@@ -227,45 +225,35 @@
                 </variable>
               </outputVariables>
             </block>
-            <block localId="18" typeName="BOOL_TO_BYTE" height="20" width="52">
+            <inVariable localId="18" height="10" width="74">
+              <position x="40" y="240" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#0</expression>
+            </inVariable>
+            <inVariable localId="19" height="10" width="74">
+              <position x="40" y="254" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#1</expression>
+            </inVariable>
+            <block localId="20" typeName="SEL" height="40" width="76">
               <position x="200" y="240" />
               <inputVariables>
-                <variable formalParameter="IN">
+                <variable formalParameter="G">
                   <connectionPointIn>
                     <relPosition x="0" y="5" />
                     <connection refLocalId="8" />
                   </connectionPointIn>
                 </variable>
-              </inputVariables>
-              <inOutVariables />
-              <outputVariables>
-                <variable formalParameter="OUT">
-                  <connectionPointOut>
-                    <relPosition x="52" y="5" />
-                  </connectionPointOut>
-                </variable>
-              </outputVariables>
-            </block>
-            <outVariable localId="19" height="10" width="83">
-              <position x="320" y="240" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="18" />
-              </connectionPointIn>
-              <expression>vConRdy</expression>
-            </outVariable>
-            <inVariable localId="20" height="10" width="83">
-              <position x="440" y="240" />
-              <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
-              <expression>vConRdy</expression>
-            </inVariable>
-            <block localId="21" typeName="BOOL_TO_BYTE" height="20" width="52">
-              <position x="200" y="270" />
-              <inputVariables>
-                <variable formalParameter="IN">
+                <variable formalParameter="IN0">
                   <connectionPointIn>
-                    <relPosition x="0" y="5" />
-                    <connection refLocalId="9" />
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="18" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="25" />
+                    <connection refLocalId="19" />
                   </connectionPointIn>
                 </variable>
               </inputVariables>
@@ -273,24 +261,52 @@
               <outputVariables>
                 <variable formalParameter="OUT">
                   <connectionPointOut>
-                    <relPosition x="52" y="5" />
+                    <relPosition x="76" y="5" />
                   </connectionPointOut>
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="22" height="10" width="83">
-              <position x="320" y="270" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="21" />
-              </connectionPointIn>
-              <expression>vCpmRdy</expression>
-            </outVariable>
-            <inVariable localId="23" height="10" width="83">
-              <position x="440" y="270" />
-              <connectionPointOut><relPosition x="83" y="5" /></connectionPointOut>
-              <expression>vCpmRdy</expression>
+            <inVariable localId="21" height="10" width="74">
+              <position x="40" y="270" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#0</expression>
             </inVariable>
+            <inVariable localId="22" height="10" width="74">
+              <position x="40" y="284" />
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#1</expression>
+            </inVariable>
+            <block localId="23" typeName="SEL" height="40" width="76">
+              <position x="200" y="270" />
+              <inputVariables>
+                <variable formalParameter="G">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="9" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN0">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="21" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="25" />
+                    <connection refLocalId="22" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="76" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
             <inVariable localId="24" height="10" width="65">
               <position x="40" y="44" />
               <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
@@ -1896,7 +1912,7 @@
         <addData>
           <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
             <InterfaceAsPlainText>
-              <xhtml xmlns="http://www.w3.org/1999/xhtml">FUNCTION_BLOCK FB_IO_Ports&#xA;(* 256 I/O-portov Z80. Privyazka portov k apparatnym buferam PLK&#xA;i konsoli CP/M realizovana cepochkoy SEL po adresu porta. *)&#xA;VAR_INPUT&#xA;	Addr : BYTE; (* adres porta *)&#xA;	D_Write : BYTE; (* dannye dlya zapisi *)&#xA;	Rd : BOOL; (* strob chteniya *)&#xA;	Wr : BOOL; (* strob zapisi *)&#xA;	In_DI : BYTE; (* diskretnye vhody PLK *)&#xA;	In_AI0 : WORD; (* analogovyy vhod 0 *)&#xA;	In_AI1 : WORD; (* analogovyy vhod 1 *)&#xA;	Con_In : BYTE; (* simvol ot terminala *)&#xA;	Con_Ready : BOOL; (* est simvol *)&#xA;	Cpm_Ready : BOOL; (* CP/M zagruzhen *)&#xA;END_VAR&#xA;VAR_OUTPUT&#xA;	Rd_Data : BYTE; (* chto vernut na shinu I/O *)&#xA;	Out_DO : BYTE; (* diskretnye vyhody PLK *)&#xA;	Out_AO0 : WORD; (* analogovyy vyhod 0 *)&#xA;	Out_AO1 : WORD; (* analogovyy vyhod 1 *)&#xA;	Con_Out : BYTE; (* simvol dlya konsoli *)&#xA;	Con_Wr : BOOL; (* strob vyvoda *)&#xA;	Con_Port : BYTE; (* nomer konsolnogo porta *)&#xA;	Halt_Req : BOOL; (* zapros ostanovki *)&#xA;END_VAR&#xA;VAR&#xA;	vConRdy : BYTE;&#xA;	vCpmRdy : BYTE;&#xA;	fbAO0Lo : FB_Reg16; (* mladshij bajt analogovogo vyhoda 0 *)&#xA;	fbAO0Hi : FB_Reg16; (* starshij bajt analogovogo vyhoda 0 *)&#xA;	fbAO1Lo : FB_Reg16; (* mladshij bajt analogovogo vyhoda 1 *)&#xA;	fbAO1Hi : FB_Reg16; (* starshij bajt analogovogo vyhoda 1 *)&#xA;END_VAR&#xA;</xhtml>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">FUNCTION_BLOCK FB_IO_Ports&#xA;(* 256 I/O-portov Z80. Privyazka portov k apparatnym buferam PLK&#xA;i konsoli CP/M realizovana cepochkoy SEL po adresu porta. *)&#xA;VAR_INPUT&#xA;	Addr : BYTE; (* adres porta *)&#xA;	D_Write : BYTE; (* dannye dlya zapisi *)&#xA;	Rd : BOOL; (* strob chteniya *)&#xA;	Wr : BOOL; (* strob zapisi *)&#xA;	In_DI : BYTE; (* diskretnye vhody PLK *)&#xA;	In_AI0 : WORD; (* analogovyy vhod 0 *)&#xA;	In_AI1 : WORD; (* analogovyy vhod 1 *)&#xA;	Con_In : BYTE; (* simvol ot terminala *)&#xA;	Con_Ready : BOOL; (* est simvol *)&#xA;	Cpm_Ready : BOOL; (* CP/M zagruzhen *)&#xA;END_VAR&#xA;VAR_OUTPUT&#xA;	Rd_Data : BYTE; (* chto vernut na shinu I/O *)&#xA;	Out_DO : BYTE; (* diskretnye vyhody PLK *)&#xA;	Out_AO0 : WORD; (* analogovyy vyhod 0 *)&#xA;	Out_AO1 : WORD; (* analogovyy vyhod 1 *)&#xA;	Con_Out : BYTE; (* simvol dlya konsoli *)&#xA;	Con_Wr : BOOL; (* strob vyvoda *)&#xA;	Con_Port : BYTE; (* nomer konsolnogo porta *)&#xA;	Halt_Req : BOOL; (* zapros ostanovki *)&#xA;END_VAR&#xA;VAR&#xA;	fbAO0Lo : FB_Reg16; (* mladshij bajt analogovogo vyhoda 0 *)&#xA;	fbAO0Hi : FB_Reg16; (* starshij bajt analogovogo vyhoda 0 *)&#xA;	fbAO1Lo : FB_Reg16; (* mladshij bajt analogovogo vyhoda 1 *)&#xA;	fbAO1Hi : FB_Reg16; (* starshij bajt analogovogo vyhoda 1 *)&#xA;END_VAR&#xA;</xhtml>
             </InterfaceAsPlainText>
           </data>
         </addData>

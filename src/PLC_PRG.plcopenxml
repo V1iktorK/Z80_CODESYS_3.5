@@ -1900,10 +1900,10 @@
               <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
               <expression>vCtl_Imm_Mode</expression>
             </inVariable>
-            <inVariable localId="183" height="10" width="29">
+            <inVariable localId="183" height="10" width="74">
               <position x="40" y="190" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>1</expression>
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#1</expression>
             </inVariable>
             <inVariable localId="185" height="10" width="74">
               <position x="40" y="270" />
@@ -1980,10 +1980,10 @@
               </connectionPointIn>
               <expression>vSrc</expression>
             </outVariable>
-            <inVariable localId="485" height="10" width="29">
+            <inVariable localId="485" height="10" width="74">
               <position x="40" y="202" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>1</expression>
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#1</expression>
             </inVariable>
             <block localId="189" typeName="AND" height="30" width="64">
               <position x="200" y="270" />
@@ -2010,10 +2010,10 @@
                 </variable>
               </outputVariables>
             </block>
-            <inVariable localId="486" height="10" width="29">
+            <inVariable localId="486" height="10" width="74">
               <position x="40" y="202" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>1</expression>
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#1</expression>
             </inVariable>
             <block localId="190" typeName="EQ" height="30" width="64">
               <position x="360" y="250" />
@@ -2060,10 +2060,10 @@
               <connectionPointOut><relPosition x="119" y="5" /></connectionPointOut>
               <expression>vCtl_IncDec</expression>
             </inVariable>
-            <inVariable localId="487" height="10" width="29">
+            <inVariable localId="487" height="10" width="74">
               <position x="40" y="202" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>1</expression>
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#1</expression>
             </inVariable>
             <block localId="195" typeName="FB_ALU_Z80" instanceName="fbALU" height="70" width="124">
               <position x="520" y="200" />
@@ -5134,10 +5134,10 @@
               <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
               <expression>vIOEn</expression>
             </inVariable>
-            <inVariable localId="437" height="10" width="29">
+            <inVariable localId="437" height="10" width="74">
               <position x="40" y="74" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>0</expression>
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#0</expression>
             </inVariable>
             <block localId="438" typeName="SEL" height="40" width="76">
               <position x="360" y="60" />
@@ -5218,10 +5218,10 @@
               <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
               <expression>vIOEn</expression>
             </inVariable>
-            <inVariable localId="505" height="10" width="29">
+            <inVariable localId="505" height="10" width="74">
               <position x="40" y="86" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>0</expression>
+              <connectionPointOut><relPosition x="74" y="5" /></connectionPointOut>
+              <expression>BYTE#0</expression>
             </inVariable>
             <inVariable localId="506" height="10" width="56">
               <position x="40" y="102" />

@@ -204,6 +204,49 @@ class Network(object):
         self._items.append((u"outvar", i, expr, _src(src), x, self._y(y)))
         return Src(i)
 
+    def typed(self, src, tip):
+        u"""Сделать ЛИТЕРАЛ в ветви явно типизированным: 16#00 -> BYTE#16#00.
+
+        П О Ч Е М У  Э Т О  Н У Ж Н О. Блок SEL обобщённый: его тип выводится
+        по ветвям IN0/IN1. Если одна ветвь -- переменная BYTE, а другая --
+        «голый» литерал 16#00, компилятор вынужден сам выбирать тип литерала
+        и в цепочке из десятка SEL ошибается: берёт USINT, и тогда
+        присвоение результата в BYTE даёт
+            C32: Невозможно конвертировать тип 'USINT' в тип 'BOOL'.
+        Явная запись BYTE#16#00 снимает выбор: тип ветви задан текстом.
+
+        Работает только с литералами. Переменные и выходы блоков не трогаем:
+        у них тип уже есть (или его задаёт сам блок).
+
+        В А Ж Н О: функция возвращает ТОТ ЖЕ Src, поэтому встраивается
+        в существующие вызовы без переделки схем.
+        """
+        if src is None or tip is None:
+            return src
+        #  V N I M A N I E: _src() vozvrashchaet O B E K T Src, a ne nomer.
+        #  Pervaya versiya sravnivala it[1] (chislo) s etim obektom, sravnenie
+        #  nikogda ne sovpadalo, i tipizaciya molcha ne srabatyvala -- vneshne
+        #  oshibki ostavalis, hotya kod vyglyadel pravilno.
+        eid = _src(src).eid
+        for idx, it in enumerate(self._items):
+            if it[1] != eid:
+                continue
+            if it[0] != u"invar":
+                return src          # eto blok ili vyhod -- ne tronem
+            expr = it[2]
+            s = (u"%s" % expr).strip()
+            #  U Zh E  T I P I Z I R O V A N: nachinaetsya s imeni tipa pered "#".
+            #  V A Zh N O  N E  S P U T A T' s osnovaniem sistemy schisleniya:
+            #  "16#00" nachinaetsya s C I F R, a "BYTE#16#00" -- s imeni.
+            if re.match(u"^[A-Za-z][A-Za-z0-9_]*#", s):
+                return src
+            if not (re.match(u"^\\d+$", s) or re.match(u"^\\d+#", s)):
+                return src          # ne literal
+            self._items[idx] = (it[0], it[1], u"%s#%s" % (tip.upper(), s),
+                                it[3], it[4])
+            return src
+        return src
+
     def block(self, type_name, inputs, outputs, x=COL_BLK, y=None, instance=None):
         u"""Блок. inputs — [(pin, Src)]. outputs — [имя вывода].
 
