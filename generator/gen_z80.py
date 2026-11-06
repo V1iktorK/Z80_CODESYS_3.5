@@ -1050,16 +1050,53 @@ def mk_decoder():
     m7 = n.const(u"16#07", y=y + 14)
     grp = n.block(u"AND", [(PIN1, c_ir), (PIN2, m7)], [POUT],
                   x=F.COL_BLK, y=y + 26)
-    add3 = b_add(n, F.COL_BLK2, y, grp, n.const(u"1", y=y + 14))
-    add3b = b_add(n, F.COL_BLK2, y + 40, add3, n.const(u"1", y=y + 54))
-    sub2 = b_sub(n, F.COL_BLK2, y + 80, grp, n.const(u"2", y=y + 94))
-    sub3 = b_sub(n, F.COL_BLK2, y + 120, grp, n.const(u"3", y=y + 134))
-    c4 = n.const(u"16#04", y=y + 160)
-    is_logic = n.block(u"GE", [(PIN1, n4), (PIN2, c4)], [POUT],
-                       x=F.COL_BLK2, y=y + 160)
-    alu_rm = b_sel(n, F.COL_BLK2 + 160, y, is_logic, add3b, n4)
-    alu_log = b_add(n, F.COL_BLK2 + 160, y + 60, alu_rm, n.const(u"3", y=y + 74))
-    alu_sel = b_sel(n, F.COL_BLK2 + 320, y, is_logic, alu_log, alu_rm)
+    #  K O D  O P E R A C I I  A L U  (Ctl_ALU_Op).
+    #
+    #  B Y L O  T A K (i eto ne rabotalo):
+    #      is_logic = GE(n4, 4)                     -- n4 = IR >> 3
+    #      alu_rm   = SEL(is_logic, grp + 2, n4)
+    #      alu_log  = alu_rm + 3
+    #      alu_sel  = SEL(is_logic, alu_log, alu_rm)
+    #  Uslovie "IR >> 3 >= 4" istinno pochti dlya vseh opkodov, poetomu vse
+    #  komandy shli po "logicheskoy" vetke i poluchali kod, nikak ne svyazann yy
+    #  s operaciej. Izmereno na progone (sim_one, test T13 INC A):
+    #      IR = 3Ch, Ctl_ALU_Op = 7 (eto CP), a nuzhno 0 (ADD)
+    #      PLC_PRG.vY = 0, GVL_PLCVisu.A ostalsya 0Fh vmesto 10h
+    #  To est A ne uvelichivalsya, potomu chto ALU vypolnyal sravnenie.
+    #
+    #  P R A V I L A  Z80.
+    #  Arifmetiko-logicheskaya gruppa -- opkody 80h..BFh, to est dva starshih
+    #  bita ravny 10b. Nomer operacii vnutri gruppy -- tri mladshih bita (grp):
+    #      0 ADD   1 ADC   2 SUB   3 SBC   4 AND   5 XOR   6 OR   7 CP
+    #  V nashem ALU prinyat drugoy poryadok dlya treh operacij:
+    #      4 AND   5 OR    6 XOR   7 CP
+    #  Znachit nuzhno pomenyat mestami 5 i 6 (XOR i OR).
+    #
+    #  INC/DEC (opkody x4/x5 i 3Ch/3Dh) -- eto slozhenie ili vychitanie
+    #  edinicy: kod operacii 0 (ADD) ili 2 (SUB). Sam operand = 1 podayot
+    #  vhod B_Forced.
+    #
+    #  Vse ostalnye komandy ALU ne ispolzuyut, dlya nih kod 0.
+    hi2 = n.block(u"AND", [(PIN1, c_ir), (PIN2, n.const(u"16#C0", y=y + 10))],
+                  [POUT], x=F.COL_BLK, y=y)
+    is_alu_grp = n.block(u"EQ", [(PIN1, hi2), (PIN2, n.const(u"16#80", y=y + 30))],
+                         [POUT], x=F.COL_BLK, y=y + 26)
+    gg4 = n.block(u"EQ", [(PIN1, grp), (PIN2, n.const(u"16#04", y=y + 60))],
+                  [POUT], x=F.COL_BLK2, y=y + 46)
+    gg5 = n.block(u"EQ", [(PIN1, grp), (PIN2, n.const(u"16#05", y=y + 90))],
+                  [POUT], x=F.COL_BLK2, y=y + 76)
+    gg6 = n.block(u"EQ", [(PIN1, grp), (PIN2, n.const(u"16#06", y=y + 120))],
+                  [POUT], x=F.COL_BLK2, y=y + 106)
+    sw56 = b_or(n, F.COL_BLK2 + 160, y + 76, gg5, gg6)
+    #  P O M N I T': b_sel(G, IN0, IN1) daet IN0 pri G=FALSE i IN1 pri G=TRUE.
+    swap = b_sel(n, F.COL_BLK2 + 160, y + 106, gg5,
+                 n.const(u"BYTE#05", y=y + 120),
+                 n.const(u"BYTE#06", y=y + 134))
+    op_alu = b_sel(n, F.COL_BLK2 + 320, y + 76, sw56, grp, swap)
+    op_dec = b_sel(n, F.COL_BLK2 + 320, y + 46, gg5,
+                   n.const(u"BYTE#00", y=y + 60),
+                   n.const(u"BYTE#02", y=y + 74))
+    alu_sel = b_sel(n, F.COL_BLK2 + 480, y + 26, is_alu_grp, op_dec, op_alu)
 
     # --- uslovnye perehody ---
     #  Ch T O  Z D E S'  B Y L O  N E  T A K. Stoyalo
@@ -1121,11 +1158,6 @@ def mk_decoder():
     is_load = b_or(n, F.COL_BLK2 + 320, y + 400, is_ld, r_ldn)
     src_sel = b_sel(n, F.COL_BLK2 + 320, y + 380, is_load, src_sum3, dst_c)
 
-    # --- flagi i procheto ---
-    #  is_alu: "IR >> 3" ne ravno nulyu -- eto PRIZNAK, a ne chislo.
-    #  Bylo b_and(n4, const 1): smeshannyy tip i nesushchestvuyushchaya logika.
-    is_alu = n.block(u"NE", [(PIN1, n4), (PIN2, n.const(u"0", y=y + 534))],
-                     [POUT], x=F.COL_BLK2 + 160, y=y + 520)
     # --- Ctl_IncDec: opkody x4/x5 (INC/DEC r) i 3C/3D (INC/DEC A) ---
     g5 = n.block(u"EQ", [(PIN1, grp), (PIN2, n.const(u"16#04", y=y + 574))],
                  [POUT], x=F.COL_BLK2, y=y + 560)
@@ -1136,7 +1168,26 @@ def mk_decoder():
     a2 = eq_const(0x3D, F.COL_BLK2 + 160, y + 680)
     a12 = b_or(n, F.COL_BLK2 + 320, y + 660, a1, a2)
     incdec = b_or(n, F.COL_BLK2 + 480, y + 620, g45, a12)
-    flags_en = b_or(n, F.COL_BLK2 + 320, y + 520, is_alu, r_ldahl)
+
+    #  C T L _ F L A G S _ E N -- zhestko po gruppe komand.
+    #
+    #  B Y L O : flags_en = OR(is_alu, r_ldahl), gde is_alu = (IR >> 3 <> 0).
+    #  Eto uslovie N I Ch E G O  N E  Z N A Ch I T: "IR >> 3" ne ravno nulyu
+    #  pochti dlya vseh opkodov. Izmer na real nom progone (sim_strobes):
+    #      Init_En=FALSE  Ctl_Flags_En=TRUE   F=BYTE#0    IR=BYTE#195 (JP)
+    #      Init_En=FALSE  Ctl_Flags_En=TRUE   F=BYTE#68   IR=BYTE#118 (HALT)
+    #  To est flagi perezapisyvalis posle K A Zh D O J komandy, vklyuchaya
+    #  JP i HALT, kotorye ih menyat ne dolzhny. Posledstvie: vse 40 testov
+    #  padali, potomu chto oni proveryayut "flagi ne izmenilis" -- a F k
+    #  momentu sravneniya uzhe byl drugim (0x44 vmesto Init_F).
+    #
+    #  P R A V I L O  Z80. Flagy menyayut tolko:
+    #     * arifmetika i logika 80h..BFh  (ADD/ADC/SUB/SBC/AND/OR/XOR/CP r);
+    #     * INC/DEC registra       x4/x5 i 3Ch/3Dh;
+    #  a takzhe DAA, CPL, SCF, CCF -- ih v etom proekte net.
+    #  Zdes strogaya proverka "IR v diapazone 80h..BFh": dva starshih bita
+    #  ravny 10b. Eto i est gruppa ALU.
+    flags_en = b_or(n, F.COL_BLK2 + 320, y + 520, incdec, is_alu_grp)
 
     outs = [
         (u"Ctl_Is_CALL", r_call, F.COL_OUT),
@@ -2438,6 +2489,19 @@ fbCase.Actual_A := SEL(GVL_HW_IO.DO_2, BYTE#0, BYTE#1);
                     fbCase.Mask_A := FALSE;
                 END_CASE
 
+                    (*  V Y Z O V  F B  O B Ya Z A T E L E N.
+                        TEST_Z80 -- programma na ST, a v ST funktsionalnyj blok
+                        ne vypolnyaetsya sam: nuzhno yavno napisat "fbCase();".
+                        Bez etogo stroki vyshe tol ko ZAPOLNILI vhody FB, a ego
+                        telo (sravneniya EQ i vyhod Pass) ne schitalos nikogda.
+                        Rezul tat izmeryon na progone: pri sovpadayushchih
+                        Expected_A = Actual_A i Mask_A = TRUE vyhod Pass ostavalsya
+                        FALSE, i PO E T O M U  padali vse 40 testov. *)
+
+                fbCase.Run := TRUE;
+                fbCase();
+
+                GVL_Tests_CPM.Cpm_Test_Result[i] := fbCase.Pass;
                 GVL_Tests_CPM.Cpm_Test_Result[i] := fbCase.Pass;
                 IF fbCase.Pass THEN
                     GVL_Tests_CPM.Cpm_Test_Total_Pass :=
@@ -3016,6 +3080,18 @@ IF GVL_Tests.Cpu_Test_Run THEN
         fbCase.Mask_PC := GVL_Tests.Cpu_Tests[i].Mask_PC;
 
         (* dopolnitel naya proverka pamyati: esli trebuetsya *)
+                (*  V Y Z O V  F B  O B Ya Z A T E L E N.
+                    TEST_Z80 -- programma na ST, a v ST funktsionalnyj blok
+                    ne vypolnyaetsya sam: nuzhno yavno napisat "fbCase();".
+                    Bez etogo stroki vyshe tol ko ZAPOLNILI vhody FB, a ego
+                    telo (sravneniya EQ i vyhod Pass) ne schitalos nikogda.
+                    Rezul tat izmeryon na progone: pri sovpadayushchih
+                    Expected_A = Actual_A i Mask_A = TRUE vyhod Pass ostavalsya
+                    FALSE, i PO E T O M U  padali vse 40 testov. *)
+
+        fbCase.Run := TRUE;
+        fbCase();
+
         IF GVL_Tests.Cpu_Tests[i].Mask_Mem AND (snimok_Mem <> GVL_Tests.Cpu_Tests[i].Exp_Mem) THEN
             GVL_Tests.Cpu_Test_Result[i] := FALSE;
         ELSE
@@ -3499,6 +3575,19 @@ def mk_plc_prg():
     p.var(u"vPCLoad", u"BOOL", u"zagruzit' PC")
     p.var(u"vPCNew", u"WORD", u"novoe znachenie PC")
     p.var(u"vIncBy", u"BYTE", u"dlina komandy")
+    #  S I N H R O N I Z A C I Ya  D V U H  E K Z E M P L Ya R O V  R E G I S T R O V.
+    #  V proekte dva ekzemplyara FB_RegFileZ80: fbRF (zapis) i fbRFRd (chtenie).
+    #  Eto razdelenie bylo sdelano, chtoby vyhody odnogo FB ne chitat v odnoj
+    #  seti neskolko raz. No u kazhdogo ekzemplyara S V O I  V N U T R E N N I E
+    #  registry! V itoge zapis popadala v fbRF, a ALU chital fbRFRd, kotoryj
+    #  ostavalsya s nulyami: izmerено sim_one (test T13 INC A) --
+    #      GVL_PLCVisu.A = 0Fh (fbRF verno), a PLC_PRG.vY = 1 vmesto 10h,
+    #  potomu chto ALU poluchal A = 0 i schital 0 + 1.
+    #  Teper oba ekzemplyara poluchayut ODINAKOVYE vhody (nabor vInitWr/vWrEn/
+    #  vClkWr), znachit i sostoyanie u nih odinakovoe.
+    p.var(u"vInitWr", u"BYTE", u"znachenie dlya zapisi v registr (dlya oboih ekzemplyarov)")
+    p.var(u"vWrEn", u"BOOL", u"razreshenie zapisi (dlya oboih ekzemplyarov)")
+    p.var(u"vClkWr", u"BOOL", u"takt zapisi: Clk_Exec ili Init_En")
     p.var(u"vY", u"BYTE", u"rezul'tat ALU")
     p.var(u"vF", u"BYTE", u"registr flagov")
     #  TIP WORD, a ne BYTE: vyhod SP_Out u FB_Memory64K -- WORD (snyatoe so
@@ -3736,9 +3825,9 @@ def mk_plc_prg():
     n5.block(u"FB_RegFileZ80",
              [(u"Sel_Dst", n5.invar(u"vCtl_Sel_Dst", y=30)),
               (u"Sel_Src", n5.invar(u"vCtl_Sel_Src", y=70)),
-              (u"Wr_Val", n5.const(u"0", y=110)),
-              (u"Wr_En", n5.const(u"FALSE", y=150)),
-              (u"Clk", n5.invar(u"fbClock.Clk_Exec", y=190)),
+               (u"Wr_Val", n5.invar(u"vInitWr", y=110)),
+               (u"Wr_En", n5.invar(u"vWrEn", y=150)),
+               (u"Clk", n5.invar(u"vClkWr", y=190)),
               (u"CLR", n5.invar(u"GVL_Control.Emu_Reset", y=230)),
               (u"Mem_Rd", n5.invar(u"vMemDrv", y=270)),
               (u"Imm", n5.invar(u"vImm", y=310)),
@@ -3895,12 +3984,19 @@ def mk_plc_prg():
     clk_wr = b_or(n10, F.COL_BLK, 190,
                   n10.invar(u"fbClock.Clk_Exec", y=190),
                   n10.invar(u"GVL_InitRegs.Init_En", y=210))
+    #  T E  Zh E  Z N A Ch E N I Ya, Ch T O  U  SET 5: oba ekzemplyara
+    #  registrovogo fajla dolzhny poluchat odinakovye vhody, inache u nih
+    #  raznoe vnutrennee sostoyanie i ALU chitaet ne to, chto zapisano.
+    n10.outvar(u"vInitWr", wr_init, x=F.COL_OUT + 300, y=640)
+    n10.outvar(u"vClkWr", clk_wr, x=F.COL_OUT + 300, y=190)
+    n10.outvar(u"vWrEn", n10.invar(u"vCtl_Wr_Enable", y=250),
+               x=F.COL_OUT + 300, y=250)
     n10.block(u"FB_RegFileZ80",
               [(u"Sel_Dst", n10.invar(u"vCtl_Sel_Dst", y=30)),
                (u"Sel_Src", n10.invar(u"vCtl_Sel_Src", y=70)),
-               (u"Wr_Val", wr_val),
-               (u"Wr_En", n10.invar(u"vCtl_Wr_Enable", y=150)),
-               (u"Clk", clk_wr),
+                (u"Wr_Val", n10.invar(u"vInitWr", y=110)),
+                (u"Wr_En", n10.invar(u"vWrEn", y=150)),
+                (u"Clk", n10.invar(u"vClkWr", y=190)),
                (u"CLR", n10.invar(u"GVL_Control.Emu_Reset", y=230)),
                (u"Mem_Rd", n10.invar(u"vMemDrv", y=270)),
                (u"Imm", n10.invar(u"vImm", y=310)),

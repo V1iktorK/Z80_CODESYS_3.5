@@ -1,0 +1,46 @@
+    #  K O D  O P E R A C I I  A L U  (Ctl_ALU_Op).
+    #
+    #  B Y L O  T A K (i eto ne rabotalo):
+    #      is_logic = GE(n4, 4)                     -- n4 = IR >> 3
+    #      alu_rm   = SEL(is_logic, grp + 2, n4)
+    #      alu_log  = alu_rm + 3
+    #      alu_sel  = SEL(is_logic, alu_log, alu_rm)
+    #  Uslovie "IR >> 3 >= 4" istinno pochti dlya vseh opkodov, poetomu vse
+    #  komandy shli po "logicheskoy" vetke i poluchali kod, nikak ne svyazann yy
+    #  s operaciej. Izmerено na progone (sim_one, test T13 INC A):
+    #      IR = 3Ch, Ctl_ALU_Op = 7 (eto CP), a nuzhno 0 (ADD)
+    #      PLC_PRG.vY = 0, GVL_PLCVisu.A ostalsya 0Fh vmesto 10h
+    #  To est A ne uvelichivalsya, potomu chto ALU vypolnyal sravnenie.
+    #
+    #  P R A V I L A  Z80.
+    #  Arifmetiko-logicheskaya gruppa -- opkody 80h..BFh, to est dva starshih
+    #  bita ravny 10b. Nomer operacii vnutri gruppy -- tri mladshih bita (grp):
+    #      0 ADD   1 ADC   2 SUB   3 SBC   4 AND   5 XOR   6 OR   7 CP
+    #  V nashem ALU prinyat drugoy poryadok dlya treh operacij:
+    #      4 AND   5 OR    6 XOR   7 CP
+    #  Znachit nuzhno pomenyat mestami 5 i 6 (XOR i OR).
+    #
+    #  INC/DEC (opkody x4/x5 i 3Ch/3Dh) -- eto slozhenie ili vychitanie
+    #  edinicy: kod operacii 0 (ADD) ili 2 (SUB). Sam operand = 1 podayot
+    #  vhod B_Forced.
+    #
+    #  Vse ostalnye komandy ALU ne ispolzuyut, dlya nih kod 0.
+    hi2 = n.block(u"AND", [(PIN1, c_ir), (PIN2, n.const(u"16#C0", y=y + 10))],
+                  [POUT], x=F.COL_BLK, y=y)
+    is_alu_grp = n.block(u"EQ", [(PIN1, hi2), (PIN2, n.const(u"16#80", y=y + 30))],
+                         [POUT], x=F.COL_BLK, y=y + 26)
+    gg4 = n.block(u"EQ", [(PIN1, grp), (PIN2, n.const(u"16#04", y=y + 60))],
+                  [POUT], x=F.COL_BLK2, y=y + 46)
+    gg5 = n.block(u"EQ", [(PIN1, grp), (PIN2, n.const(u"16#05", y=y + 90))],
+                  [POUT], x=F.COL_BLK2, y=y + 76)
+    gg6 = n.block(u"EQ", [(PIN1, grp), (PIN2, n.const(u"16#06", y=y + 120))],
+                  [POUT], x=F.COL_BLK2, y=y + 106)
+    sw56 = b_or(n, F.COL_BLK2 + 160, y + 76, gg5, gg6)
+    swap = b_sel(n, F.COL_BLK2 + 160, y + 106, gg5,
+                 n.const(u"BYTE#06", y=y + 120),
+                 n.const(u"BYTE#05", y=y + 134))
+    op_alu = b_sel(n, F.COL_BLK2 + 320, y + 76, sw56, swap, grp)
+    op_dec = b_sel(n, F.COL_BLK2 + 320, y + 46, gg5,
+                   n.const(u"BYTE#02", y=y + 60),
+                   n.const(u"BYTE#00", y=y + 74))
+    alu_sel = b_sel(n, F.COL_BLK2 + 480, y + 26, is_alu_grp, op_alu, op_dec)
