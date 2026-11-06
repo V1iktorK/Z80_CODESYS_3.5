@@ -3063,6 +3063,11 @@ IF GVL_Tests.Cpu_Test_Run THEN
             END_IF
 
             (* --- vypolnit initsializatsiyu registrov --- *)
+            (*  N O M E R  R E G I S T R A  --  S  N U L Ya  S R A Z U.
+                Inache pervyj zhe vyzov s Init_En pishet v registr,
+                nomer kotorogo ostalsya ot PROSHLOGO testa (15), i
+                Init_Vals[0] popadaet ne tuda. *)
+            GVL_InitRegs.Init_Sel_Dst := 0;
             GVL_InitRegs.Init_En := TRUE;
             nInit := 0;              (* perebor vedem my, a ne shema *)
             bPrepared := TRUE;
