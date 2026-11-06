@@ -73,15 +73,31 @@ def main():
             req.append(u"GVL_Tests.Cpu_Act_%s[%d]" % (f2, i))
         for f2 in (u"WE", u"ID", u"MR", u"MW", u"Rst"):
             req.append(u"GVL_Tests.Cpu_Act_%s[%d]" % (f2, i))
-        for f2 in (u"RsPC", u"NxPC", u"Mem0"):
+        for f2 in (u"RsPC", u"NxPC", u"Mem0", u"Mem2", u"MemE", u"AA",
+                   u"DV", u"SR", u"RA", u"RB", u"RH", u"RL"):
             req.append(u"GVL_Tests.Cpu_Act_%s[%d]" % (f2, i))
+        req.append(u"GVL_Tests.Cpu_Act_FE[%d]" % i)
+        for f2 in (u"PA", u"PB", u"PH"):
+            req.append(u"GVL_Tests.Cpu_Act_%s[%d]" % (f2, i))
+        for f2 in (u"CK", u"RN", u"HT", u"WEF", u"FE2", u"YY",
+                   u"OW", u"PN", u"PL", u"CD"):
+            req.append(u"GVL_Tests.Cpu_Act_%s[%d]" % (f2, i))
+        for f2 in (u"I0", u"I1", u"SD"):
+            req.append(u"GVL_Tests.Cpu_Act_%s[%d]" % (f2, i))
+        req.append(u"GVL_Tests.Cpu_Act_IE[%d]" % i)
         for f in FIELDS:
             req.append(u"GVL_Tests.Cpu_Tests[%d].%s" % (i, f))
-    try:
-        vals = list(onl.read_values(req))
-    except Exception as exc:                                   # noqa: BLE001
-        log(u"read_values OSHIBKA: %s" % exc)
-        vals = []
+    #  ScriptEngine ne prinimaet slishkom dlinnyj spisok vyrazhenij
+    #  ("Slishkom mnogo vyrazhenij"), poetomu chitaem paketami.
+    vals = []
+    CH = 50
+    for k0 in range(0, len(req), CH):
+        part = req[k0:k0 + CH]
+        try:
+            vals.extend(list(onl.read_values(part)))
+        except Exception as exc:                               # noqa: BLE001
+            log(u"read_values OSHIBKA na pakete %d: %s" % (k0 // CH, exc))
+            vals.extend([u"?"] * len(part))
 
     dbg = [u"GVL_Tests.Cpu_Dbg_Init_A", u"GVL_Tests.Cpu_Dbg_Init_F",
            u"GVL_Tests.Cpu_Dbg_Init_N", u"GVL_PLCVisu.A", u"GVL_PLCVisu.F",
@@ -125,9 +141,30 @@ def main():
                    (u"1" if u"TRUE" in g(u"Mask_PC") else u"0"),
                    (u"1" if u"TRUE" in g(u"Mask_Mem") else u"0"),
                    (u"1" if u"TRUE" in g(u"Mask_Flag") else u"0"), en))
-            log(u"      PCrs=%s PCnx=%s Mem0=%s Rst=%s" %
+            log(u"      PCrs=%s PCnx=%s Mem0=%s Mem2=%s MemE=%s Rst=%s" %
                 (a(u"Cpu_Act_RsPC"), a(u"Cpu_Act_NxPC"), a(u"Cpu_Act_Mem0"),
+                 a(u"Cpu_Act_Mem2"), a(u"Cpu_Act_MemE"),
                  rec.get(u"GVL_Tests.Cpu_Act_Rst[%d]" % i, u"?")))
+            log(u"      now FlagsEn=%s Y=%s OpWord=%s PCNew=%s PCLoad=%s Cond=%s" %
+                (rec.get(u"GVL_Tests.Cpu_Act_FE2[%d]" % i, u"?"),
+                 a(u"Cpu_Act_YY"), a(u"Cpu_Act_OW"), a(u"Cpu_Act_PN"),
+                 rec.get(u"GVL_Tests.Cpu_Act_PL[%d]" % i, u"?"),
+                 rec.get(u"GVL_Tests.Cpu_Act_CD[%d]" % i, u"?")))
+            log(u"      clock ClkExec=%s Run=%s Halted=%s WrEnEff=%s" %
+                (rec.get(u"GVL_Tests.Cpu_Act_CK[%d]" % i, u"?"),
+                 rec.get(u"GVL_Tests.Cpu_Act_RN[%d]" % i, u"?"),
+                 rec.get(u"GVL_Tests.Cpu_Act_HT[%d]" % i, u"?"),
+                 rec.get(u"GVL_Tests.Cpu_Act_WEF[%d]" % i, u"?")))
+            log(u"      posle perebora A=%s B=%s H=%s" %
+                (a(u"Cpu_Act_PA"), a(u"Cpu_Act_PB"), a(u"Cpu_Act_PH")))
+            log(u"      init V0=%s V1=%s SelDst=%s InitEn=%s" %
+                (a(u"Cpu_Act_I0"), a(u"Cpu_Act_I1"), a(u"Cpu_Act_SD"),
+                 rec.get(u"GVL_Tests.Cpu_Act_IE[%d]" % i, u"?")))
+            log(u"      regs A=%s B=%s H=%s L=%s | ALU_A=%s Src=%s Dst=%s FEn=%s" %
+                (a(u"Cpu_Act_RA"), a(u"Cpu_Act_RB"), a(u"Cpu_Act_RH"),
+                 a(u"Cpu_Act_RL"), a(u"Cpu_Act_AA"), a(u"Cpu_Act_SR"),
+                 a(u"Cpu_Act_DV"),
+                 rec.get(u"GVL_Tests.Cpu_Act_FE[%d]" % i, u"?")))
             log(u"      IR=%s Op=%s Dst=%s Src=%s Bus=%s WE=%s ID=%s MR=%s MW=%s"
                 % (a(u"Cpu_Act_IR"), a(u"Cpu_Act_Op"), a(u"Cpu_Act_Dst"),
                    a(u"Cpu_Act_Src"), a(u"Cpu_Act_Bus"),

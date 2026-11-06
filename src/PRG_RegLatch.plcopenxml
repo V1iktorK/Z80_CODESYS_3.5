@@ -266,357 +266,306 @@
               </connectionPointIn>
               <expression>GVL_Regs.Rs_SP</expression>
             </outVariable>
-            <!-- LATCH 2: zerkalo dlya vizualizacii (HMI) -->
-            <inVariable localId="39" height="10" width="137">
-              <position x="40" y="30" />
-              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_A</expression>
+            <inVariable localId="39" height="10" width="146">
+              <position x="40" y="676" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_MW</expression>
             </inVariable>
-            <outVariable localId="40" height="10" width="137">
-              <position x="520" y="30" />
+            <outVariable localId="40" height="10" width="146">
+              <position x="520" y="676" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
                 <connection refLocalId="39" />
               </connectionPointIn>
-              <expression>GVL_PLCVisu.A</expression>
+              <expression>GVL_Regs.Rs_MW</expression>
             </outVariable>
-            <inVariable localId="41" height="10" width="137">
-              <position x="40" y="64" />
-              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_B</expression>
+            <inVariable localId="41" height="10" width="173">
+              <position x="40" y="710" />
+              <connectionPointOut><relPosition x="173" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_MAddr</expression>
             </inVariable>
-            <outVariable localId="42" height="10" width="137">
-              <position x="520" y="64" />
+            <outVariable localId="42" height="10" width="173">
+              <position x="520" y="710" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
                 <connection refLocalId="41" />
               </connectionPointIn>
-              <expression>GVL_PLCVisu.B</expression>
+              <expression>GVL_Regs.Rs_MAddr</expression>
             </outVariable>
-            <inVariable localId="43" height="10" width="137">
-              <position x="40" y="98" />
-              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_C</expression>
+            <inVariable localId="43" height="10" width="173">
+              <position x="40" y="744" />
+              <connectionPointOut><relPosition x="173" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_MData</expression>
             </inVariable>
-            <outVariable localId="44" height="10" width="137">
-              <position x="520" y="98" />
+            <outVariable localId="44" height="10" width="173">
+              <position x="520" y="744" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
                 <connection refLocalId="43" />
               </connectionPointIn>
-              <expression>GVL_PLCVisu.C</expression>
+              <expression>GVL_Regs.Rs_MData</expression>
             </outVariable>
+            <!-- LATCH 2: zerkalo dlya vizualizacii (HMI) -->
             <inVariable localId="45" height="10" width="137">
-              <position x="40" y="132" />
-              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_D</expression>
-            </inVariable>
-            <outVariable localId="46" height="10" width="137">
-              <position x="520" y="132" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="45" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.D</expression>
-            </outVariable>
-            <inVariable localId="47" height="10" width="137">
-              <position x="40" y="166" />
-              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_E</expression>
-            </inVariable>
-            <outVariable localId="48" height="10" width="137">
-              <position x="520" y="166" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="47" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.E</expression>
-            </outVariable>
-            <inVariable localId="49" height="10" width="137">
-              <position x="40" y="200" />
-              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_H</expression>
-            </inVariable>
-            <outVariable localId="50" height="10" width="137">
-              <position x="520" y="200" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="49" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.H</expression>
-            </outVariable>
-            <inVariable localId="51" height="10" width="137">
-              <position x="40" y="234" />
-              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_L</expression>
-            </inVariable>
-            <outVariable localId="52" height="10" width="137">
-              <position x="520" y="234" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="51" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.L</expression>
-            </outVariable>
-            <inVariable localId="53" height="10" width="137">
-              <position x="40" y="268" />
-              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_F</expression>
-            </inVariable>
-            <outVariable localId="54" height="10" width="137">
-              <position x="520" y="268" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="53" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.F</expression>
-            </outVariable>
-            <inVariable localId="55" height="10" width="146">
-              <position x="40" y="302" />
-              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Sa</expression>
-            </inVariable>
-            <outVariable localId="56" height="10" width="164">
-              <position x="520" y="302" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="55" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.AltA</expression>
-            </outVariable>
-            <inVariable localId="57" height="10" width="146">
-              <position x="40" y="336" />
-              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Sb</expression>
-            </inVariable>
-            <outVariable localId="58" height="10" width="164">
-              <position x="520" y="336" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="57" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.AltB</expression>
-            </outVariable>
-            <inVariable localId="59" height="10" width="146">
-              <position x="40" y="370" />
-              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Sc</expression>
-            </inVariable>
-            <outVariable localId="60" height="10" width="164">
-              <position x="520" y="370" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="59" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.AltC</expression>
-            </outVariable>
-            <inVariable localId="61" height="10" width="146">
-              <position x="40" y="404" />
-              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Sd</expression>
-            </inVariable>
-            <outVariable localId="62" height="10" width="164">
-              <position x="520" y="404" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="61" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.AltD</expression>
-            </outVariable>
-            <inVariable localId="63" height="10" width="146">
-              <position x="40" y="438" />
-              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Se</expression>
-            </inVariable>
-            <outVariable localId="64" height="10" width="164">
-              <position x="520" y="438" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="63" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.AltE</expression>
-            </outVariable>
-            <inVariable localId="65" height="10" width="146">
-              <position x="40" y="472" />
-              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Sh</expression>
-            </inVariable>
-            <outVariable localId="66" height="10" width="164">
-              <position x="520" y="472" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="65" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.AltH</expression>
-            </outVariable>
-            <inVariable localId="67" height="10" width="146">
-              <position x="40" y="506" />
-              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Sl</expression>
-            </inVariable>
-            <outVariable localId="68" height="10" width="164">
-              <position x="520" y="506" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="67" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.AltL</expression>
-            </outVariable>
-            <inVariable localId="69" height="10" width="146">
-              <position x="40" y="540" />
-              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Sf</expression>
-            </inVariable>
-            <outVariable localId="70" height="10" width="164">
-              <position x="520" y="540" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="69" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.AltF</expression>
-            </outVariable>
-            <inVariable localId="71" height="10" width="137">
-              <position x="40" y="574" />
-              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_R</expression>
-            </inVariable>
-            <outVariable localId="72" height="10" width="173">
-              <position x="520" y="574" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="71" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.R_Reg</expression>
-            </outVariable>
-            <inVariable localId="73" height="10" width="146">
-              <position x="40" y="608" />
-              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_PC</expression>
-            </inVariable>
-            <outVariable localId="74" height="10" width="146">
-              <position x="520" y="608" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="73" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.PC</expression>
-            </outVariable>
-            <inVariable localId="75" height="10" width="146">
-              <position x="40" y="642" />
-              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_SP</expression>
-            </inVariable>
-            <outVariable localId="76" height="10" width="146">
-              <position x="520" y="642" />
-              <connectionPointIn>
-                <relPosition x="0" y="5" />
-                <connection refLocalId="75" />
-              </connectionPointIn>
-              <expression>GVL_PLCVisu.SP</expression>
-            </outVariable>
-            <!-- LATCH 3: kontrol'naya summa registrov (XOR) -->
-            <inVariable localId="77" height="10" width="137">
               <position x="40" y="30" />
               <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Nx_A</expression>
             </inVariable>
-            <inVariable localId="78" height="10" width="137">
+            <outVariable localId="46" height="10" width="137">
+              <position x="520" y="30" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="45" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.A</expression>
+            </outVariable>
+            <inVariable localId="47" height="10" width="137">
               <position x="40" y="64" />
               <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Nx_B</expression>
             </inVariable>
-            <block localId="79" typeName="XOR" height="30" width="64">
-              <position x="240" y="30" />
-              <inputVariables>
-                <variable formalParameter="IN1">
-                  <connectionPointIn>
-                    <relPosition x="0" y="5" />
-                    <connection refLocalId="77" />
-                  </connectionPointIn>
-                </variable>
-                <variable formalParameter="IN2">
-                  <connectionPointIn>
-                    <relPosition x="0" y="15" />
-                    <connection refLocalId="78" />
-                  </connectionPointIn>
-                </variable>
-              </inputVariables>
-              <inOutVariables />
-              <outputVariables>
-                <variable formalParameter="OUT">
-                  <connectionPointOut>
-                    <relPosition x="64" y="5" />
-                  </connectionPointOut>
-                </variable>
-              </outputVariables>
-            </block>
-            <inVariable localId="80" height="10" width="137">
-              <position x="40" y="110" />
+            <outVariable localId="48" height="10" width="137">
+              <position x="520" y="64" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="47" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.B</expression>
+            </outVariable>
+            <inVariable localId="49" height="10" width="137">
+              <position x="40" y="98" />
               <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Nx_C</expression>
             </inVariable>
-            <block localId="81" typeName="XOR" height="30" width="64">
-              <position x="240" y="76" />
-              <inputVariables>
-                <variable formalParameter="IN1">
-                  <connectionPointIn>
-                    <relPosition x="0" y="5" />
-                    <connection refLocalId="79" />
-                  </connectionPointIn>
-                </variable>
-                <variable formalParameter="IN2">
-                  <connectionPointIn>
-                    <relPosition x="0" y="15" />
-                    <connection refLocalId="80" />
-                  </connectionPointIn>
-                </variable>
-              </inputVariables>
-              <inOutVariables />
-              <outputVariables>
-                <variable formalParameter="OUT">
-                  <connectionPointOut>
-                    <relPosition x="64" y="5" />
-                  </connectionPointOut>
-                </variable>
-              </outputVariables>
-            </block>
-            <inVariable localId="82" height="10" width="137">
-              <position x="40" y="156" />
+            <outVariable localId="50" height="10" width="137">
+              <position x="520" y="98" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="49" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.C</expression>
+            </outVariable>
+            <inVariable localId="51" height="10" width="137">
+              <position x="40" y="132" />
               <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Nx_D</expression>
             </inVariable>
-            <block localId="83" typeName="XOR" height="30" width="64">
-              <position x="240" y="122" />
-              <inputVariables>
-                <variable formalParameter="IN1">
-                  <connectionPointIn>
-                    <relPosition x="0" y="5" />
-                    <connection refLocalId="81" />
-                  </connectionPointIn>
-                </variable>
-                <variable formalParameter="IN2">
-                  <connectionPointIn>
-                    <relPosition x="0" y="15" />
-                    <connection refLocalId="82" />
-                  </connectionPointIn>
-                </variable>
-              </inputVariables>
-              <inOutVariables />
-              <outputVariables>
-                <variable formalParameter="OUT">
-                  <connectionPointOut>
-                    <relPosition x="64" y="5" />
-                  </connectionPointOut>
-                </variable>
-              </outputVariables>
-            </block>
-            <inVariable localId="84" height="10" width="137">
-              <position x="40" y="202" />
+            <outVariable localId="52" height="10" width="137">
+              <position x="520" y="132" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="51" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.D</expression>
+            </outVariable>
+            <inVariable localId="53" height="10" width="137">
+              <position x="40" y="166" />
               <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
               <expression>GVL_Regs.Nx_E</expression>
             </inVariable>
+            <outVariable localId="54" height="10" width="137">
+              <position x="520" y="166" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="53" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.E</expression>
+            </outVariable>
+            <inVariable localId="55" height="10" width="137">
+              <position x="40" y="200" />
+              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_H</expression>
+            </inVariable>
+            <outVariable localId="56" height="10" width="137">
+              <position x="520" y="200" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="55" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.H</expression>
+            </outVariable>
+            <inVariable localId="57" height="10" width="137">
+              <position x="40" y="234" />
+              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_L</expression>
+            </inVariable>
+            <outVariable localId="58" height="10" width="137">
+              <position x="520" y="234" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="57" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.L</expression>
+            </outVariable>
+            <inVariable localId="59" height="10" width="137">
+              <position x="40" y="268" />
+              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_F</expression>
+            </inVariable>
+            <outVariable localId="60" height="10" width="137">
+              <position x="520" y="268" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="59" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.F</expression>
+            </outVariable>
+            <inVariable localId="61" height="10" width="146">
+              <position x="40" y="302" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_Sa</expression>
+            </inVariable>
+            <outVariable localId="62" height="10" width="164">
+              <position x="520" y="302" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="61" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.AltA</expression>
+            </outVariable>
+            <inVariable localId="63" height="10" width="146">
+              <position x="40" y="336" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_Sb</expression>
+            </inVariable>
+            <outVariable localId="64" height="10" width="164">
+              <position x="520" y="336" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="63" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.AltB</expression>
+            </outVariable>
+            <inVariable localId="65" height="10" width="146">
+              <position x="40" y="370" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_Sc</expression>
+            </inVariable>
+            <outVariable localId="66" height="10" width="164">
+              <position x="520" y="370" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="65" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.AltC</expression>
+            </outVariable>
+            <inVariable localId="67" height="10" width="146">
+              <position x="40" y="404" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_Sd</expression>
+            </inVariable>
+            <outVariable localId="68" height="10" width="164">
+              <position x="520" y="404" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="67" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.AltD</expression>
+            </outVariable>
+            <inVariable localId="69" height="10" width="146">
+              <position x="40" y="438" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_Se</expression>
+            </inVariable>
+            <outVariable localId="70" height="10" width="164">
+              <position x="520" y="438" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="69" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.AltE</expression>
+            </outVariable>
+            <inVariable localId="71" height="10" width="146">
+              <position x="40" y="472" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_Sh</expression>
+            </inVariable>
+            <outVariable localId="72" height="10" width="164">
+              <position x="520" y="472" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="71" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.AltH</expression>
+            </outVariable>
+            <inVariable localId="73" height="10" width="146">
+              <position x="40" y="506" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_Sl</expression>
+            </inVariable>
+            <outVariable localId="74" height="10" width="164">
+              <position x="520" y="506" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="73" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.AltL</expression>
+            </outVariable>
+            <inVariable localId="75" height="10" width="146">
+              <position x="40" y="540" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_Sf</expression>
+            </inVariable>
+            <outVariable localId="76" height="10" width="164">
+              <position x="520" y="540" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="75" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.AltF</expression>
+            </outVariable>
+            <inVariable localId="77" height="10" width="137">
+              <position x="40" y="574" />
+              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_R</expression>
+            </inVariable>
+            <outVariable localId="78" height="10" width="173">
+              <position x="520" y="574" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="77" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.R_Reg</expression>
+            </outVariable>
+            <inVariable localId="79" height="10" width="146">
+              <position x="40" y="608" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_PC</expression>
+            </inVariable>
+            <outVariable localId="80" height="10" width="146">
+              <position x="520" y="608" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="79" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.PC</expression>
+            </outVariable>
+            <inVariable localId="81" height="10" width="146">
+              <position x="40" y="642" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_SP</expression>
+            </inVariable>
+            <outVariable localId="82" height="10" width="146">
+              <position x="520" y="642" />
+              <connectionPointIn>
+                <relPosition x="0" y="5" />
+                <connection refLocalId="81" />
+              </connectionPointIn>
+              <expression>GVL_PLCVisu.SP</expression>
+            </outVariable>
+            <!-- LATCH 3: kontrol'naya summa registrov (XOR) -->
+            <inVariable localId="83" height="10" width="137">
+              <position x="40" y="30" />
+              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_A</expression>
+            </inVariable>
+            <inVariable localId="84" height="10" width="137">
+              <position x="40" y="64" />
+              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_B</expression>
+            </inVariable>
             <block localId="85" typeName="XOR" height="30" width="64">
-              <position x="240" y="168" />
+              <position x="240" y="30" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
@@ -641,12 +590,12 @@
               </outputVariables>
             </block>
             <inVariable localId="86" height="10" width="137">
-              <position x="40" y="248" />
+              <position x="40" y="110" />
               <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_H</expression>
+              <expression>GVL_Regs.Nx_C</expression>
             </inVariable>
             <block localId="87" typeName="XOR" height="30" width="64">
-              <position x="240" y="214" />
+              <position x="240" y="76" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
@@ -671,12 +620,12 @@
               </outputVariables>
             </block>
             <inVariable localId="88" height="10" width="137">
-              <position x="40" y="294" />
+              <position x="40" y="156" />
               <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_L</expression>
+              <expression>GVL_Regs.Nx_D</expression>
             </inVariable>
             <block localId="89" typeName="XOR" height="30" width="64">
-              <position x="240" y="260" />
+              <position x="240" y="122" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
@@ -701,12 +650,12 @@
               </outputVariables>
             </block>
             <inVariable localId="90" height="10" width="137">
-              <position x="40" y="340" />
+              <position x="40" y="202" />
               <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_F</expression>
+              <expression>GVL_Regs.Nx_E</expression>
             </inVariable>
             <block localId="91" typeName="XOR" height="30" width="64">
-              <position x="240" y="306" />
+              <position x="240" y="168" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
@@ -730,13 +679,13 @@
                 </variable>
               </outputVariables>
             </block>
-            <inVariable localId="92" height="10" width="146">
-              <position x="40" y="386" />
-              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Sa</expression>
+            <inVariable localId="92" height="10" width="137">
+              <position x="40" y="248" />
+              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_H</expression>
             </inVariable>
             <block localId="93" typeName="XOR" height="30" width="64">
-              <position x="240" y="352" />
+              <position x="240" y="214" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
@@ -760,13 +709,13 @@
                 </variable>
               </outputVariables>
             </block>
-            <inVariable localId="94" height="10" width="146">
-              <position x="40" y="432" />
-              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Sb</expression>
+            <inVariable localId="94" height="10" width="137">
+              <position x="40" y="294" />
+              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_L</expression>
             </inVariable>
             <block localId="95" typeName="XOR" height="30" width="64">
-              <position x="240" y="398" />
+              <position x="240" y="260" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
@@ -790,13 +739,13 @@
                 </variable>
               </outputVariables>
             </block>
-            <inVariable localId="96" height="10" width="146">
-              <position x="40" y="478" />
-              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Sc</expression>
+            <inVariable localId="96" height="10" width="137">
+              <position x="40" y="340" />
+              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_F</expression>
             </inVariable>
             <block localId="97" typeName="XOR" height="30" width="64">
-              <position x="240" y="444" />
+              <position x="240" y="306" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
@@ -821,12 +770,12 @@
               </outputVariables>
             </block>
             <inVariable localId="98" height="10" width="146">
-              <position x="40" y="524" />
+              <position x="40" y="386" />
               <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Sd</expression>
+              <expression>GVL_Regs.Nx_Sa</expression>
             </inVariable>
             <block localId="99" typeName="XOR" height="30" width="64">
-              <position x="240" y="490" />
+              <position x="240" y="352" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
@@ -851,12 +800,12 @@
               </outputVariables>
             </block>
             <inVariable localId="100" height="10" width="146">
-              <position x="40" y="570" />
+              <position x="40" y="432" />
               <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Se</expression>
+              <expression>GVL_Regs.Nx_Sb</expression>
             </inVariable>
             <block localId="101" typeName="XOR" height="30" width="64">
-              <position x="240" y="536" />
+              <position x="240" y="398" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
@@ -881,12 +830,12 @@
               </outputVariables>
             </block>
             <inVariable localId="102" height="10" width="146">
-              <position x="40" y="616" />
+              <position x="40" y="478" />
               <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Sh</expression>
+              <expression>GVL_Regs.Nx_Sc</expression>
             </inVariable>
             <block localId="103" typeName="XOR" height="30" width="64">
-              <position x="240" y="582" />
+              <position x="240" y="444" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
@@ -911,12 +860,12 @@
               </outputVariables>
             </block>
             <inVariable localId="104" height="10" width="146">
-              <position x="40" y="662" />
+              <position x="40" y="524" />
               <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Sl</expression>
+              <expression>GVL_Regs.Nx_Sd</expression>
             </inVariable>
             <block localId="105" typeName="XOR" height="30" width="64">
-              <position x="240" y="628" />
+              <position x="240" y="490" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
@@ -941,12 +890,12 @@
               </outputVariables>
             </block>
             <inVariable localId="106" height="10" width="146">
-              <position x="40" y="708" />
+              <position x="40" y="570" />
               <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_Sf</expression>
+              <expression>GVL_Regs.Nx_Se</expression>
             </inVariable>
             <block localId="107" typeName="XOR" height="30" width="64">
-              <position x="240" y="674" />
+              <position x="240" y="536" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
@@ -970,13 +919,13 @@
                 </variable>
               </outputVariables>
             </block>
-            <inVariable localId="108" height="10" width="137">
-              <position x="40" y="754" />
-              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
-              <expression>GVL_Regs.Nx_R</expression>
+            <inVariable localId="108" height="10" width="146">
+              <position x="40" y="616" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_Sh</expression>
             </inVariable>
             <block localId="109" typeName="XOR" height="30" width="64">
-              <position x="240" y="720" />
+              <position x="240" y="582" />
               <inputVariables>
                 <variable formalParameter="IN1">
                   <connectionPointIn>
@@ -1000,24 +949,114 @@
                 </variable>
               </outputVariables>
             </block>
-            <outVariable localId="110" height="10" width="137">
+            <inVariable localId="110" height="10" width="146">
+              <position x="40" y="662" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_Sl</expression>
+            </inVariable>
+            <block localId="111" typeName="XOR" height="30" width="64">
+              <position x="240" y="628" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="109" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="110" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="112" height="10" width="146">
+              <position x="40" y="708" />
+              <connectionPointOut><relPosition x="146" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_Sf</expression>
+            </inVariable>
+            <block localId="113" typeName="XOR" height="30" width="64">
+              <position x="240" y="674" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="111" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="112" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <inVariable localId="114" height="10" width="137">
+              <position x="40" y="754" />
+              <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
+              <expression>GVL_Regs.Nx_R</expression>
+            </inVariable>
+            <block localId="115" typeName="XOR" height="30" width="64">
+              <position x="240" y="720" />
+              <inputVariables>
+                <variable formalParameter="IN1">
+                  <connectionPointIn>
+                    <relPosition x="0" y="5" />
+                    <connection refLocalId="113" />
+                  </connectionPointIn>
+                </variable>
+                <variable formalParameter="IN2">
+                  <connectionPointIn>
+                    <relPosition x="0" y="15" />
+                    <connection refLocalId="114" />
+                  </connectionPointIn>
+                </variable>
+              </inputVariables>
+              <inOutVariables />
+              <outputVariables>
+                <variable formalParameter="OUT">
+                  <connectionPointOut>
+                    <relPosition x="64" y="5" />
+                  </connectionPointOut>
+                </variable>
+              </outputVariables>
+            </block>
+            <outVariable localId="116" height="10" width="137">
               <position x="520" y="30" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="109" />
+                <connection refLocalId="115" />
               </connectionPointIn>
               <expression>vReg_Checksum</expression>
             </outVariable>
-            <inVariable localId="111" height="10" width="137">
+            <inVariable localId="117" height="10" width="137">
               <position x="40" y="70" />
               <connectionPointOut><relPosition x="137" y="5" /></connectionPointOut>
               <expression>vReg_Checksum</expression>
             </inVariable>
-            <outVariable localId="112" height="10" width="236">
+            <outVariable localId="118" height="10" width="236">
               <position x="520" y="70" />
               <connectionPointIn>
                 <relPosition x="0" y="5" />
-                <connection refLocalId="111" />
+                <connection refLocalId="117" />
               </connectionPointIn>
               <expression>GVL_PLCVisu.Reg_Checksum</expression>
             </outVariable>

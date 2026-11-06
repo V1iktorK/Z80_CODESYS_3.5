@@ -55,8 +55,48 @@ VAR_GLOBAL
     (*  S Ch E T Ch I K  K O M A N D  i  U K A Z A T E L  S T E K A.
         Oni tozhe kol co ("chitaetsya zdes, pishetsya zdes"), poetomu zhivut
         po tem zhe pravilam, chto i registry. *)
+    (*  O T L O Zh E N N A Ya  Z A P I S '  V  P A M Ya T '.
+        Dannye dlya zapisi (adres, bajt, strob) vyrabatyvayutsya V T O J  ZhE
+        seti, gde schitaet ALU, a vyzov pamyati stoit RAN'ShE nee. Poetomu
+        zapis' vypolnyaetsya na SLEDUYushchEM skane: Rs_* -- to, chto pamyat
+        zapishet sejchas, Nx_* -- to, chto vyrabotal etot skan. *)
+    Rs_MW    : BOOL;   (* strob zapisi v pamyat' *)
+    Rs_MAddr : WORD;   (* adres zapisi *)
+    Rs_MData : BYTE;   (* bajt zapisi *)
+    Nx_MW    : BOOL;
+    Nx_MAddr : WORD;
+    Nx_MData : BYTE;
+
     Rs_PC : WORD;   (* adres tekushchej komandy *)
     Nx_PC : WORD;   (* on zhe posle vypolneniya *)
+    (*  O T L A D O Ch N Y E  P O L Ya: chto imenno podano na ALU i v
+        registrovuyu chast v etom skane. Nuzhny, potomu chto chtenie po
+        onlajnu idet medlennee skana i vnutrennie signaly PLC_PRG snaruzhi
+        ne vidny. Vyvodyatsya iz PLC_PRG, chitayutsya TEST_Z80 v tablicu
+        Cpu_Act_*. *)
+    Dbg_ALU_A    : BYTE;   (* pervyj operand ALU *)
+    Dbg_Dst      : BYTE;   (* Dst_Val: registr-priemnik *)
+    Dbg_Src      : BYTE;   (* vtoroj operand ALU *)
+    Dbg_Flags_En : BOOL;   (* Ctl_Flags_En *)
+    Dbg_A        : BYTE;   (* Rs_A *)
+    Dbg_B        : BYTE;
+    Dbg_H        : BYTE;
+    Dbg_L        : BYTE;
+    Dbg_Init0    : BYTE;   (* GVL_InitRegs.Init_Vals[0] *)
+    Dbg_Init1    : BYTE;   (* GVL_InitRegs.Init_Vals[1] *)
+    Dbg_SelDst   : BYTE;   (* GVL_InitRegs.Init_Sel_Dst *)
+    Dbg_InitEn   : BOOL;   (* GVL_InitRegs.Init_En *)
+    Dbg_Clk      : BOOL;   (* fbClock.Clk_Exec *)
+    Dbg_Run      : BOOL;   (* GVL_Control.Emu_Run *)
+    Dbg_Halted   : BOOL;   (* priznak HALT *)
+    Dbg_WrEnEff  : BOOL;   (* deystvuyushchij strob zapisi registra *)
+    Dbg_FlagsEn  : BOOL;   (* strob zapisi registra flagov *)
+    Dbg_Y        : BYTE;   (* rezul tat ALU *)
+    Dbg_OpWord   : WORD;   (* operandnnaya para nn iz pamyati *)
+    Dbg_PCNew    : WORD;   (* kuda perejti po resheniyu ustroystva upravleniya *)
+    Dbg_PCLoad   : BOOL;   (* razreshenie zagruzki PC *)
+    Dbg_Cond     : BOOL;   (* uslovie perehoda istinno *)
+
     Rs_SP : WORD;   (* ukazatel steka *)
     Nx_SP : WORD;   (* on zhe posle vypolneniya *)
 END_VAR

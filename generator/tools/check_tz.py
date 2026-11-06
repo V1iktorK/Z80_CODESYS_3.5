@@ -79,9 +79,15 @@ def main():
         pat = (u"16#" + hx, u"0x" + hx, u"16#" + hx.lower(), u"0x" + hx.lower())
         found = any(p in gen for p in pat)
         if not found and name in (u"LD (HL),r", u"LD r,(HL)"):
-            #  eti dvuh komand v dekodere net otdelnymi kodami: oni
-            #  raspoznayutsya po gruppe 0x46/0x70 cherez maski
-            found = any(p in gen for p in (u"16#46", u"0x46", u"16#70", u"0x70"))
+            #  E T I  D V E  K O M A N D Y  dekoder raspoznaet NE po celomu kodu,
+            #  a po polyu nomera registra: klass komandy -- maska 16#C0 = 16#40
+            #  (gruppa LD r,r'), a nomer 6 v etom pole i est' (HL). Tak koroche
+            #  i pravil nee: odna maska pokryvaet vse 64 koda gruppy vmesto
+            #  shesti otdel nyh sravnenij. Poetomu proverka ishet maski, a
+            #  rabotosposobnost potverzhdaetsya progonami T05 (LD (HL),A) i
+            #  T06 (LD A,(HL)) -- oni vklyucheny v tablicu TEST_Z80_PREP.
+            found = (u"vIsLdRr" in gen and u"16#40" in gen
+                     and u"16#06" in gen)
         chk(found, u"komanda %s (kod %s)" % (name, code),
             u"kod ne najden v generatore")
 
