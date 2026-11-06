@@ -13,6 +13,22 @@
       <pou name="FB_RegFileZ80" pouType="functionBlock">
         <interface>
           <inputVars>
+            <variable name="A_In"><type><BYTE /></type></variable>
+            <variable name="B_In"><type><BYTE /></type></variable>
+            <variable name="C_In"><type><BYTE /></type></variable>
+            <variable name="D_In"><type><BYTE /></type></variable>
+            <variable name="E_In"><type><BYTE /></type></variable>
+            <variable name="H_In"><type><BYTE /></type></variable>
+            <variable name="L_In"><type><BYTE /></type></variable>
+            <variable name="F_In"><type><BYTE /></type></variable>
+            <variable name="Sa_In"><type><BYTE /></type></variable>
+            <variable name="Sb_In"><type><BYTE /></type></variable>
+            <variable name="Sc_In"><type><BYTE /></type></variable>
+            <variable name="Sd_In"><type><BYTE /></type></variable>
+            <variable name="Se_In"><type><BYTE /></type></variable>
+            <variable name="Sh_In"><type><BYTE /></type></variable>
+            <variable name="Sl_In"><type><BYTE /></type></variable>
+            <variable name="Sf_In"><type><BYTE /></type></variable>
             <variable name="Sel_Dst"><type><BYTE /></type></variable>
             <variable name="Sel_Src"><type><BYTE /></type></variable>
             <variable name="Wr_Val"><type><BYTE /></type></variable>
@@ -5394,55 +5410,55 @@
               <connectionPointOut><relPosition x="47" y="5" /></connectionPointOut>
               <expression>Imm</expression>
             </inVariable>
-            <inVariable localId="83" height="10" width="29">
+            <inVariable localId="83" height="10" width="56">
               <position x="40" y="170" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>A</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>A_In</expression>
             </inVariable>
-            <inVariable localId="84" height="10" width="29">
+            <inVariable localId="84" height="10" width="56">
               <position x="40" y="200" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>B</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>B_In</expression>
             </inVariable>
-            <inVariable localId="85" height="10" width="29">
+            <inVariable localId="85" height="10" width="56">
               <position x="40" y="230" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>C</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>C_In</expression>
             </inVariable>
-            <inVariable localId="86" height="10" width="29">
+            <inVariable localId="86" height="10" width="56">
               <position x="40" y="260" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>D</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>D_In</expression>
             </inVariable>
-            <inVariable localId="87" height="10" width="29">
+            <inVariable localId="87" height="10" width="56">
               <position x="40" y="290" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>E</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>E_In</expression>
             </inVariable>
-            <inVariable localId="88" height="10" width="29">
+            <inVariable localId="88" height="10" width="56">
               <position x="40" y="320" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>H</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>H_In</expression>
             </inVariable>
-            <inVariable localId="89" height="10" width="29">
+            <inVariable localId="89" height="10" width="56">
               <position x="40" y="350" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>L</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>L_In</expression>
             </inVariable>
-            <inVariable localId="90" height="10" width="29">
+            <inVariable localId="90" height="10" width="56">
               <position x="40" y="380" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>F</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>F_In</expression>
             </inVariable>
-            <inVariable localId="91" height="10" width="38">
+            <inVariable localId="91" height="10" width="65">
               <position x="40" y="410" />
-              <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
-              <expression>Sa</expression>
+              <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
+              <expression>Sa_In</expression>
             </inVariable>
-            <inVariable localId="92" height="10" width="38">
+            <inVariable localId="92" height="10" width="65">
               <position x="40" y="440" />
-              <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
-              <expression>Sb</expression>
+              <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
+              <expression>Sb_In</expression>
             </inVariable>
             <inVariable localId="99" height="10" width="29">
               <position x="40" y="650" />
@@ -6174,15 +6190,15 @@
               <expression>Src_Val</expression>
             </outVariable>
             <!-- SBORKA ADRESA HL -->
-            <inVariable localId="133" height="10" width="29">
+            <inVariable localId="133" height="10" width="56">
               <position x="40" y="30" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>H</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>H_In</expression>
             </inVariable>
-            <inVariable localId="134" height="10" width="29">
+            <inVariable localId="134" height="10" width="56">
               <position x="40" y="70" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>L</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>L_In</expression>
             </inVariable>
             <block localId="135" typeName="BYTE_TO_WORD" height="20" width="52">
               <position x="200" y="30" />
@@ -6286,10 +6302,10 @@
               <expression>Addr_HL</expression>
             </outVariable>
             <!-- HRANENIE: 16 registrov, zapis' po strobam WE_k -->
-            <inVariable localId="141" height="10" width="29">
+            <inVariable localId="141" height="10" width="56">
               <position x="40" y="30" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>A</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>A_In</expression>
             </inVariable>
             <inVariable localId="142" height="10" width="56">
               <position x="40" y="50" />
@@ -6430,10 +6446,10 @@
               </connectionPointIn>
               <expression>A</expression>
             </outVariable>
-            <inVariable localId="151" height="10" width="29">
+            <inVariable localId="151" height="10" width="56">
               <position x="40" y="120" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>B</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>B_In</expression>
             </inVariable>
             <inVariable localId="152" height="10" width="56">
               <position x="40" y="140" />
@@ -6574,10 +6590,10 @@
               </connectionPointIn>
               <expression>B</expression>
             </outVariable>
-            <inVariable localId="161" height="10" width="29">
+            <inVariable localId="161" height="10" width="56">
               <position x="40" y="210" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>C</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>C_In</expression>
             </inVariable>
             <inVariable localId="162" height="10" width="56">
               <position x="40" y="230" />
@@ -6718,10 +6734,10 @@
               </connectionPointIn>
               <expression>C</expression>
             </outVariable>
-            <inVariable localId="171" height="10" width="29">
+            <inVariable localId="171" height="10" width="56">
               <position x="40" y="300" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>D</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>D_In</expression>
             </inVariable>
             <inVariable localId="172" height="10" width="56">
               <position x="40" y="320" />
@@ -6862,10 +6878,10 @@
               </connectionPointIn>
               <expression>D</expression>
             </outVariable>
-            <inVariable localId="181" height="10" width="29">
+            <inVariable localId="181" height="10" width="56">
               <position x="40" y="390" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>E</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>E_In</expression>
             </inVariable>
             <inVariable localId="182" height="10" width="56">
               <position x="40" y="410" />
@@ -7006,10 +7022,10 @@
               </connectionPointIn>
               <expression>E</expression>
             </outVariable>
-            <inVariable localId="191" height="10" width="29">
+            <inVariable localId="191" height="10" width="56">
               <position x="40" y="480" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>H</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>H_In</expression>
             </inVariable>
             <inVariable localId="192" height="10" width="56">
               <position x="40" y="500" />
@@ -7150,10 +7166,10 @@
               </connectionPointIn>
               <expression>H</expression>
             </outVariable>
-            <inVariable localId="201" height="10" width="29">
+            <inVariable localId="201" height="10" width="56">
               <position x="40" y="570" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>L</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>L_In</expression>
             </inVariable>
             <inVariable localId="202" height="10" width="56">
               <position x="40" y="590" />
@@ -7294,10 +7310,10 @@
               </connectionPointIn>
               <expression>L</expression>
             </outVariable>
-            <inVariable localId="211" height="10" width="29">
+            <inVariable localId="211" height="10" width="56">
               <position x="40" y="660" />
-              <connectionPointOut><relPosition x="29" y="5" /></connectionPointOut>
-              <expression>F</expression>
+              <connectionPointOut><relPosition x="56" y="5" /></connectionPointOut>
+              <expression>F_In</expression>
             </inVariable>
             <inVariable localId="212" height="10" width="56">
               <position x="40" y="680" />
@@ -7438,10 +7454,10 @@
               </connectionPointIn>
               <expression>F</expression>
             </outVariable>
-            <inVariable localId="221" height="10" width="38">
+            <inVariable localId="221" height="10" width="65">
               <position x="40" y="750" />
-              <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
-              <expression>Sa</expression>
+              <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
+              <expression>Sa_In</expression>
             </inVariable>
             <inVariable localId="222" height="10" width="56">
               <position x="40" y="770" />
@@ -7582,10 +7598,10 @@
               </connectionPointIn>
               <expression>Sa</expression>
             </outVariable>
-            <inVariable localId="231" height="10" width="38">
+            <inVariable localId="231" height="10" width="65">
               <position x="40" y="840" />
-              <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
-              <expression>Sb</expression>
+              <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
+              <expression>Sb_In</expression>
             </inVariable>
             <inVariable localId="232" height="10" width="56">
               <position x="40" y="860" />
@@ -7726,10 +7742,10 @@
               </connectionPointIn>
               <expression>Sb</expression>
             </outVariable>
-            <inVariable localId="241" height="10" width="38">
+            <inVariable localId="241" height="10" width="65">
               <position x="40" y="930" />
-              <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
-              <expression>Sc</expression>
+              <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
+              <expression>Sc_In</expression>
             </inVariable>
             <inVariable localId="242" height="10" width="65">
               <position x="40" y="950" />
@@ -7870,10 +7886,10 @@
               </connectionPointIn>
               <expression>Sc</expression>
             </outVariable>
-            <inVariable localId="251" height="10" width="38">
+            <inVariable localId="251" height="10" width="65">
               <position x="40" y="1020" />
-              <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
-              <expression>Sd</expression>
+              <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
+              <expression>Sd_In</expression>
             </inVariable>
             <inVariable localId="252" height="10" width="65">
               <position x="40" y="1040" />
@@ -8014,10 +8030,10 @@
               </connectionPointIn>
               <expression>Sd</expression>
             </outVariable>
-            <inVariable localId="261" height="10" width="38">
+            <inVariable localId="261" height="10" width="65">
               <position x="40" y="1110" />
-              <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
-              <expression>Se</expression>
+              <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
+              <expression>Se_In</expression>
             </inVariable>
             <inVariable localId="262" height="10" width="65">
               <position x="40" y="1130" />
@@ -8158,10 +8174,10 @@
               </connectionPointIn>
               <expression>Se</expression>
             </outVariable>
-            <inVariable localId="271" height="10" width="38">
+            <inVariable localId="271" height="10" width="65">
               <position x="40" y="1200" />
-              <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
-              <expression>Sh</expression>
+              <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
+              <expression>Sh_In</expression>
             </inVariable>
             <inVariable localId="272" height="10" width="65">
               <position x="40" y="1220" />
@@ -8302,10 +8318,10 @@
               </connectionPointIn>
               <expression>Sh</expression>
             </outVariable>
-            <inVariable localId="281" height="10" width="38">
+            <inVariable localId="281" height="10" width="65">
               <position x="40" y="1290" />
-              <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
-              <expression>Sl</expression>
+              <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
+              <expression>Sl_In</expression>
             </inVariable>
             <inVariable localId="282" height="10" width="65">
               <position x="40" y="1310" />
@@ -8446,10 +8462,10 @@
               </connectionPointIn>
               <expression>Sl</expression>
             </outVariable>
-            <inVariable localId="291" height="10" width="38">
+            <inVariable localId="291" height="10" width="65">
               <position x="40" y="1380" />
-              <connectionPointOut><relPosition x="38" y="5" /></connectionPointOut>
-              <expression>Sf</expression>
+              <connectionPointOut><relPosition x="65" y="5" /></connectionPointOut>
+              <expression>Sf_In</expression>
             </inVariable>
             <inVariable localId="292" height="10" width="65">
               <position x="40" y="1400" />
@@ -8595,7 +8611,7 @@
         <addData>
           <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
             <InterfaceAsPlainText>
-              <xhtml xmlns="http://www.w3.org/1999/xhtml">FUNCTION_BLOCK FB_RegFileZ80&#xA;(* Registrovaya chast' Z80: 16 registrov (osnovnoj i alternativnyj nabory).&#xA;Zapis' po Sel_Dst, chtenie po Sel_Src cherez cepochku SEL. *)&#xA;VAR_INPUT&#xA;	Sel_Dst : BYTE; (* nomer registra-priemnika 0..15 *)&#xA;	Sel_Src : BYTE; (* nomer registra-istochnika 0..11 *)&#xA;	Wr_Val : BYTE; (* znachenie dlya zapisi *)&#xA;	Wr_En : BOOL; (* razreshenie zapisi *)&#xA;	Clk : BOOL; (* takt zashchelki *)&#xA;	CLR : BOOL; (* sBros vseh registrov *)&#xA;	Mem_Rd : BYTE; (* znachenie (HL) s shiny *)&#xA;	Imm : BYTE; (* neposredstvennyj operand *)&#xA;	Init_En : BOOL; (* rezhim initsializatsii registrov *)&#xA;	Init_Sel_Dst : BYTE; (* nomer registra pri initsializatsii *)&#xA;END_VAR&#xA;VAR_OUTPUT&#xA;	Src_Val : BYTE; (* vybrannoe znachenie *)&#xA;	A : BYTE; (* registr *)&#xA;	B : BYTE; (* registr *)&#xA;	C : BYTE; (* registr *)&#xA;	D : BYTE; (* registr *)&#xA;	E : BYTE; (* registr *)&#xA;	H : BYTE; (* registr *)&#xA;	L : BYTE; (* registr *)&#xA;	F : BYTE; (* registr *)&#xA;	Sa : BYTE; (* registr *)&#xA;	Sb : BYTE; (* registr *)&#xA;	Sc : BYTE; (* registr *)&#xA;	Sd : BYTE; (* registr *)&#xA;	Se : BYTE; (* registr *)&#xA;	Sh : BYTE; (* registr *)&#xA;	Sl : BYTE; (* registr *)&#xA;	Sf : BYTE; (* registr *)&#xA;	Addr_HL : WORD; (* adres pary HL (dlya kosvennoj adresatsii) *)&#xA;END_VAR&#xA;VAR&#xA;	WE_0 : BOOL; (* razreshenie zapisi registra 0 *)&#xA;	WE_1 : BOOL; (* razreshenie zapisi registra 1 *)&#xA;	WE_2 : BOOL; (* razreshenie zapisi registra 2 *)&#xA;	WE_3 : BOOL; (* razreshenie zapisi registra 3 *)&#xA;	WE_4 : BOOL; (* razreshenie zapisi registra 4 *)&#xA;	WE_5 : BOOL; (* razreshenie zapisi registra 5 *)&#xA;	WE_6 : BOOL; (* razreshenie zapisi registra 6 *)&#xA;	WE_7 : BOOL; (* razreshenie zapisi registra 7 *)&#xA;	WE_8 : BOOL; (* razreshenie zapisi registra 8 *)&#xA;	WE_9 : BOOL; (* razreshenie zapisi registra 9 *)&#xA;	WE_10 : BOOL; (* razreshenie zapisi registra 10 *)&#xA;	WE_11 : BOOL; (* razreshenie zapisi registra 11 *)&#xA;	WE_12 : BOOL; (* razreshenie zapisi registra 12 *)&#xA;	WE_13 : BOOL; (* razreshenie zapisi registra 13 *)&#xA;	WE_14 : BOOL; (* razreshenie zapisi registra 14 *)&#xA;	WE_15 : BOOL; (* razreshenie zapisi registra 15 *)&#xA;END_VAR&#xA;</xhtml>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">FUNCTION_BLOCK FB_RegFileZ80&#xA;(* Registrovaya chast' Z80: 16 registrov (osnovnoj i alternativnyj nabory).&#xA;Zapis' po Sel_Dst, chtenie po Sel_Src cherez cepochku SEL. *)&#xA;VAR_INPUT&#xA;	A_In : BYTE; (* tekushchee znachenie A *)&#xA;	B_In : BYTE; (* tekushchee znachenie B *)&#xA;	C_In : BYTE; (* tekushchee znachenie C *)&#xA;	D_In : BYTE; (* tekushchee znachenie D *)&#xA;	E_In : BYTE; (* tekushchee znachenie E *)&#xA;	H_In : BYTE; (* tekushchee znachenie H *)&#xA;	L_In : BYTE; (* tekushchee znachenie L *)&#xA;	F_In : BYTE; (* tekushchee znachenie F *)&#xA;	Sa_In : BYTE; (* tekushchee znachenie Sa *)&#xA;	Sb_In : BYTE; (* tekushchee znachenie Sb *)&#xA;	Sc_In : BYTE; (* tekushchee znachenie Sc *)&#xA;	Sd_In : BYTE; (* tekushchee znachenie Sd *)&#xA;	Se_In : BYTE; (* tekushchee znachenie Se *)&#xA;	Sh_In : BYTE; (* tekushchee znachenie Sh *)&#xA;	Sl_In : BYTE; (* tekushchee znachenie Sl *)&#xA;	Sf_In : BYTE; (* tekushchee znachenie Sf *)&#xA;	Sel_Dst : BYTE; (* nomer registra-priemnika 0..15 *)&#xA;	Sel_Src : BYTE; (* nomer registra-istochnika 0..11 *)&#xA;	Wr_Val : BYTE; (* znachenie dlya zapisi *)&#xA;	Wr_En : BOOL; (* razreshenie zapisi *)&#xA;	Clk : BOOL; (* takt zashchelki *)&#xA;	CLR : BOOL; (* sBros vseh registrov *)&#xA;	Mem_Rd : BYTE; (* znachenie (HL) s shiny *)&#xA;	Imm : BYTE; (* neposredstvennyj operand *)&#xA;	Init_En : BOOL; (* rezhim initsializatsii registrov *)&#xA;	Init_Sel_Dst : BYTE; (* nomer registra pri initsializatsii *)&#xA;END_VAR&#xA;VAR_OUTPUT&#xA;	Src_Val : BYTE; (* vybrannoe znachenie *)&#xA;	A : BYTE; (* registr *)&#xA;	B : BYTE; (* registr *)&#xA;	C : BYTE; (* registr *)&#xA;	D : BYTE; (* registr *)&#xA;	E : BYTE; (* registr *)&#xA;	H : BYTE; (* registr *)&#xA;	L : BYTE; (* registr *)&#xA;	F : BYTE; (* registr *)&#xA;	Sa : BYTE; (* registr *)&#xA;	Sb : BYTE; (* registr *)&#xA;	Sc : BYTE; (* registr *)&#xA;	Sd : BYTE; (* registr *)&#xA;	Se : BYTE; (* registr *)&#xA;	Sh : BYTE; (* registr *)&#xA;	Sl : BYTE; (* registr *)&#xA;	Sf : BYTE; (* registr *)&#xA;	Addr_HL : WORD; (* adres pary HL (dlya kosvennoj adresatsii) *)&#xA;END_VAR&#xA;VAR&#xA;	WE_0 : BOOL; (* razreshenie zapisi registra 0 *)&#xA;	WE_1 : BOOL; (* razreshenie zapisi registra 1 *)&#xA;	WE_2 : BOOL; (* razreshenie zapisi registra 2 *)&#xA;	WE_3 : BOOL; (* razreshenie zapisi registra 3 *)&#xA;	WE_4 : BOOL; (* razreshenie zapisi registra 4 *)&#xA;	WE_5 : BOOL; (* razreshenie zapisi registra 5 *)&#xA;	WE_6 : BOOL; (* razreshenie zapisi registra 6 *)&#xA;	WE_7 : BOOL; (* razreshenie zapisi registra 7 *)&#xA;	WE_8 : BOOL; (* razreshenie zapisi registra 8 *)&#xA;	WE_9 : BOOL; (* razreshenie zapisi registra 9 *)&#xA;	WE_10 : BOOL; (* razreshenie zapisi registra 10 *)&#xA;	WE_11 : BOOL; (* razreshenie zapisi registra 11 *)&#xA;	WE_12 : BOOL; (* razreshenie zapisi registra 12 *)&#xA;	WE_13 : BOOL; (* razreshenie zapisi registra 13 *)&#xA;	WE_14 : BOOL; (* razreshenie zapisi registra 14 *)&#xA;	WE_15 : BOOL; (* razreshenie zapisi registra 15 *)&#xA;END_VAR&#xA;</xhtml>
             </InterfaceAsPlainText>
           </data>
         </addData>

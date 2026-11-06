@@ -17,6 +17,7 @@ VAR_GLOBAL
     AltE : BYTE;
     AltH : BYTE;
     AltL : BYTE;
+    AltF : BYTE;   (* F' -- flagi alternativnogo nabora *)
 
     F      : BYTE;
     PC     : WORD;

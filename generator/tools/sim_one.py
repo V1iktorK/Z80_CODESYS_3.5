@@ -104,7 +104,10 @@ def main():
               u"PLC_PRG.fbRF.A", u"PLC_PRG.fbRFRd.A",
               u"PLC_PRG.fbRF.Src_Val", u"PLC_PRG.fbRFRd.Src_Val",
               u"PLC_PRG.vInitWr", u"PLC_PRG.vWrEn", u"PLC_PRG.vClkWr",
-              u"PLC_PRG.fbALU.Y", u"PLC_PRG.fbRFRd.B"):
+              u"PLC_PRG.fbALU.Y",
+              u"GVL_InitRegs.Init_Sel_Dst", u"GVL_InitRegs.Init_Busy",
+              u"GVL_InitRegs.Init_En", u"GVL_InitRegs.Init_Vals[0]",
+              u"GVL_InitRegs.Init_Vals[1]", u"PLC_PRG.vClkWr"):
         log(u"  %-34s = %s" % (e, rd(oapp, e)))
 
     try:
