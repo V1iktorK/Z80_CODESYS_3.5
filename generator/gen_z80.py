@@ -288,9 +288,9 @@ def b_sel(n, x, y, g, in0, in1, tip=u"BYTE"):
 
     tip -- tip rezul tata, po umolchaniyu u"BYTE".
 
-    P O Ch E M U  T I P  Z A D A E T S Ya  В С Е Г Д А. Blok SEL
+    P O Ch E M U  T I P  Z A D A E T S Ya  V S E G D A. Blok SEL
     obobshchennyj (ANY): ego tip vyvoditsya po vetkam IN0/IN1.
-    Esli odna vetka -- peremennaya BYTE, a drugaya -- «golyj»
+    Esli odna vetka -- peremennaya BYTE, a drugaya -- "golyj"
     literal 1, kompilyator sam vybiraet tip literala i v cepochke
     iz neskolkih SEL oshibaetsya. V otchyote eto vyglyadit kak pary
         C32: Nevozmozhno konvertirovat tip BOOL v tip USINT
@@ -947,7 +947,7 @@ def mk_flagsreg():
     #  I N I C I A L I Z A C I Ya  F. Bez neyo testy, kotorye proveryayut
     #  "flagi ne dolzhny izmenit sya" (naprimer LD), vsegda padali: registr
     #  flagov ne zagruzhalsya iz Init_Vals[7] i nachinalsya s nulya vmesto
-    #  Init_F. Izmerено na progone: Init_F = FFh, a GVL_PLCVisu.F = 00h.
+    #  Init_F. Izmereno na progone: Init_F = FFh, a GVL_PLCVisu.F = 00h.
     p.var_in(u"Init_En", u"BOOL", u"rezhim initsializatsii flagov")
     p.var_in(u"Init_Val", u"BYTE", u"nachal noe znachenie F")
     p.var_out(u"F", u"BYTE", u"upakovannyj registr flagov")
@@ -1149,10 +1149,10 @@ def mk_decoder():
         (u"Ctl_Is_Jr", r_djnz, F.COL_OUT),
         #  Ctl_Imm_Mode: "adres operanda beretsya iz koda komandy (nn), a ne iz HL".
         #  B Y L O  T A K: OR(r_ldn, r_call, r_in, r_out) -- i v etom spiske
-        #  N E  B Y L O  komanд perehoda. Posledstvie izmereno na real nom
+        #  N E  B Y L O  komand perehoda. Posledstvie izmereno na real nom
         #  progone: dlya "JP 0FA00h" Imm_Mode okazalsya FALSE, SET 6 vybral
         #  vetku Addr_HL (HL=0), pamyat' prochitala bajt po adresu 0 (sam
-        #  opkod 0C3h), i skhemа schitala, chto cel' perehoda = 0. PC na
+        #  opkod 0C3h), i skhema schitala, chto cel' perehoda = 0. PC na
         #  kazhdom skane zagruzhal 0 i stoyal na meste.
         #  T E P E R'  v spiske vse komandy, u kotoryh operand -- chislo iz
         #  koda: LD r,n; CALL nn; JP nn; JP Z; JP NZ; IN A,(n); OUT (n),A;
@@ -1372,7 +1372,7 @@ def mk_control():
                  b_or(n, F.COL_BLK2, 440, c_call, n.const(u"0", y=454)))
     two = b_or(n, F.COL_BLK2, 480, c_djnz, c_ret)
     #  V E T K I  T I P I Z I R O V A N Y  Ya V N O: u bloka SEL tip
-    #  vyvoditsya po vetkam, i «golyj» literal 1 ryadom s peremennoj BYTE
+    #  vyvoditsya po vetkam, i "golyj" literal 1 ryadom s peremennoj BYTE
     #  zastavlyaet kompilyator gadat. Rezul tat pitayot Inc_By tipa BYTE.
     inc = n.block(u"SEL", [(u"G", two), (u"IN0", n.const(u"BYTE#1", y=490)),
                            (u"IN1", n.const(u"BYTE#2", y=520))], [POUT],
@@ -1446,7 +1446,7 @@ def mk_clock():
     #  otdel'noj fazoj.
     #
     #  P O Ch E M U  O T D E L N Y E  invar  dlya odnogo i togo zhe vyhoda.
-    #  Eto pravilo proekta (sm. docs/04_СХЕМЫ.md): odin istochnik -- odna
+    #  Eto pravilo proekta (sm. docs/04_SHEMY.md): odin istochnik -- odna
     #  vhodnaya peremennaya, inache biblioteka kloniruet vetv' i mozhet
     #  ostavit' u klona nepodklyuchennyj vhod.
     p.var(u"fbPhase", u"FB_RS", u"faza takta: perekl. kazhdyj skan")
@@ -1457,7 +1457,7 @@ def mk_clock():
     #  SET/RESET, iz nego T-trigger poluchaetsya v dva bloka:
     #        SET   = Enable AND NOT Q1
     #        RESET = Enable AND     Q1
-    #  Kazhdyj skan odin iz nih aktivен, poetomu Q1 perekladyvaetsya kazhdyj
+    #  Kazhdyj skan odin iz nih aktiven, poetomu Q1 perekladyvaetsya kazhdyj
     #  skan, a vyhody poluchayutsya vzaimno isklyuchayushchie.
     n = p.network(u"Takty: fazy pereklyuchayutsya kazhdyj skan")
     c_en_dc = n.invar(u"Enable", y=30)
@@ -1613,7 +1613,7 @@ ST_MEM_IMPL = u'''(* ======================== O B  A D R E S A H  ==============
    i obrashchenie popadaet ne tuda. Kompilyator chestno preduprezhdaet:
         C196: Neyavnaya konversiya iz tipa bez znaka WORD v tip so znakom
               INT: vozmozhno izmenenie znaka.
-   Eto ne príd... eto real nyj defekt yadra: CP/M zhivet v oblasti 0F000h,
+   Eto ne prid... eto real nyj defekt yadra: CP/M zhivet v oblasti 0F000h,
    a eto 61440.
 
    P O Ch E M U  WORD_TO_DINT, a ne WORD_TO_INT:  DINT -- 32-bitnyj so znakom,
@@ -2350,7 +2350,10 @@ IF GVL_Tests_CPM.Cpm_Test_Run THEN
                         fbCase.Mask_PC := TRUE;
 
                     6:  fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
-                        fbCase.Actual_A := BOOL_TO_BYTE(GVL_HW_IO.DO_2);
+                        (*  Ch E R E Z  SEL, A  N E  BOOL_TO_BYTE: eta konversiya daet USINT,
+    a pole Actual_A obyavleno BYTE. Vetki SEL yavno tipizirovany,
+    poetomu rezul tat odnoznachno BYTE. Pravilo -- sm. docs/04 . *)
+fbCase.Actual_A := SEL(GVL_HW_IO.DO_2, BYTE#0, BYTE#1);
                         fbCase.Mask_A := TRUE;
 
                     7:  fbCase.Expected_A := GVL_Tests_CPM.Cpm_Tests[i].Exp_Byte;
@@ -3080,7 +3083,7 @@ ST_GVL_TESTS = u'''VAR_GLOBAL
        vseh testov 40, a on pytalsya vz yat' sorok chetvertyj. V CODESYS
        vyhod za granitsu massiva ne dayot oshibki kompilyatsii i mozhet
        nichego ne soobshchit' vo vremya raboty -- poetomu eto stoyalo
-       незамеченным. Teper' granitsy sovpadayut: 1..75 i <= 75. *)
+       nezamechennym. Teper' granitsy sovpadayut: 1..75 i <= 75. *)
     Cpu_Tests            : ARRAY[1..75] OF ST_TestCase;
 
     Cpu_Test_Result      : ARRAY[1..75] OF BOOL;
@@ -3309,7 +3312,7 @@ VAR
         Cikl idet do 65535, a eto bol she INT (maksimum 32767):
         s schetchikom INT on posle 32767 ushel by v otricatel nye
         chisla. DINT vmeshchaet 0..65535 celikom, poetomu schetchik
-        cikla obyavlen kak DINT. Proverено otdel nym opytom
+        cikla obyavlen kak DINT. Provereno otdel nym opytom
         (generator/tools/probe_index.py): massiv ARRAY[0..65535]
         prinimaet indeks lyubogo cislovogo tipa bez preduprezhdenij. *)
     i : DINT;
@@ -3552,22 +3555,22 @@ def mk_plc_prg():
     #  PLC_AO_1). Karta portov -- docs/05_APPARATNYJ_VVOD_VYVOD.md.
     #  Logika i shema ot etogo ne menyayutsya: DOSTATOChNO dobavit "AT %IX0.0"
     #  k obyavleniyu nizhe.
-    #  А Д Р Е С А  Ж И В У Т  З Д Е С Ь,  И  Э Т О  О К О Н Ч А Т Е Л Ь Н О.
+    #  A D R E S A  ZH I V U T  Z D E S ,  I  E T O  O K O N CH A T E L  N O.
     #
-    #  Ранее здесь стоял комментарий, что привязку к Device Tree сделать
-    #  нельзя, потому что «в Device Tree нет модулей ввода-вывода». Это
-    #  оказалось неверно, и ошибка была не в CODESYS, а в МЕСТЕ объявления:
-    #  директива AT недопустима в списке ГЛОБАЛЬНЫХ переменных (там она даёт
-    #  40 ошибок C6: «' ;, :=, REF=, ( или [' требуется вместо 'AT'»),
-    #  но в PROGRAM она работает штатно.
+    #  Ranee zdes stoyal kommentarij, chto privyazku k Device Tree sdelat
+    #  nelzya, potomu chto "v Device Tree net modulej vvoda-vyvoda". Eto
+    #  okazalos neverno, i oshibka byla ne v CODESYS, a v MESTE obyavleniya:
+    #  direktiva AT nedopustima v spiske GLOBALNYH peremennyh (tam ona daet
+    #  40 oshibok C6: "' ;, :=, REF=, ( ili [' trebuetsya vmesto 'AT'"),
+    #  no v PROGRAM ona rabotaet shtatno.
     #
-    #  Для CODESYS Control Win V3 (SoftPLC) области %I и %Q существуют
-    #  по умолчанию, поэтому адреса принимаются без установки модулей:
-    #    %IX0.0 … %IX0.7  — дискретные входы   (порт IN  00h)
-    #    %QX0.0 … %QX0.7  — дискретные выходы  (порт OUT 01h)
-    #    %IW0 / %IW1      — аналоговые входы   (порты IN  02h/03h и 06h/07h)
-    #    %QW0 / %QW1      — аналоговые выходы  (порты OUT 04h/05h и 08h/09h)
-    #  Карта портов Z80 ↔ каналы ПЛК — docs/05_АППАРАТНЫЙ_ВВОД_ВЫВОД.md.
+    #  Dlya CODESYS Control Win V3 (SoftPLC) oblasti %I i %Q sushchestvuyut
+    #  po umolchaniyu, poetomu adresa prinimayutsya bez ustanovki modulej:
+    #    %IX0.0  %IX0.7  - diskretnye vhody   (port IN  00h)
+    #    %QX0.0  %QX0.7  - diskretnye vyhody  (port OUT 01h)
+    #    %IW0 / %IW1      - analogovye vhody   (porty IN  02h/03h i 06h/07h)
+    #    %QW0 / %QW1      - analogovye vyhody  (porty OUT 04h/05h i 08h/09h)
+    #  Karta portov Z80  kanaly PLK - docs/05_APPARATNYJ_VVOD_VYVOD.md.
     p.var(u"PLC_DI_0", u"BOOL", u"diskretnyy vhod 0 (IN 00h, bit 0)", u"%IX0.0")
     p.var(u"PLC_DI_1", u"BOOL", u"diskretnyy vhod 1", u"%IX0.1")
     p.var(u"PLC_DI_2", u"BOOL", u"diskretnyy vhod 2", u"%IX0.2")
@@ -3606,7 +3609,7 @@ def mk_plc_prg():
     #  B Y L O  T A K: vRun := GVL_Control.Emu_Run, i bol she nichego.
     #  Posledstvie izmereno na real nom progone: komanda HALT (76h) po
     #  adresu 0 raspolagalas' verno, FB_ControlUnit vyrabatyval Halted=TRUE,
-    #  no takt prodolzhal idti, PC uehаl dal she 2500 i nikogda ne
+    #  no takt prodolzhal idti, PC uehal dal she 2500 i nikogda ne
     #  ostanavlivalsya. To est' HALT ne ostanavlival protsessor.
     #  T E P E R' vRun gasit takt, kak tol ko FB_ControlUnit vystavil Halted.
     #  vCtl_Halted chitaetsya iz SET 12 -- eto znachenie proshlogo skana,
@@ -3634,7 +3637,7 @@ def mk_plc_prg():
     #  registr: nomer beretsya iz Init_Sel_Dst. A Init_Sel_Dst nikto ne
     #  perebiral -- programma testov vypuskala Init_En na odin skan i zhdala,
     #  chto zagruzitsya vsyo srazu. Po etomu zhe Init_En gruzitsya i PC.
-    #  Zdes shema sama vedet perebor: poka Init_En aktivен, nomer registra
+    #  Zdes shema sama vedet perebor: poka Init_En aktiven, nomer registra
     #  rastet 0,1,2 ... 15, a Init_Busy derzhit Init_En v programme testov
     #  do konca perebora. Kogda Init_En snyat -- schetchik sbrasyvaetsya.
     #
@@ -3882,12 +3885,12 @@ def mk_plc_prg():
     wr_val = b_sel(n10, F.COL_BLK2 + 320, 110,
                    n10.invar(u"GVL_InitRegs.Init_En", y=1300),
                    n10.invar(u"vY", y=1340), wr_init)
-    #  T A K T  З А П И С И  =  Clk_Exec  I L I  Init_En.
+    #  T A K T  Z A P I S I  =  Clk_Exec  I L I  Init_En.
     #  B Y L O: Clk := fbClock.Clk_Exec. No vo vremya initsializatsii
     #  Emu_Run = FALSE, znachit takt stoit i Clk_Exec ne voznikaet nikogda.
     #  Vnutri FB_RegFileZ80 strob zapisi -- eto AND(Wr_En, Clk), poetomu
     #  N I  O D I N  registr pri initsializatsii ne zapisyvalsya.
-    #  Izmerено: Init_Vals zadany (A=12h, B=34h, ...), Init_En podan,
+    #  Izmereno: Init_Vals zadany (A=12h, B=34h, ...), Init_En podan,
     #  a vse registry ostalis' nulevymi.
     clk_wr = b_or(n10, F.COL_BLK, 190,
                   n10.invar(u"fbClock.Clk_Exec", y=190),
@@ -3978,7 +3981,7 @@ def mk_plc_prg():
     #  B Y L O  T A K: na vhody FB_PC_Z80 podavalis tolko vPCLoad i vPCNew
     #  (upravlenie potokom: JP / CALL / RET / DJNZ). A GVL_InitRegs.Init_PC,
     #  kuda programma testov kladet startovyj adres, N E  Ch I T A L S Ya
-    #  N I G D E v PLC_PRG -- proverено poiskom po vsemu generatoru.
+    #  N I G D E v PLC_PRG -- provereno poiskom po vsemu generatoru.
     #  Posledstvie na real nom progone: kazhdyj test nachinalsya s PC = 0,
     #  a ne s Init_PC (dlya testov s Init_PC = 0120h i 0140h eto oshibka
     #  v samom nachale), i vse 40 proverok valilis.
@@ -3998,16 +4001,16 @@ def mk_plc_prg():
                    [(u"Load_Val", val_all),
                     (u"Load", load_all),
                     #  I N K R E M E N T -- T O L K O  V  F A Z E  V Y P O L N E N I Ya.
-                    #  Bylo const(TRUE): schetchik priращивался K A Zh D Y J  S K A N,
+                    #  Bylo const(TRUE): schetchik prirashchivalsya K A Zh D Y J  S K A N,
                     #  a komanda zanimaet DVA skana (dekodirovanie i vypolnenie).
                     #  Znachit za odnu komandu PC uskakal na dve pozicii i pereskakival
-                    #  bajty -- v tom chisle HALT. Izmerено: programma "4 NOP i HALT
+                    #  bajty -- v tom chisle HALT. Izmereno: programma "4 NOP i HALT
                     #  po adresu 4" nikogda ne ostanavlivalas'.
                     (u"Inc", n13.invar(u"fbClock.Clk_Exec", y=110)),
                     (u"Inc_By", n13.invar(u"vIncBy", y=150))],
                    [u"Addr", u"PC_Next"], x=F.COL_BLK + 160, y=30,
                    instance=u"fbPC")
-    #  zapis' v zashchelku: po fazе vykonaniya ILI poInit_En
+    #  zapis' v zashchelku: po faze vykonaniya ILI poInit_En
     c_exec = n13.invar(u"fbClock.Clk_Exec", y=190)
     c_init_lat = n13.invar(u"GVL_InitRegs.Init_En", y=510)
     lat_en = b_or(n13, F.COL_BLK2 + 480, 510, c_exec, c_init_lat)

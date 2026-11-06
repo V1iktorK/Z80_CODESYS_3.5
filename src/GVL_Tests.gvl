@@ -16,7 +16,7 @@ VAR_GLOBAL
        vseh testov 40, a on pytalsya vz yat' sorok chetvertyj. V CODESYS
        vyhod za granitsu massiva ne dayot oshibki kompilyatsii i mozhet
        nichego ne soobshchit' vo vremya raboty -- poetomu eto stoyalo
-       незамеченным. Teper' granitsy sovpadayut: 1..75 i <= 75. *)
+       nezamechennym. Teper' granitsy sovpadayut: 1..75 i <= 75. *)
     Cpu_Tests            : ARRAY[1..75] OF ST_TestCase;
 
     Cpu_Test_Result      : ARRAY[1..75] OF BOOL;
