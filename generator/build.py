@@ -243,7 +243,8 @@ END_TYPE
 GVL_ORDER = [u"GVL_Bus", u"GVL_Memory", u"GVL_Control", u"GVL_InitState",
              u"GVL_PLCVisu", u"GVL_Tests", u"GVL_InitRegs",
              u"GVL_HW_IO", u"GVL_HW_Buffer", u"GVL_IO", u"GVL_CPM",
-             u"GVL_Disk", u"GVL_CPM_Extra", u"GVL_BootFlags", u"GVL_Tests_CPM"]
+             u"GVL_Disk", u"GVL_CPM_Extra", u"GVL_BootFlags", u"GVL_Tests_CPM",
+             u"GVL_Regs"]
 # Poryadok importa = poryadok zavisimostej: snachala primitivy, zatem bloki.
 IMPORT_ORDER = [
     u"FB_Reg8", u"FB_Reg16", u"FB_RTrig", u"FB_FTrig", u"FB_RS", u"FB_Reg8Latch",
@@ -256,6 +257,7 @@ IMPORT_ORDER = [
     u"PLC_PRG",
     u"PRG_InitMemory", u"PRG_LoadTestProgram", u"PRG_CPM_Boot",
     u"PRG_CPM_BDOS", u"TEST_Z80_PREP", u"TEST_Z80", u"TEST_Z80_CPM",
+    u"PRG_RegLatch",
 ]
 
 
@@ -405,7 +407,8 @@ def main():
             log(u"  spisok zadach iz Z80_TASK_POUS: %s" % _pous)
         else:
             _pous = [u"PRG_InitMemory", u"TEST_Z80_PREP", u"PRG_CPM_Boot",
-                     u"TEST_Z80", u"PRG_CPM_BDOS", u"TEST_Z80_CPM", u"PLC_PRG"]
+                     u"TEST_Z80", u"PRG_CPM_BDOS", u"TEST_Z80_CPM", u"PLC_PRG",
+                     u"PRG_RegLatch"]
         for prg in _pous:
             #  P R A V I L N Y J  S P O S O B  T O L K O  O D I N: add(imya, imya).
             #  Vyяснeno otdelnym opytom (generator/tools/probe_task.py):

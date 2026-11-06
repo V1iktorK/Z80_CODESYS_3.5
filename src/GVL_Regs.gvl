@@ -1,0 +1,62 @@
+VAR_GLOBAL
+    (* ==========================================================================
+       SOSTOYaNIE REGISTROV PROCESSORA.
+
+       POCHEMU OTDELNAYa GVL, A NE PEREMENNYE PLC_PRG.
+       Registrovyj fajl -- eto KOLCO: vhod ALU (A) -> rezul tat (vY) ->
+       zapis v registr -> snova vhod. Vnutri odnogo POU takoe kolco CODESYS
+       razryvaet NULEM, a ne znacheniem proshlogo skana. Izmereno na progone
+       (sim_init3): posle uspeshnoj initsializacii (A = 0Fh) registr v
+       sleduyushchem skane stanovilsya 0, i INC A daval 1 vmesto 10h.
+
+       KAK ETO RESHAETSYa. Sostoyanie zhivet v dvuh naborah:
+         Rs_*  -- to, chto chitaet emulyator (znachenie proshlogo skana);
+         Nx_*  -- to, chto on vyrachislyaet v etom skane.
+       PLC_PRG chitaet Rs_* i pishet Nx_*. Otdelnaya programma PRG_RegLatch
+       (FBD) perenosit Nx_* v Rs_* i zapushchena POSLE PLC_PRG v zadache.
+       Takim obrazom kolco razryvaetsya NA GRANICE POU, i nikakoj neyavnoj
+       pamyati ne trebuetsya.
+       ========================================================================== *)
+    Rs_A : BYTE;   (* registr A (chitaet emulyator) *)
+    Rs_B : BYTE;   (* registr B (chitaet emulyator) *)
+    Rs_C : BYTE;   (* registr C (chitaet emulyator) *)
+    Rs_D : BYTE;   (* registr D (chitaet emulyator) *)
+    Rs_E : BYTE;   (* registr E (chitaet emulyator) *)
+    Rs_H : BYTE;   (* registr H (chitaet emulyator) *)
+    Rs_L : BYTE;   (* registr L (chitaet emulyator) *)
+    Rs_F : BYTE;   (* registr F (chitaet emulyator) *)
+    Rs_Sa : BYTE;   (* registr Sa (chitaet emulyator) *)
+    Rs_Sb : BYTE;   (* registr Sb (chitaet emulyator) *)
+    Rs_Sc : BYTE;   (* registr Sc (chitaet emulyator) *)
+    Rs_Sd : BYTE;   (* registr Sd (chitaet emulyator) *)
+    Rs_Se : BYTE;   (* registr Se (chitaet emulyator) *)
+    Rs_Sh : BYTE;   (* registr Sh (chitaet emulyator) *)
+    Rs_Sl : BYTE;   (* registr Sl (chitaet emulyator) *)
+    Rs_Sf : BYTE;   (* registr Sf (chitaet emulyator) *)
+    Nx_A : BYTE;   (* on zhe posle pereschyota *)
+    Nx_B : BYTE;   (* on zhe posle pereschyota *)
+    Nx_C : BYTE;   (* on zhe posle pereschyota *)
+    Nx_D : BYTE;   (* on zhe posle pereschyota *)
+    Nx_E : BYTE;   (* on zhe posle pereschyota *)
+    Nx_H : BYTE;   (* on zhe posle pereschyota *)
+    Nx_L : BYTE;   (* on zhe posle pereschyota *)
+    Nx_F : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Sa : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Sb : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Sc : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Sd : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Se : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Sh : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Sl : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Sf : BYTE;   (* on zhe posle pereschyota *)
+    Rs_R : BYTE;   (* schetchik obrashchenij k pamyati (proshlyj skan) *)
+    Nx_R : BYTE;   (* on zhe posle pereschyota *)
+
+    (*  S Ch E T Ch I K  K O M A N D  i  U K A Z A T E L  S T E K A.
+        Oni tozhe kol co ("chitaetsya zdes, pishetsya zdes"), poetomu zhivut
+        po tem zhe pravilam, chto i registry. *)
+    Rs_PC : WORD;   (* adres tekushchej komandy *)
+    Nx_PC : WORD;   (* on zhe posle vypolneniya *)
+    Rs_SP : WORD;   (* ukazatel steka *)
+    Nx_SP : WORD;   (* on zhe posle vypolneniya *)
+END_VAR

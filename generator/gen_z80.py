@@ -471,6 +471,10 @@ def mk_regfile():
     init_dst = p.var_in(u"Init_Sel_Dst", u"BYTE",
                         u"nomer registra pri initsializatsii")
     p.var_out(u"Src_Val", u"BYTE", u"vybrannoe znachenie")
+    #  V T O R O J  P O R T  Ch T E N I Ya: znachenie registra-priemnika.
+    #  Nuzhen, chtoby ALU schital "priemnik + operand", a ne "A + operand":
+    #  bez nego "INC B" uvelichival A i zapisyval ego v B.
+    p.var_out(u"Dst_Val", u"BYTE", u"znachenie registra-priemnika")
     for v in (u"A", u"B", u"C", u"D", u"E", u"H", u"L", u"F",
               u"Sa", u"Sb", u"Sc", u"Sd", u"Se", u"Sh", u"Sl", u"Sf"):
         p.var_out(v, u"BYTE", u"registr")
@@ -540,6 +544,25 @@ def mk_regfile():
     v = sel_chain(nr, c_ss, cur[0], cases, x=F.COL_BLK2, y0=40, ystep=50,
                   tip=u"BYTE")
     nr.outvar(u"Src_Val", v, x=F.COL_OUT, y=40)
+
+    # --- vtoroj port chteniya: registr-priemnik po Sel_Dst -------------------
+    nd = p.network(u"CHTENIE PRIEMNIKA: vybor registra po Sel_Dst")
+    y = 30
+    c_sd = nd.invar(sd, y=y)
+    y += 50
+    regs_d = []
+    for nm in NAMES:
+        regs_d.append(nd.invar(nm + u"_In", y=y))
+        y += 30
+    cases_d = []
+    for k in range(16):
+        ck = nd.const(u"%d" % k, y=y)
+        y += 30
+        eq = b_eq(nd, F.COL_BLK, y - 15, c_sd, ck)
+        cases_d.append((eq, regs_d[k]))
+    vd = sel_chain(nd, c_sd, regs_d[15], cases_d, x=F.COL_BLK2, y0=40,
+                   ystep=50, tip=u"BYTE")
+    nd.outvar(u"Dst_Val", vd, x=F.COL_OUT, y=40)
 
     # --- adres pary HL: (H shl 8) or L -------------------------------------
     # Nuzhen dlya kosvennoj adresatsii (HL): za odin skan pamyat dolzhna
@@ -694,6 +717,14 @@ def mk_alu():
     p.var(u"Logic_And", u"BYTE", u"A and B (tip zakreplen yavno)")
     p.var(u"Logic_Or", u"BYTE", u"A or B (tip zakreplen yavno)")
     p.var(u"Logic_Xor", u"BYTE", u"A xor B (tip zakreplen yavno)")
+    p.var(u"vIsCp", u"BOOL", u"komanda CP (op = 7)")
+    p.var(u"vBorrow", u"BOOL", u"vychitanie ili CP: N = 1, C -- zaym")
+    p.var(u"vAddCM", u"BOOL", u"perenos dlya ADD/ADC (u logiki vsegda 0)")
+    p.var(u"vHBit", u"BOOL", u"poluperenos arifmetiki")
+    p.var(u"vIsAnd", u"BOOL", u"operaciya AND (op = 4): H = 1")
+    p.var(u"vPar", u"BOOL", u"chetnost rezul tata")
+    p.var(u"vEqAb", u"BOOL", u"A.7 = B.7")
+    p.var(u"vNeAy", u"BOOL", u"A.7 <> Y.7")
     p.var(u"Ovf_Add", u"BOOL", u"perepolnenie pri slozhenii (tip zakreplen)")
     p.var(u"Ovf_Sub", u"BOOL", u"perepolnenie pri vychitanii (tip zakreplen)")
 
@@ -819,50 +850,49 @@ def mk_alu():
     c_y = n4.invar(u"Y", y=30)
     c_i7 = n4.const(u"16#80", y=70)
     c_z0 = n4.const(u"0", y=110)
-    c_cin4 = n4.invar(cin, y=150)
-    c_b4 = n4.invar(b, y=190)   # dlya H ispol'zuem B_Forced ne nuzhno: INC/DEC
-                                # schitaet H po formule s B=1, sm. set' 4
-    # mezhsetevye signaly -- cherez imena; kazhdoe potreblenie otdel'nym
-    # ekzemplyarom invar, chtoby ne vyzyvat' klonirovanie (sm. set' 3)
+    c_addc = n4.invar(u"Add_C", y=150)
+    c_subc = n4.invar(u"Sub_C", y=190)
     c_issub = n4.invar(u"Is_Sub", y=430)
-    c_issub2 = n4.invar(u"Is_Sub", y=445)
     c_islog = n4.invar(u"Is_Logic", y=470)
-    c_islog2 = n4.invar(u"Is_Logic", y=485)
     c_isar = n4.invar(u"Is_Arith", y=510)
-    c_addc = n4.invar(u"Add_C", y=550)
-    c_subc = n4.invar(u"Sub_C", y=590)
-    # S = Y.7
-    #  V N I M A N I E: ran'she zdes' stoyalo pryamo
-    #      Flag_S := Y AND 16#80
-    #  Eto D V E  oshibki v odnoj stroke:
-    #   1) T I P. AND dvuh bajtov daet BYTE, a Flag_S obyavlen BOOL --
-    #      kompilyator soobshchal "C32: Nevozmozhno konvertirovat tip 'USINT'
-    #      v tip 'BOOL'" (BYTE on schitaet cherez USINT);
-    #   2) S M Y S L. Rezul tat AND -- eto 16#80 ili 16#00, a ne 1/0.
-    #  Pravil no: sravnit' maskirovannyj bit s samoj maskoj.
+    c_op = n4.invar(op, y=550)
+    c_op_b = n4.invar(op, y=590)
+    # S = bit 7 rezul tata
     v_s_mask = n4.block(u"AND", [(PIN1, c_y), (PIN2, c_i7)], [POUT],
                         x=F.COL_BLK, y=30)
     v_s = b_eq(n4, F.COL_BLK, 60, v_s_mask, c_i7)
     n4.outvar(u"Flag_S", v_s, x=F.COL_OUT, y=30)
-    # Z = (Y = 0)
+    # Z = rezul tat raven nulyu
     v_z = b_eq(n4, F.COL_BLK, 110, c_y, c_z0)
     n4.outvar(u"Flag_Z", v_z, x=F.COL_OUT, y=110)
-    # C berem iz 16-bitnoj summy: dlya ADD -- perenos, dlya SUB -- zaym
-    v_c = b_sel(n4, F.COL_BLK2, 30, c_issub, c_addc, c_subc)
-    n4.outvar(u"Flag_C", v_c, x=F.COL_OUT + 140, y=30)
+
+    #  Ch T O  B Y L O  N E  T A K  V  F L A G A H:
+    #      Flag_N = SEL(Is_Logic, Is_Sub, FALSE)
+    #  -- u SUB N stanovilsya NULEM, potomu chto dlya arifmetiki Is_Logic
+    #  lozh, i vybor shel v vetku FALSE. A op 7 (CP) ne popadal ni tuda, ni
+    #  syuda: on logicheskij (op >= 4), no NE SUB, hotya vedet sebya kak SUB.
+    #  Teper est odin imenovannyj priznak "eto vychitanie/zaym" dlya N i C,
+    #  on zhe ispol zuetsya dlya perepolneniya.
+    n4.outvar(u"vIsCp", b_eq(n4, F.COL_BLK, 550, c_op,
+                             n4.const(u"16#07", y=564)),
+              x=F.COL_OUT, y=550)
+    n4.outvar(u"vBorrow", b_or(n4, F.COL_BLK, 610, c_issub,
+                               n4.invar(u"vIsCp", y=624)),
+              x=F.COL_OUT, y=610)
+    #  C: dlya logiki 0, dlya SUB/SBC/CP -- zaym, dlya ADD/ADC -- perenos
+    n4.outvar(u"vAddCM", b_and(n4, F.COL_BLK, 660, c_addc,
+                               b_not(n4, F.COL_BLK, 690, c_islog)),
+              x=F.COL_OUT, y=660)
+    n4.outvar(u"Flag_C", b_sel(n4, F.COL_BLK2, 660,
+                               n4.invar(u"vBorrow", y=660),
+                               n4.invar(u"vAddCM", y=690), c_subc),
+              x=F.COL_OUT + 140, y=30)
+    #  N = 1 dlya SUB/SBC/CP
+    n4.outvar(u"Flag_N", n4.invar(u"vBorrow", y=740),
+              x=F.COL_OUT + 140, y=110)
+
     # ---- poluperenos H: perenos iz bita 3 v bit 4 ----
     #  F O R M U L A:  H = ((A AND 0Fh) + (B AND 0Fh)) AND 10h  <>  0
-    #  To est skladyvaem MLADShIE TETRADY i smotrim, peresek li rezul tat
-    #  granitsu tetrady.
-    #
-    #  Chto zdes' bylo N E T A K (dve oshibki srazu):
-    #    Flag_H := ((A AND 08h) AND (B AND 08h)) OR ((NOT (Y AND 08h)) AND (A AND 08h))
-    #    1) T I P: AND nad dvumya bajtami daet BYTE, potom OR -- tozhe BYTE,
-    #       a posledniy AND uzhe smeshannyj (BYTE i BOOL), i rezul tat
-    #       prisvaivalsya peremennoj BOOL. Otsyuda pary C32 'BOOL' <-> 'USINT';
-    #    2) S M Y S L: eto voobshche ne poluperenos -- maskirovanie ne daet
-    #       perenosa iz bita 3.
-    #  Vse bloki teper' odnotipnye: AND/ADD nad BYTE, sravnenie i AND -- BOOL.
     c_i0f = n4.const(u"16#0F", y=210)
     c_i10 = n4.const(u"16#10", y=250)
     c_a4 = n4.invar(a, y=270)
@@ -875,18 +905,22 @@ def mk_alu():
     hmask = n4.block(u"AND", [(PIN1, hsum), (PIN2, c_i10)], [POUT],
                      x=F.COL_BLK2 + 160, y=290)
     h_bit = b_eq(n4, F.COL_BLK2 + 320, 300, hmask, c_i10)
-    h_fin = b_and(n4, F.COL_BLK2 + 480, 320, h_bit, c_isar)
-    n4.outvar(u"Flag_H", h_fin, x=F.COL_OUT + 600, y=300)
-    # N = 1 dlya SUB/SBC/CP
-    v_n = b_sel(n4, F.COL_BLK2, 110, c_islog2, c_issub2,
-                n4.const(u"FALSE", y=124))
-    n4.outvar(u"Flag_N", v_n, x=F.COL_OUT + 140, y=110)
+    n4.outvar(u"vHBit", b_and(n4, F.COL_BLK2 + 480, 320, h_bit, c_isar),
+              x=F.COL_OUT + 600, y=300)
+    #  H dlya logiki: u AND on V S E G D A 1, u OR i XOR -- 0. Poetomu vetyka
+    #  ne "poluperenos", a nomer operacii: op = 4 -- eto AND.
+    n4.outvar(u"vIsAnd", b_eq(n4, F.COL_BLK, 590, c_op_b,
+                              n4.const(u"16#04", y=604)),
+              x=F.COL_OUT, y=590)
+    n4.outvar(u"Flag_H", b_sel(n4, F.COL_BLK2, 780,
+                               c_islog,
+                               n4.invar(u"vIsAnd", y=780),
+                               n4.invar(u"vHBit", y=794)),
+              x=F.COL_OUT + 600, y=340)
 
-    # ---------------- 5. P/V: chetnost' dlya logiki, perepolnenie dlya arifm ----------------
-    n5 = p.network(u"P/V: chetnost' XOR-cepochkoj (logika) ili perepolnenie (arifmetika)")
+    # ---------------- 5. P/V: chetnost dlya logiki, perepolnenie dlya arifm ----
+    n5 = p.network(u"P/V: chetnost XOR-cepochkoj (logika) ili perepolnenie")
     c_y5 = n5.invar(u"Y", y=30)
-    # otdel'nye ekzemplyary dlya kazhdogo potrebleniya (sm. poyasnenie v seti 3)
-    c_issub5 = n5.invar(u"Is_Sub", y=430)
     c_islog5 = n5.invar(u"Is_Logic", y=470)
     bits = []
     yy = 30
@@ -903,17 +937,13 @@ def mk_alu():
     for i in range(2, 8):
         xo = n5.block(u"XOR", [(PIN1, xo), (PIN2, bits[i])], [POUT],
                       x=F.COL_BLK2 + 160, y=30 + (i - 1) * 45)
-    #  Ch E T N O S T'  D L Ya  P / V.
-    #  XOR vseh vos mi bitov daet 0, esli edinichetnoe chislo, i 1, esli
-    #  nechetnoye. Z80 stavir P/V = 1 pri Ch E T N O M chisle edinic,
-    #  znachit nuzhno sravnit' s nulem.
-    #
-    #  Bylo:  par = NOT(xo)  -- i eto D V E oshibki:
-    #   1) NOT nad bajtom daet bajt (0FFh ili 0FEh), a ne logiku;
-    #   2) tip: Flag_PV obyavlen BOOL, a poluchal USINT. Kompilyator i
-    #      soobshchal "C32: Nevozmozhno konvertirovat tip 'USINT' v tip 'BOOL'".
-    par = b_eq(n5, F.COL_BLK2 + 320, 30, xo, n5.const(u"0", y=44))
-    # perepolnenie: ADD -> (A.7 = B.7) i (A.7 <> Y.7); SUB -> (A.7 <> B.7) i (A.7 <> Y.7)
+    #  XOR vseh vos mi bitov daet 1 pri NEChETNOM chisle edinic. Z80 stavit
+    #  P/V = 1 pri Ch E T N O M, znachit sravnivaem s nulem.
+    n5.outvar(u"vPar", b_eq(n5, F.COL_BLK2 + 320, 30, xo,
+                            n5.const(u"0", y=44)),
+              x=F.COL_OUT + 900, y=60)
+    #  perepolnenie: ADD -- (A.7 = B.7) i (A.7 <> Y.7);
+    #                SUB -- (A.7 <> B.7) i (A.7 <> Y.7)
     c_a5 = n5.invar(a, y=420)
     c_b5 = n5.invar(b, y=460)
     sa = n5.block(u"AND", [(PIN1, c_a5), (PIN2, n5.const(u"16#80", y=434))],
@@ -922,21 +952,28 @@ def mk_alu():
                   [POUT], x=F.COL_BLK2 + 320, y=460)
     sy = n5.block(u"AND", [(PIN1, c_y5), (PIN2, n5.const(u"16#80", y=514))],
                   [POUT], x=F.COL_BLK2 + 320, y=500)
-    eq_ab_add = b_eq(n5, F.COL_BLK2 + 480, 420, sa, sb)
-    eq_ab_sub = b_not(n5, F.COL_BLK2 + 480, 460, eq_ab_add)
-    ne_ay = b_not(n5, F.COL_BLK2 + 480, 500, b_eq(n5, F.COL_BLK2 + 480, 540, sa, sy))
-    ovf_add = b_and(n5, F.COL_BLK2 + 640, 420, eq_ab_add, ne_ay)
-    ovf_sub = b_and(n5, F.COL_BLK2 + 640, 480, eq_ab_sub, ne_ay)
-    #  I zdes' to zhe samoe: vyhody obobshchennogo AND provedeny cherez
-    #  yavnye peremennye BOOL, inache sleduyushchiy SEL poluchaet vetki
-    #  bez zakreplennogo tipa (sm. Logic_And i kommentarij k nemu).
-    n5.outvar(u"Ovf_Add", ovf_add, x=F.COL_OUT + 700, y=420)
-    n5.outvar(u"Ovf_Sub", ovf_sub, x=F.COL_OUT + 700, y=480)
-    pv_arith = b_sel(n5, F.COL_BLK2 + 800, 440, c_issub5,
+    n5.outvar(u"vEqAb", b_eq(n5, F.COL_BLK2 + 480, 420, sa, sb),
+              x=F.COL_OUT + 700, y=420)
+    n5.outvar(u"vNeAy", b_not(n5, F.COL_BLK2 + 480, 500,
+                              b_eq(n5, F.COL_BLK2 + 480, 540, sa, sy)),
+              x=F.COL_OUT + 700, y=500)
+    n5.outvar(u"Ovf_Add", b_and(n5, F.COL_BLK2 + 640, 420,
+                                n5.invar(u"vEqAb", y=420),
+                                n5.invar(u"vNeAy", y=434)),
+              x=F.COL_OUT + 700, y=460)
+    n5.outvar(u"Ovf_Sub", b_and(n5, F.COL_BLK2 + 640, 480,
+                                b_not(n5, F.COL_BLK2 + 640, 480,
+                                      n5.invar(u"vEqAb", y=494)),
+                                n5.invar(u"vNeAy", y=508)),
+              x=F.COL_OUT + 700, y=520)
+    pv_arith = b_sel(n5, F.COL_BLK2 + 800, 440,
+                     n5.invar(u"vBorrow", y=440),
                      n5.invar(u"Ovf_Add", y=430),
                      n5.invar(u"Ovf_Sub", y=460))
-    pv = b_sel(n5, F.COL_BLK2 + 960, 200, c_islog5, pv_arith, par)
-    n5.outvar(u"Flag_PV", pv, x=F.COL_OUT + 900, y=200)
+    n5.outvar(u"Flag_PV", b_sel(n5, F.COL_BLK2 + 960, 200, c_islog5,
+                                pv_arith,
+                                n5.invar(u"vPar", y=214)),
+              x=F.COL_OUT + 900, y=200)
 
     return p
 
@@ -1037,12 +1074,68 @@ def mk_decoder():
     n = p.network(u"Dekodirovanie: sravneniya s kodami komand")
     c_ir = n.invar(ir, y=30)
     y = 500
+    #  Kolonka imenovannyh peremennyh chasti 2 (nomera registrov).
+    XN = 1200
 
     def cmp_const(val, yy):
         return n.const(u"16#%02X" % val, y=yy + 12)
 
     def eq_const(val, x, yy):
-        return b_eq(n, x, yy, c_ir, cmp_const(val, yy))
+        u"""Sravnenie IR s kodom + IMENOVANNAYa peremennaya, vozvrat -- imya.
+
+        P O Ch E M U  imya, a ne ssylka na blok: kazhdaya komanda nuzhna v
+        neskolkih mestah (Ctl_Is_*, Ctl_Imm_Mode, vyborki), a pryamaya ssylka
+        na vyhod EQ daet fan-out. U klona, kak vyyasneno eksperimentom s
+        importom, mozhet ostat'sya nepodklyuchennyj vhod -- i togda signal
+        chitaetsya kak musor. Cherez peremennuyu svyaz' odnokratnaya.
+        """
+        eq = b_eq(n, x, yy, c_ir, cmp_const(val, yy))
+        nm = u"vCmd%02X" % val
+        p.var(nm, u"BOOL", u"komanda %02Xh" % val)
+        n.outvar(nm, eq, x=XN + 800, y=yy)
+        return nm
+
+    #  P R O M E Zh U T O Ch N Y E  S I G N A L Y  Ch A S T I  2.
+    #  Vse oni imenovannye: kazhdoe potreblenie chitaet svoyu peremennuyu,
+    #  i nikakoj vyhod bloka ne pitayot dva vhoda (inache klon poyavlyaetsya
+    #  s nepodklyuchennym vhodom, i sravneniya schitayut musor).
+    p.var(u"vLo3", u"BYTE", u"bity 0..2 koda komandy (nomer istochnika)")
+    p.var(u"vHi3", u"BYTE", u"bity 3..5 koda komandy (priemnik i kod ALU)")
+    p.var(u"vHi2", u"BYTE", u"bity 6..7 koda komandy (klass komandy)")
+    p.var(u"vDstProj", u"BYTE", u"nomer registra-priemnika v numeracii proekta")
+    p.var(u"vSrcProj", u"BYTE", u"nomer registra-istochnika v numeracii proekta")
+    p.var(u"vDstAOnly", u"BOOL", u"priemnik prinuditel no A (ALU, IN A,(n))")
+    p.var(u"vDstSel", u"BYTE", u"Ctl_Sel_Dst")
+    p.var(u"vDstMem", u"BOOL", u"priemnik -- pamyat (HL), a ne registr")
+    p.var(u"vSrcSel", u"BYTE", u"Ctl_Sel_Src")
+    p.var(u"vImmLdn", u"BOOL", u"LD r,n: operand beretsya iz IR")
+    p.var(u"vIsAluGrp", u"BOOL", u"gruppa ALU (80h..BFh)")
+    p.var(u"vIsLdRr", u"BOOL", u"gruppa LD r,r' (40h..7Fh)")
+    p.var(u"vIrC7", u"BYTE", u"IR AND C7h -- maska klassov LD r,n i INC/DEC r")
+    p.var(u"vIsLdn", u"BOOL", u"gruppa LD r,n")
+    p.var(u"vInc4", u"BOOL", u"gruppa x4 (INC r)")
+    p.var(u"vDec5", u"BOOL", u"gruppa x5 (DEC r)")
+    p.var(u"vIncDec", u"BOOL", u"INC ili DEC: operand raven 1")
+    p.var(u"vIsXor", u"BOOL", u"kod operacii Z80 5 (XOR)")
+    p.var(u"vIsOrp", u"BOOL", u"kod operacii Z80 6 (OR)")
+    p.var(u"vSw56", u"BOOL", u"nuzhno pomenyat kody 5 i 6 mestami")
+    p.var(u"vSwap", u"BYTE", u"kod operacii posle obmena")
+    p.var(u"vOpAlu", u"BYTE", u"kod operacii dlya gruppy ALU")
+    p.var(u"vOpDec", u"BYTE", u"kod operacii dlya INC/DEC (0 ili 2)")
+    p.var(u"vAluSel", u"BYTE", u"Ctl_ALU_Op")
+    p.var(u"vIsCp", u"BOOL", u"komanda CP: rezul tat v registr ne pishetsya")
+    p.var(u"vWrL", u"BOOL", u"zapis razreshena klassom LD")
+    p.var(u"vWrR", u"BOOL", u"zapis razreshena ALU ili INC/DEC")
+    p.var(u"vWrBase", u"BOOL", u"zapis razreshena komandoj")
+    p.var(u"vWrBase2", u"BOOL", u"to zhe s uchetom IN A,(n)")
+    p.var(u"vWrOk", u"BOOL", u"zapis razreshena i priemnik ne (HL)")
+    p.var(u"vWrEn", u"BOOL", u"Ctl_Wr_Enable")
+    p.var(u"vSrcMem", u"BOOL", u"istochnik (HL)")
+    p.var(u"vMemRdAuto", u"BOOL", u"chtenie pamyati po maske")
+    p.var(u"vMemRd", u"BOOL", u"Ctl_Mem_Rd")
+    p.var(u"vMemWrAuto", u"BOOL", u"zapis v pamyat po maske")
+    p.var(u"vMemWrAuto2", u"BOOL", u"to zhe, krome HALT")
+    p.var(u"vMemWr", u"BOOL", u"Ctl_Mem_Wr")
 
     # --- gruppy komand ---
     y = 30
@@ -1053,7 +1146,6 @@ def mk_decoder():
     r_jp = eq_const(0xC3, F.COL_BLK, y); y += 26
     r_jpz = eq_const(0xCA, F.COL_BLK, y); y += 26
     r_jpnz = eq_const(0xC2, F.COL_BLK, y); y += 26
-    r_ldn = eq_const(0x3E, F.COL_BLK, y); y += 26
     r_ldahl = eq_const(0x7E, F.COL_BLK, y); y += 26
     r_ldhla = eq_const(0x77, F.COL_BLK, y); y += 26
     r_ldann = eq_const(0x3A, F.COL_BLK, y); y += 26
@@ -1064,9 +1156,119 @@ def mk_decoder():
     # --- ALU Op ---
     n4 = n.block(u"SHR", [(PIN1, c_ir), (PIN2, n.const(u"3", y=y))], [POUT],
                  x=F.COL_BLK, y=y)
-    m7 = n.const(u"16#07", y=y + 14)
-    grp = n.block(u"AND", [(PIN1, c_ir), (PIN2, m7)], [POUT],
-                  x=F.COL_BLK, y=y + 26)
+    #  ======================================================================
+    #  Ch A S T'  2.  N O M E R A  R E G I S T R O V  I  K O D  O P E R A C I I.
+    #
+    #  Bloki etoy chasti stojat v otdel'noy kolonke XN, pravee vseh ostal'nyh,
+    #  chtoby tablica komand sleva ostaalas' chitaemoj.
+    #
+    #  P R A V I L O  (oplacheno otladkoy): kazhdyj promezhutochnyj signal
+    #  imenuetsya i chitaetsya otdel'nym ekzemplyarom invar na kazhdoe
+    #  potreblenie. Inache biblioteka kloniruet vetv', i u klona mozhet
+    #  ostat'sya nepodklyuchennyj vhod -- togda sravnenie schitaet musor.
+    #  Izmereno: "IR AND C7h" pitaya srazu dva sravneniya, dlya INC A (3Ch)
+    #  vybiralsya kod operacii SUB, i A stanovilsya 0Eh vmesto 10h.
+    #  ======================================================================
+
+    def zr2proj(varname, yy):
+        u"""Tri bita koda registra Z80 -> nomer registra v numeracii proekta.
+
+        varname -- imya peremennoj s tremya bitami koda r (uzhe vyrezannymi
+        iz IR). Vozvrat: (r + 1) AND 7, a dlya (HL) -- nomer 8.
+        """
+        plus = b_add(n, XN + 160, yy,
+                     n.invar(varname, y=yy), n.const(u"BYTE#1", y=yy + 14))
+        wrap = n.block(u"AND",
+                       [(PIN1, plus), (PIN2, n.const(u"BYTE#7", y=yy + 28))],
+                       [POUT], x=XN + 320, y=yy)
+        is_hl = b_eq(n, XN + 160, yy + 50,
+                     n.invar(varname, y=yy + 50),
+                     n.const(u"BYTE#6", y=yy + 64))
+        return b_sel(n, XN + 480, yy, is_hl, wrap,
+                     n.const(u"BYTE#8", y=yy + 14))
+
+    #  K O D I R O V K A  Z 8 0 (tri bita r v kode komandy):
+    #      0 = B   1 = C   2 = D   3 = E   4 = H   5 = L   6 = (HL)   7 = A
+    #  N U M E R A C I Ya  P R O E K T A (tak indeksiruetsya FB_RegFileZ80):
+    #      0 = A   1 = B   2 = C   3 = D   4 = E   5 = H   6 = L   7 = F
+    #      dlya chteniya takzhe: 8 = (HL), 9 = neposredstvennyj operand
+    #  P E R E V O D:  nomer_proekta = (r + 1) AND 7, dlya r = 6 -> 8.
+    #
+    #  P O Ch E M U  P E R E V O D  N U Zh E N. Ran'she dekoder podaval v
+    #  registrovuyu chast nomer pryamo iz koda komandy, a numeracii raznye:
+    #      "ADD A,B" (80h) chital registr A vmesto B,
+    #      "SUB B"   (90h) chital registr C,
+    #      "LD A,L"  (7Dh) pisala rezul tat v registr F,
+    #      "INC B"   (04h) pisala v registr H.
+    #  Padali 29 proverok iz 40 pri polnost'yu rabotayushchih initsializacii,
+    #  ALU, pamyati i steke -- potomu chto viny ne bylo ni v odnom iz nih.
+
+    #  bity 0..2 koda komandy -- nomer registra-istochnika,
+    #  bity 3..5 -- nomer registra-priemnika.
+    n.outvar(u"vLo3", n.block(u"AND", [(PIN1, c_ir),
+                                       (PIN2, n.const(u"16#07", y=44))],
+                               [POUT], x=XN, y=30), x=XN + 640, y=30)
+    n.outvar(u"vHi3", n.block(u"AND", [(PIN1, n4),
+                                       (PIN2, n.const(u"16#07", y=104))],
+                               [POUT], x=XN, y=90), x=XN + 640, y=90)
+    n.outvar(u"vDstProj", zr2proj(u"vHi3", 30), x=XN + 640, y=190)
+    n.outvar(u"vSrcProj", zr2proj(u"vLo3", 170), x=XN + 640, y=330)
+
+    #  dva starshih bita koda -- klass komandy (gruppa)
+    n.outvar(u"vHi2", n.block(u"AND", [(PIN1, c_ir),
+                                       (PIN2, n.const(u"16#C0", y=444))],
+                              [POUT], x=XN, y=430), x=XN + 640, y=430)
+    n.outvar(u"vIsAluGrp", b_eq(n, XN, 470, n.invar(u"vHi2", y=470),
+                                n.const(u"16#80", y=484)),
+             x=XN + 640, y=470)
+    #  I R  A N D  C 0 h = 4 0 h -- gruppa "LD r,r'" i "LD (HL),r" (40h..7Fh)
+    n.outvar(u"vIsLdRr", b_eq(n, XN, 510, n.invar(u"vHi2", y=510),
+                              n.const(u"16#40", y=524)),
+             x=XN + 640, y=510)
+
+    #  I R  A N D  C 7 h = 0 6 h -- gruppa "LD r,n"
+    #  (06h 0Eh 16h 1Eh 26h 2Eh 36h 3Eh). Maskoj, a ne spiskom sravnenij:
+    #  tak korotko i srazu vidno, kakie bity otvechayut za klass komandy.
+    n.outvar(u"vIrC7", n.block(u"AND", [(PIN1, c_ir),
+                                        (PIN2, n.const(u"16#C7", y=564))],
+                               [POUT], x=XN, y=550), x=XN + 640, y=550)
+    n.outvar(u"vIsLdn", b_eq(n, XN, 590, n.invar(u"vIrC7", y=590),
+                             n.const(u"16#06", y=604)),
+             x=XN + 640, y=590)
+    #  I R  A N D  C 7 h = 0 4 h / 0 5 h -- INC r / DEC r (gruppy x4 / x5).
+    #  Ta zhe maska pokryvaet i 3Ch / 3Dh: 3Ch AND C7h = 04h, 3Dh AND C7h = 05h.
+    n.outvar(u"vInc4", b_eq(n, XN, 630, n.invar(u"vIrC7", y=630),
+                            n.const(u"16#04", y=644)),
+             x=XN + 640, y=630)
+    n.outvar(u"vDec5", b_eq(n, XN, 670, n.invar(u"vIrC7", y=670),
+                            n.const(u"16#05", y=684)),
+             x=XN + 640, y=670)
+    n.outvar(u"vIncDec", b_or(n, XN, 710, n.invar(u"vInc4", y=710),
+                              n.invar(u"vDec5", y=724)),
+             x=XN + 640, y=710)
+
+    #  P R I E M N I K.  Dlya gruppy ALU i dlya IN A,(n) on vsegda A (nomer 0).
+    n.outvar(u"vDstAOnly", b_or(n, XN, 760, n.invar(u"vIsAluGrp", y=760),
+                                n.invar(r_in, y=774)),
+             x=XN + 640, y=760)
+    n.outvar(u"vDstSel", b_sel(n, XN, 810, n.invar(u"vDstAOnly", y=810),
+                               n.invar(u"vDstProj", y=824),
+                               n.const(u"BYTE#0", y=838)),
+             x=XN + 640, y=810)
+    #  priemnik (HL)? Togda registr ne zapisyvaetsya -- rabotaet pamyat'.
+    n.outvar(u"vDstMem", b_eq(n, XN, 870, n.invar(u"vHi3", y=870),
+                              n.const(u"16#06", y=884)),
+             x=XN + 640, y=870)
+    #  I S T O Ch N I K.  Dlya "LD r,n" operand beretsya iz IR (kod 9).
+    n.outvar(u"vSrcSel", b_sel(n, XN, 920, n.invar(u"vIsLdn", y=920),
+                               n.invar(u"vSrcProj", y=934),
+                               n.const(u"BYTE#9", y=948)),
+             x=XN + 640, y=920)
+    #  "LD r,n", u kotorogo priemnik NE (HL): operand beretsya iz IR
+    n.outvar(u"vImmLdn", b_and(n, XN, 980, n.invar(u"vIsLdn", y=980),
+                               b_not(n, XN, 1010, n.invar(u"vDstMem", y=1010))),
+             x=XN + 640, y=980)
+
     #  K O D  O P E R A C I I  A L U  (Ctl_ALU_Op).
     #
     #  B Y L O  T A K (i eto ne rabotalo):
@@ -1075,45 +1277,105 @@ def mk_decoder():
     #      alu_log  = alu_rm + 3
     #      alu_sel  = SEL(is_logic, alu_log, alu_rm)
     #  Uslovie "IR >> 3 >= 4" istinno pochti dlya vseh opkodov, poetomu vse
-    #  komandy shli po "logicheskoy" vetke i poluchali kod, nikak ne svyazann yy
-    #  s operaciej. Izmereno na progone (sim_one, test T13 INC A):
-    #      IR = 3Ch, Ctl_ALU_Op = 7 (eto CP), a nuzhno 0 (ADD)
-    #      PLC_PRG.vY = 0, GVL_PLCVisu.A ostalsya 0Fh vmesto 10h
-    #  To est A ne uvelichivalsya, potomu chto ALU vypolnyal sravnenie.
+    #  komandy shli po "logicheskoy" vetke i poluchali kod, nikak ne svyazannyy
+    #  s operaciej. Izmereno (sim_one, test T13 INC A):
+    #      IR = 3Ch, Ctl_ALU_Op = 7 (eto CP), a nuzhno 0 (ADD).
     #
-    #  P R A V I L A  Z80.
-    #  Arifmetiko-logicheskaya gruppa -- opkody 80h..BFh, to est dva starshih
-    #  bita ravny 10b. Nomer operacii vnutri gruppy -- tri mladshih bita (grp):
+    #  V T O R A Ya  O Sh I B K A, naydennaya po progonu soroka proverok: nomer
+    #  operacii bralsya iz MLADSHIH treh bit (IR AND 07h), a v gruppe 80h..BFh
+    #  eto nomer registra-istochnika. Nomer operacii stoit v bitah 3..5 -- vHi3.
+    #  Iz-za etogo "SUB B" (90h) i "OR B" (B0h) vypolnyalis' kak ADD.
+    #
+    #  P R A V I L A  Z80 (bity 3..5 gruppy 80h..BFh):
     #      0 ADD   1 ADC   2 SUB   3 SBC   4 AND   5 XOR   6 OR   7 CP
-    #  V nashem ALU prinyat drugoy poryadok dlya treh operacij:
+    #  V nashem ALU prinyat drugoy poryadok dlya dvuh operacij:
     #      4 AND   5 OR    6 XOR   7 CP
     #  Znachit nuzhno pomenyat mestami 5 i 6 (XOR i OR).
     #
-    #  INC/DEC (opkody x4/x5 i 3Ch/3Dh) -- eto slozhenie ili vychitanie
-    #  edinicy: kod operacii 0 (ADD) ili 2 (SUB). Sam operand = 1 podayot
-    #  vhod B_Forced.
-    #
+    #  INC/DEC (x4/x5 i 3Ch/3Dh) -- eto slozhenie ili vychitanie edinicy:
+    #  kod operacii 0 (ADD) ili 2 (SUB). Sam operand = 1 podayot vhod B_Forced.
     #  Vse ostalnye komandy ALU ne ispolzuyut, dlya nih kod 0.
-    hi2 = n.block(u"AND", [(PIN1, c_ir), (PIN2, n.const(u"16#C0", y=y + 10))],
-                  [POUT], x=F.COL_BLK, y=y)
-    is_alu_grp = n.block(u"EQ", [(PIN1, hi2), (PIN2, n.const(u"16#80", y=y + 30))],
-                         [POUT], x=F.COL_BLK, y=y + 26)
-    gg4 = n.block(u"EQ", [(PIN1, grp), (PIN2, n.const(u"16#04", y=y + 60))],
-                  [POUT], x=F.COL_BLK2, y=y + 46)
-    gg5 = n.block(u"EQ", [(PIN1, grp), (PIN2, n.const(u"16#05", y=y + 90))],
-                  [POUT], x=F.COL_BLK2, y=y + 76)
-    gg6 = n.block(u"EQ", [(PIN1, grp), (PIN2, n.const(u"16#06", y=y + 120))],
-                  [POUT], x=F.COL_BLK2, y=y + 106)
-    sw56 = b_or(n, F.COL_BLK2 + 160, y + 76, gg5, gg6)
+    n.outvar(u"vIsXor", b_eq(n, XN, 1060, n.invar(u"vHi3", y=1060),
+                             n.const(u"16#05", y=1074)),
+             x=XN + 640, y=1060)
+    n.outvar(u"vIsOrp", b_eq(n, XN, 1100, n.invar(u"vHi3", y=1100),
+                             n.const(u"16#06", y=1114)),
+             x=XN + 640, y=1100)
+    n.outvar(u"vSw56", b_or(n, XN, 1140, n.invar(u"vIsXor", y=1140),
+                            n.invar(u"vIsOrp", y=1154)),
+             x=XN + 640, y=1140)
     #  P O M N I T': b_sel(G, IN0, IN1) daet IN0 pri G=FALSE i IN1 pri G=TRUE.
-    swap = b_sel(n, F.COL_BLK2 + 160, y + 106, gg5,
-                 n.const(u"BYTE#05", y=y + 120),
-                 n.const(u"BYTE#06", y=y + 134))
-    op_alu = b_sel(n, F.COL_BLK2 + 320, y + 76, sw56, grp, swap)
-    op_dec = b_sel(n, F.COL_BLK2 + 320, y + 46, gg5,
-                   n.const(u"BYTE#00", y=y + 60),
-                   n.const(u"BYTE#02", y=y + 74))
-    alu_sel = b_sel(n, F.COL_BLK2 + 480, y + 26, is_alu_grp, op_dec, op_alu)
+    n.outvar(u"vSwap", b_sel(n, XN, 1190, n.invar(u"vIsXor", y=1190),
+                             n.const(u"BYTE#05", y=1204),
+                             n.const(u"BYTE#06", y=1218)),
+             x=XN + 640, y=1190)
+    n.outvar(u"vOpAlu", b_sel(n, XN, 1250, n.invar(u"vSw56", y=1250),
+                              n.invar(u"vHi3", y=1264),
+                              n.invar(u"vSwap", y=1278)),
+             x=XN + 640, y=1250)
+    n.outvar(u"vOpDec", b_sel(n, XN, 1320, n.invar(u"vDec5", y=1320),
+                              n.const(u"BYTE#00", y=1334),
+                              n.const(u"BYTE#02", y=1348)),
+             x=XN + 640, y=1320)
+    n.outvar(u"vAluSel", b_sel(n, XN, 1390, n.invar(u"vIsAluGrp", y=1390),
+                               n.invar(u"vOpDec", y=1404),
+                               n.invar(u"vOpAlu", y=1418)),
+             x=XN + 640, y=1390)
+
+    #  C T L _ W R _ E N A B L E  -- zapisyvat li registr.
+    #  B Y L O  const TRUE: registr pisalsya na L Yu B O J komande.
+    #  Posledstvie: "JP 0FA00h" (C3h) zapisyval v B rezul tat ALU, a "CP B"
+    #  (B8h) portil akkumulyator, hotya sravnenie ego ne menyaet.
+    #  P R A V I L O: zapis' idet tolko dlya LD r,r' / LD r,n / INC r / DEC r /
+    #  ALU (krome CP) / IN A,(n), i nikogda -- esli priemnik (HL).
+    n.outvar(u"vIsCp", b_and(n, XN, 1460, n.invar(u"vIsAluGrp", y=1460),
+                             b_eq(n, XN, 1490, n.invar(u"vHi3", y=1490),
+                                  n.const(u"16#07", y=1504))),
+             x=XN + 640, y=1460)
+    n.outvar(u"vWrL", b_or(n, XN, 1550, n.invar(u"vIsLdRr", y=1550),
+                           n.invar(u"vIsLdn", y=1564)),
+             x=XN + 640, y=1550)
+    n.outvar(u"vWrR", b_or(n, XN, 1600, n.invar(u"vIncDec", y=1600),
+                           n.invar(u"vIsAluGrp", y=1614)),
+             x=XN + 640, y=1600)
+    n.outvar(u"vWrBase", b_or(n, XN, 1650, n.invar(u"vWrL", y=1650),
+                              n.invar(u"vWrR", y=1664)),
+             x=XN + 640, y=1650)
+    n.outvar(u"vWrBase2", b_or(n, XN, 1700, n.invar(u"vWrBase", y=1700),
+                               n.invar(r_in, y=1714)),
+             x=XN + 640, y=1700)
+    n.outvar(u"vWrOk", b_and(n, XN, 1750, n.invar(u"vWrBase2", y=1750),
+                             b_not(n, XN, 1780, n.invar(u"vDstMem", y=1780))),
+             x=XN + 640, y=1750)
+    n.outvar(u"vWrEn", b_and(n, XN, 1830, n.invar(u"vWrOk", y=1830),
+                             b_not(n, XN, 1860, n.invar(u"vIsCp", y=1860))),
+             x=XN + 640, y=1830)
+
+    #  C T L _ M E M _ R D  i  C T L _ M E M _ W R.
+    #  Priamye priznaki opkodov 7Eh / 77h ostavleny otdel'no, chtoby tablica
+    #  komand chitalas' bukval'no; maski dobavlyayut ostal'nye sluchai togo zhe
+    #  klassa ("LD B,(HL)" i t.p.).
+    n.outvar(u"vSrcMem", b_eq(n, XN, 1910, n.invar(u"vLo3", y=1910),
+                              n.const(u"16#06", y=1924)),
+             x=XN + 640, y=1910)
+    n.outvar(u"vMemRdAuto", b_and(n, XN, 1960, n.invar(u"vSrcMem", y=1960),
+                                  b_or(n, XN, 1990,
+                                       n.invar(u"vIsAluGrp", y=1990),
+                                       n.invar(u"vIncDec", y=2004))),
+             x=XN + 640, y=1960)
+    n.outvar(u"vMemRd", b_or(n, XN, 2050, n.invar(r_ldahl, y=2050),
+                             n.invar(u"vMemRdAuto", y=2064)),
+             x=XN + 640, y=2050)
+    n.outvar(u"vMemWrAuto", b_and(n, XN, 2100, n.invar(u"vIsLdRr", y=2100),
+                                  n.invar(u"vDstMem", y=2114)),
+             x=XN + 640, y=2100)
+    n.outvar(u"vMemWrAuto2", b_and(n, XN, 2150, n.invar(u"vMemWrAuto", y=2150),
+                                   b_not(n, XN, 2180,
+                                         n.invar(r_halt, y=2180))),
+             x=XN + 640, y=2150)
+    n.outvar(u"vMemWr", b_or(n, XN, 2230, n.invar(r_ldhla, y=2230),
+                             n.invar(u"vMemWrAuto2", y=2244)),
+             x=XN + 640, y=2230)
 
     # --- uslovnye perehody ---
     #  Ch T O  Z D E S'  B Y L O  N E  T A K. Stoyalo
@@ -1124,9 +1386,12 @@ def mk_decoder():
     #  smeshannyy tip; dalee OR poluchaet BYTE, a vyhod Ctl_Cond obyavlen BOOL.
     #      C32: Nevozmozhno konvertirovat tip 'BOOL' v tip 'USINT'
     #  Po smyslu zdes' nuzhno prosto vzyat' sam signal.
-    cond_is_z = r_jpz
-    cond_nz0 = r_jpnz
-    cond_any = b_or(n, F.COL_BLK2, y + 280, cond_is_z, cond_nz0)
+    p.var(u"vCmdCond", u"BOOL", u"perehod uslovnyj (JP Z / JP NZ)")
+    n.outvar(u"vCmdCond", b_or(n, F.COL_BLK2, y + 280,
+                               n.invar(r_jpz, y=y + 280),
+                               n.invar(r_jpnz, y=y + 294)),
+             x=XN + 800, y=y + 280)
+    cond_any = n.invar(u"vCmdCond", y=y + 240)
     #  K O D  U S L O V I Ya  D L Ya  Ctl_Cond.
     #  Ctl_Cond obyavlen BYTE -- eto K O D usloviya Z80:
     #      0 = NZ, 1 = Z
@@ -1134,67 +1399,22 @@ def mk_decoder():
     #  kompilyator soobshchal
     #      C32: Nevozmozhno konvertirovat tip 'BOOL' v tip 'BYTE'.
     #  Teper' vybirayutsya imenno kody, i tip sovpadaet s obyavleniem.
-    cond_code = b_sel(n, F.COL_BLK2, y + 320, r_jpz,
-                      n.const(u"BYTE#00", y=y + 334),
-                      n.const(u"BYTE#01", y=y + 348))
+    #  K O D  U S L O V I Ya  D L Ya  Ctl_Cond -- T R E H Z N A Ch N Y J:
+    #      0 = NZ (perehod, esli Z sbroshen)
+    #      1 = Z  (perehod, esli Z ustanovlen)
+    #      2 = perehod bezuslovnyj (JP nn, CALL nn)
+    #  B Y L O  dvuhznachno, i set 12 schitala uslovie tol ko po flagu Z.
+    #  Posledstvie: "JP 2000h" ne vypolnyalsya pri Z = 0. Izmereno na progone:
+    #  u teste T17 (JP 2000h) PC ostavalsya ravnym 0.
+    cond_code = b_sel(n, F.COL_BLK2, y + 320,
+                      n.invar(u"vCmdCond", y=y + 320),
+                      n.const(u"BYTE#02", y=y + 334),
+                      b_sel(n, F.COL_BLK2 + 160, y + 320,
+                            n.invar(r_jpz, y=y + 320),
+                            n.const(u"BYTE#00", y=y + 334),
+                            n.const(u"BYTE#01", y=y + 348)))
 
-    # --- Sel_Dst ---
-    #  Z D E S'  T O  Zh E  S A M O E: vmesto vybora "0 ili nomer" stoyAo
-    #  logicheskoe I mezhdu usloviem i chislom. Zam enyaem na SEL s yavno
-    #  T I P I Z I R O V A N N Y M I  konstantami BYTE#0 i BYTE#k -- togda
-    #  vetki cepochki odnoznachno tipa BYTE.
-    def sel_byte(cond, val, yy, xx=F.COL_BLK2 + 160):
-        return b_sel(n, xx, yy, cond,
-                     n.const(u"BYTE#0", y=yy + 14),
-                     n.const(u"BYTE#%02X" % val, y=yy + 28))
 
-    sd_a = sel_byte(r_ldn, 0, y + 200)
-    sd_b = sel_byte(r_ldhla, 6, y + 240)
-    sd_hl = sel_byte(r_ldahl, 7, y + 280)
-    sd_sum = b_add(n, F.COL_BLK2 + 320, y + 200, sd_a, sd_b)
-    sd_sum2 = b_add(n, F.COL_BLK2 + 320, y + 240, sd_sum, sd_hl)
-    dst_a = n.block(u"AND", [(PIN1, n4), (PIN2, n.const(u"16#07", y=y + 294))],
-                    [POUT], x=F.COL_BLK2 + 320, y=y + 280)
-    dst_b = n.block(u"AND", [(PIN1, grp), (PIN2, n.const(u"16#07", y=y + 334))],
-                    [POUT], x=F.COL_BLK2 + 320, y=y + 320)
-    dst_c = n.block(u"OR", [(PIN1, dst_a), (PIN2, dst_b)], [POUT],
-                    x=F.COL_BLK2 + 480, y=y + 300)
-    is_ld = b_or(n, F.COL_BLK2 + 480, y + 240, r_ldahl, r_ldahl)
-    #  O S O B Y J  S L U Ch A J  INC A / DEC A (3Ch / 3Dh).
-    #  Eto NE pattern "x4/x5"; maski 3Ch = 0011 1100 i 3Dh = 0011 1101
-    #  ne dayut nomera registra A. Bez etoj pravki rezul tat INC A
-    #  zapisyvalsya v registr 7 (F): izmereno sim_one -- vY = 10h verno,
-    #  a GVL_PLCVisu.A ostavalsya 0Fh.
-    ia3c = eq_const(0x3C, F.COL_BLK2 + 320, y + 300)
-    ia3d = eq_const(0x3D, F.COL_BLK2 + 320, y + 340)
-    ia12 = b_or(n, F.COL_BLK2 + 480, y + 320, ia3c, ia3d)
-    dst_a0 = b_sel(n, F.COL_BLK2 + 480, y + 260, ia12, dst_c,
-                    n.const(u"BYTE#00", y=y + 274))
-    dst_sel = b_sel(n, F.COL_BLK2 + 480, y + 200, is_ld, sd_sum2, dst_a0)
-
-    # --- Sel_Src ---
-    src_b = n.block(u"AND", [(PIN1, grp), (PIN2, n.const(u"16#07", y=y + 374))],
-                    [POUT], x=F.COL_BLK2, y=y + 360)
-    src_a = n.block(u"AND", [(PIN1, n4), (PIN2, n.const(u"16#07", y=y + 414))],
-                    [POUT], x=F.COL_BLK2, y=y + 400)
-    src_hl = sel_byte(r_ldahl, 8, y + 440, xx=F.COL_BLK2)
-    src_imm = sel_byte(r_ldn, 9, y + 480, xx=F.COL_BLK2)
-    src_sum = b_or(n, F.COL_BLK2 + 160, y + 380, src_a, src_b)
-    src_sum2 = b_or(n, F.COL_BLK2 + 160, y + 420, src_sum, src_hl)
-    src_sum3 = b_or(n, F.COL_BLK2 + 160, y + 460, src_sum2, src_imm)
-    is_load = b_or(n, F.COL_BLK2 + 320, y + 400, is_ld, r_ldn)
-    src_sel = b_sel(n, F.COL_BLK2 + 320, y + 380, is_load, src_sum3, dst_a0)
-
-    # --- Ctl_IncDec: opkody x4/x5 (INC/DEC r) i 3C/3D (INC/DEC A) ---
-    g5 = n.block(u"EQ", [(PIN1, grp), (PIN2, n.const(u"16#04", y=y + 574))],
-                 [POUT], x=F.COL_BLK2, y=y + 560)
-    g6 = n.block(u"EQ", [(PIN1, grp), (PIN2, n.const(u"16#05", y=y + 614))],
-                 [POUT], x=F.COL_BLK2, y=y + 600)
-    g45 = b_or(n, F.COL_BLK2 + 160, y + 580, g5, g6)
-    a1 = eq_const(0x3C, F.COL_BLK2 + 160, y + 640)
-    a2 = eq_const(0x3D, F.COL_BLK2 + 160, y + 680)
-    a12 = b_or(n, F.COL_BLK2 + 320, y + 660, a1, a2)
-    incdec = b_or(n, F.COL_BLK2 + 480, y + 620, g45, a12)
 
     #  C T L _ F L A G S _ E N -- zhestko po gruppe komand.
     #
@@ -1214,7 +1434,9 @@ def mk_decoder():
     #  a takzhe DAA, CPL, SCF, CCF -- ih v etom proekte net.
     #  Zdes strogaya proverka "IR v diapazone 80h..BFh": dva starshih bita
     #  ravny 10b. Eto i est gruppa ALU.
-    flags_en = b_or(n, F.COL_BLK2 + 320, y + 520, incdec, is_alu_grp)
+    flags_en = b_or(n, F.COL_BLK2 + 320, y + 520,
+                    n.invar(u"vIncDec", y=y + 520),
+                    n.invar(u"vIsAluGrp", y=y + 534))
 
     outs = [
         (u"Ctl_Is_CALL", r_call, F.COL_OUT),
@@ -1222,8 +1444,9 @@ def mk_decoder():
         (u"Ctl_Is_DJNZ", r_djnz, F.COL_OUT),
         (u"Ctl_Is_HALT", r_halt, F.COL_OUT),
         (u"Ctl_Is_Jump", b_or(n, F.COL_BLK2 + 480, y + 200,
-                              b_or(n, F.COL_BLK2 + 480, y + 160, r_jp, cond_any),
-                              r_call), F.COL_OUT),
+                              b_or(n, F.COL_BLK2 + 480, y + 160,
+                                   n.invar(r_jp, y=y + 160), cond_any),
+                              n.invar(r_call, y=y + 200)), F.COL_OUT),
         (u"Ctl_Is_Jr", r_djnz, F.COL_OUT),
         #  Ctl_Imm_Mode: "adres operanda beretsya iz koda komandy (nn), a ne iz HL".
         #  B Y L O  T A K: OR(r_ldn, r_call, r_in, r_out) -- i v etom spiske
@@ -1247,29 +1470,28 @@ def mk_decoder():
                                   b_or(n, F.COL_BLK2 + 320, y + 580,
                                        b_or(n, F.COL_BLK2 + 320, y + 540,
                                             b_or(n, F.COL_BLK2 + 320, y + 500,
-                                                 r_ldn, r_call),
-                                            r_jp),
-                                       r_jpz),
-                                  r_jpnz),
-                             r_in),
-                        r_out),
-                   r_ldann),
-              r_ldnna),
+                                                 n.invar(u"vImmLdn", y=y + 500),
+                                                 n.invar(r_call, y=y + 514)),
+                                            n.invar(r_jp, y=y + 540)),
+                                       n.invar(r_jpz, y=y + 580)),
+                                  n.invar(r_jpnz, y=y + 620)),
+                             n.invar(r_in, y=y + 660)),
+                        n.invar(r_out, y=y + 700)),
+                   n.invar(r_ldann, y=y + 740)),
+              n.invar(r_ldnna, y=y + 780)),
          F.COL_OUT),
         (u"Ctl_Flags_En", flags_en, F.COL_OUT),
         #  Ctl_Wr_Enable -- eto BOOL. Stoyalo const(u"1") -- chislovoy literal,
         #  a on v etoy versii CODESYS vyvoditsya kak USINT, i prisvoenie ego
         #  v BOOL daet "C32: Nevozmozhno konvertirovat tip 'USINT' v tip 'BOOL'".
-        (u"Ctl_Wr_Enable", n.const(u"TRUE", y=y + 600), F.COL_OUT),
-        (u"Ctl_Mem_Rd", b_or(n, F.COL_BLK2 + 480, y + 260,
-                             b_or(n, F.COL_BLK2 + 480, y + 220, r_ldahl, r_ldahl),
-                             r_ldahl), F.COL_OUT),
-        (u"Ctl_Mem_Wr", r_ldhla, F.COL_OUT),
-        (u"Ctl_Sel_Dst", dst_sel, F.COL_OUT + 300),
-        (u"Ctl_Sel_Src", src_sel, F.COL_OUT + 300),
-        (u"Ctl_ALU_Op", alu_sel, F.COL_OUT + 300),
+        (u"Ctl_Wr_Enable", u"vWrEn", F.COL_OUT),
+        (u"Ctl_Mem_Rd", u"vMemRd", F.COL_OUT),
+        (u"Ctl_Mem_Wr", u"vMemWr", F.COL_OUT),
+        (u"Ctl_Sel_Dst", u"vDstSel", F.COL_OUT + 300),
+        (u"Ctl_Sel_Src", u"vSrcSel", F.COL_OUT + 300),
+        (u"Ctl_ALU_Op", u"vAluSel", F.COL_OUT + 300),
         (u"Ctl_Cond", cond_code, F.COL_OUT),
-        (u"Ctl_IncDec", incdec, F.COL_OUT),
+        (u"Ctl_IncDec", u"vIncDec", F.COL_OUT),
         (u"Ctl_Is_IN", r_in, F.COL_OUT),
         (u"Ctl_Is_OUT", r_out, F.COL_OUT),
         (u"Ctl_IO_Rd", r_in, F.COL_OUT),
@@ -1277,6 +1499,11 @@ def mk_decoder():
     ]
     oy = 30
     for nm_out, srcv, xo in outs:
+        #  Strokoy zdes' peredayutsya IMENA peremennyh (komandy r_* i signaly
+        #  chasti 2). Na kazhdyj vyhod delaem otdel nyj invar -- inache klon
+        #  s nepodklyuchennym vhodom, sm. shapku seti.
+        if isinstance(srcv, str):
+            srcv = n.invar(srcv, y=oy + 8)
         n.outvar(nm_out, srcv, x=xo, y=oy)
         oy += 30
     return p
@@ -1404,6 +1631,12 @@ def mk_control():
     p.var_in(u"PC_Next", u"WORD")
     p.var_in(u"B_Zero", u"BOOL", u"schetchik DJNZ obnulilsya")
     p.var_in(u"Emu_Reset", u"BOOL", u"sbros processora")
+    #  E N -- T A K T  V Y P O L N E N I Ya. Nuzhen tol'ko dlya HALT.
+    #  B E Z  N E G O  HALT stanovitsya N E S B R A S Y V A E M Y M: poka
+    #  processora stoit, IR derzhit kod 76h, uslovie HALT istinno na kazhdom
+    #  skane, i v FB_RS vhod SET perebivaet RESET. Izmereno na progone:
+    #  posle T23 (HALT) vse 17 testov do konca rabotali na zamershem IR = 76h.
+    p.var_in(u"En", u"BOOL", u"takt vypolneniya")
     p.var_out(u"PC_New", u"WORD")
     p.var_out(u"PC_Load", u"BOOL")
     p.var_out(u"Halted", u"BOOL")
@@ -1421,7 +1654,7 @@ def mk_control():
     c_hlt = n.invar(u"Is_HALT", y=300)
     c_bz = n.invar(u"B_Zero", y=340)
     c_rst = n.invar(u"Emu_Reset", y=380)
-    c_hl = n.invar(u"Halted", y=420)
+    c_en = n.invar(u"En", y=460)
 
     # DJNZ: perehod, esli schetchik ne obnulilsya
     djnz_take = b_not(n, F.COL_BLK, 340, c_bz)
@@ -1439,7 +1672,8 @@ def mk_control():
     n.outvar(u"PC_Load", load, x=F.COL_OUT + 300, y=60)
 
     # HALT -> RS-trigger s prioritetom sbrosa
-    halt_ct = b_and(n, F.COL_BLK2, 300, c_hlt, c_ct)
+    halt_cond = b_and(n, F.COL_BLK + 160, 340, c_hlt, c_ct)
+    halt_ct = b_and(n, F.COL_BLK2, 300, halt_cond, c_en)
     p.var(u"fbStopped", u"FB_RS", u"priznak HALT (s prioritetom sbrosa)")
     rs = n.block(u"FB_RS", [(u"SET", halt_ct), (u"RESET", c_rst)], [u"Q1"],
                  x=F.COL_BLK2 + 160, y=300, instance=u"fbStopped")
@@ -1664,6 +1898,8 @@ ST_MEM_DECL = u'''FUNCTION_BLOCK FB_Memory64K
            SP_Data : WORD -- chto polozhit v stek
    VYHODY: D_Out   : BYTE -- vybrannyj kod komandy
            Rd_Data : BYTE -- schitannyj operand
+           Op_Word : WORD -- dva bajta po Addr i Addr+1 (mladshij vpered);
+                             tak chitaetsya operand nn u JP nn i CALL nn
            SP_Out  : WORD -- snyatoe so steka
            Bus_Drv : BYTE -- chto pomeshchaetsya na shinu pri chtenii
    ========================================================================= *)
@@ -1681,6 +1917,7 @@ END_VAR
 VAR_OUTPUT
     D_Out   : BYTE;
     Rd_Data : BYTE;
+    Op_Word : WORD;
     SP_Out  : WORD;
     Bus_Drv : BYTE;
 END_VAR
@@ -1712,6 +1949,14 @@ Bus_Drv := Z80_Mem[Addr];
 IF Wr THEN
     Z80_Mem[Addr] := D_Bus;
 END_IF
+
+(* Port 2b: slovo po adresu operanda -- dlya operandov nn.
+   Poryadok bajtov kak u Z80: mladshij lezhit po menshemu adresu.
+   P O Ch E M U  O T D E L N Y J  V Y H O D. Ran'she starshij bajt nn brali iz
+   vyhoda steka (SP_Out), to est iz pamyati po ukazatelyu steka -- k adresu
+   operanda eto otnosheniya ne imeet. Izmereno: "JP 2000h" ostavlyal PC = 0. *)
+Op_Word := BYTE_TO_WORD(Z80_Mem[Addr]) OR
+           SHL(BYTE_TO_WORD(Z80_Mem[Addr + 1]), 8);
 
 (* Port 3: stek -- dva bajta za odin obrat.
    Snimaem i kladem v poryadke starshij, zatem mladshij.
@@ -3067,6 +3312,13 @@ IF GVL_Tests.Cpu_Test_Run THEN
                 Inache pervyj zhe vyzov s Init_En pishet v registr,
                 nomer kotorogo ostalsya ot PROSHLOGO testa (15), i
                 Init_Vals[0] popadaet ne tuda. *)
+            (*  S B R O S  P E R E D  K A Zh D Y M  T E S T O M.
+                B E Z  N E G O  odin test otravlyaet vse sleduyushchie: komanda
+                HALT (76h) vzvodit priznak Halted v FB_RS, a snyat ego mozhet
+                tol ko Emu_Reset. Izmereno na progone: posle T23 (HALT) vse
+                ostal nye proverki rabotali na stojashem processore, i A
+                ostavalsya nulem. *)
+            GVL_Control.Emu_Reset := TRUE;
             GVL_InitRegs.Init_Sel_Dst := 0;
             GVL_InitRegs.Init_En := TRUE;
             nInit := 0;              (* perebor vedem my, a ne shema *)
@@ -3088,10 +3340,15 @@ IF GVL_Tests.Cpu_Test_Run THEN
             rovno na edinicu za cikl, poetomu perebor garantirovan.
             Ranshe eto delala shema PLC_PRG, i ee schetchik vnutri skana
             uspeval vyrasti na desyatok -- nomera propuskalis. *)
+        (* snyat sBros: posle etogo skana shema pishet registry *)
+        GVL_Control.Emu_Reset := FALSE;
         IF nInit <= 15 THEN
             GVL_InitRegs.Init_Sel_Dst := INT_TO_BYTE(nInit);
             nInit := nInit + 1;
         ELSE
+            GVL_Tests.Cpu_Dbg_Init_A := GVL_PLCVisu.A;
+            GVL_Tests.Cpu_Dbg_Init_F := GVL_PLCVisu.F;
+            GVL_Tests.Cpu_Dbg_Init_N := nInit;
             GVL_InitRegs.Init_En := FALSE;
             GVL_Control.Emu_Run := TRUE;
             nRun := 0;
@@ -3115,6 +3372,27 @@ IF GVL_Tests.Cpu_Test_Run THEN
         snimok_F := GVL_PLCVisu.F;
         snimok_PC := GVL_PLCVisu.PC;
         snimok_Mem := Z80_Mem[GVL_Tests.Cpu_Tests[i].Exp_Mem_Addr];
+
+        (*  S N I M K I  F A K T A  -- do sravneniya. Bez nih po odnomu progonu
+            nel zya ponyat, Ch E M  fakticheskoe znachenie otlichaetsya ot
+            ozhidaemogo: testy idut cheredoj, i chtenie po onlajnu za nimi ne
+            uspevaet. Tablica snimkov vidna v GVL_Tests.Cpu_Act_A/_F/_PC. *)
+        GVL_Tests.Cpu_Act_A[i]  := snimok_A;
+        GVL_Tests.Cpu_Act_F[i]  := snimok_F;
+        GVL_Tests.Cpu_Act_PC[i] := snimok_PC;
+        GVL_Tests.Cpu_Act_IR[i]  := GVL_PLCVisu.IR;
+        GVL_Tests.Cpu_Act_Op[i]  := GVL_Control.Ctl_ALU_Op;
+        GVL_Tests.Cpu_Act_Dst[i] := GVL_Control.Ctl_Sel_Dst;
+        GVL_Tests.Cpu_Act_Src[i] := GVL_Control.Ctl_Sel_Src;
+        GVL_Tests.Cpu_Act_Bus[i] := GVL_Bus.Bus_Data;
+        GVL_Tests.Cpu_Act_WE[i]  := GVL_Control.Ctl_Wr_Enable;
+        GVL_Tests.Cpu_Act_ID[i]  := GVL_Control.Ctl_IncDec;
+        GVL_Tests.Cpu_Act_MR[i]  := GVL_Control.Ctl_Mem_Rd;
+        GVL_Tests.Cpu_Act_MW[i]  := GVL_Control.Ctl_Mem_Wr;
+        GVL_Tests.Cpu_Act_RsPC[i] := GVL_Regs.Rs_PC;
+        GVL_Tests.Cpu_Act_NxPC[i] := GVL_Regs.Nx_PC;
+        GVL_Tests.Cpu_Act_Mem0[i] := Z80_Mem[0];
+        GVL_Tests.Cpu_Act_Rst[i]  := GVL_Control.Emu_Reset;
 
         fbCase.Run := TRUE;
         fbCase.Expected_A := GVL_Tests.Cpu_Tests[i].Exp_A;
@@ -3215,6 +3493,32 @@ ST_GVL_TESTS = u'''VAR_GLOBAL
     Cpu_Test_Total_Pass  : INT;
     Cpu_Test_Fail_Count  : INT;
     Cpu_Test_Failed_List : ARRAY[1..16] OF INT;
+
+    (* O T L A D O Ch N Y E  S N I M K I (dlya razbora prohoda).
+       Nuzhny, potomu chto chtenie po onlajnu idet medlennee odnogo
+       skana PLK, i perehody shagov ne uspet videt. Zdes TEST_Z80
+       sam zapisyvaet klyuchevye tochki, i ih mozhno prochitat
+       posle prohoda. *)
+    Cpu_Act_A        : ARRAY[1..75] OF BYTE;   (* fakt posle komandy *)
+    Cpu_Act_F        : ARRAY[1..75] OF BYTE;
+    Cpu_Act_PC       : ARRAY[1..75] OF WORD;
+    Cpu_Act_IR       : ARRAY[1..75] OF BYTE;   (* chto lezhalo v IR *)
+    Cpu_Act_Op       : ARRAY[1..75] OF BYTE;   (* Ctl_ALU_Op *)
+    Cpu_Act_Dst      : ARRAY[1..75] OF BYTE;   (* Ctl_Sel_Dst *)
+    Cpu_Act_Src      : ARRAY[1..75] OF BYTE;   (* Ctl_Sel_Src *)
+    Cpu_Act_Bus      : ARRAY[1..75] OF BYTE;   (* GVL_Bus.Bus_Data = vY *)
+    Cpu_Act_WE       : ARRAY[1..75] OF BOOL;   (* Ctl_Wr_Enable *)
+    Cpu_Act_ID       : ARRAY[1..75] OF BOOL;   (* Ctl_IncDec *)
+    Cpu_Act_MR       : ARRAY[1..75] OF BOOL;   (* Ctl_Mem_Rd *)
+    Cpu_Act_MW       : ARRAY[1..75] OF BOOL;   (* Ctl_Mem_Wr *)
+    Cpu_Act_RsPC     : ARRAY[1..75] OF WORD;   (* GVL_Regs.Rs_PC *)
+    Cpu_Act_NxPC     : ARRAY[1..75] OF WORD;   (* GVL_Regs.Nx_PC *)
+    Cpu_Act_Mem0     : ARRAY[1..75] OF BYTE;   (* soderzhimoe Z80_Mem[0] *)
+    Cpu_Act_Rst      : ARRAY[1..75] OF BOOL;   (* GVL_Control.Emu_Reset *)
+    Cpu_Dbg_Init_A   : BYTE;   (* A srazu posle perebora registrov *)
+    Cpu_Dbg_Init_F   : BYTE;   (* F srazu posle perebora *)
+    Cpu_Dbg_Init_N   : INT;    (* skolko shagov perebora sdelano *)
+    Cpu_Dbg_MaxStage : INT;    (* samyy glubokiy dostignutyj shag *)
 END_VAR
 '''
 
@@ -3249,6 +3553,75 @@ def mk_gvl_bootflags():
 
 def mk_gvl_initregs():
     return F.Gvl(u"GVL_InitRegs", ST_GVL_INITREGS)
+
+
+
+ST_GVL_REGS = u'''VAR_GLOBAL
+    (* ==========================================================================
+       SOSTOYaNIE REGISTROV PROCESSORA.
+
+       POCHEMU OTDELNAYa GVL, A NE PEREMENNYE PLC_PRG.
+       Registrovyj fajl -- eto KOLCO: vhod ALU (A) -> rezul tat (vY) ->
+       zapis v registr -> snova vhod. Vnutri odnogo POU takoe kolco CODESYS
+       razryvaet NULEM, a ne znacheniem proshlogo skana. Izmereno na progone
+       (sim_init3): posle uspeshnoj initsializacii (A = 0Fh) registr v
+       sleduyushchem skane stanovilsya 0, i INC A daval 1 vmesto 10h.
+
+       KAK ETO RESHAETSYa. Sostoyanie zhivet v dvuh naborah:
+         Rs_*  -- to, chto chitaet emulyator (znachenie proshlogo skana);
+         Nx_*  -- to, chto on vyrachislyaet v etom skane.
+       PLC_PRG chitaet Rs_* i pishet Nx_*. Otdelnaya programma PRG_RegLatch
+       (FBD) perenosit Nx_* v Rs_* i zapushchena POSLE PLC_PRG v zadache.
+       Takim obrazom kolco razryvaetsya NA GRANICE POU, i nikakoj neyavnoj
+       pamyati ne trebuetsya.
+       ========================================================================== *)
+    Rs_A : BYTE;   (* registr A (chitaet emulyator) *)
+    Rs_B : BYTE;   (* registr B (chitaet emulyator) *)
+    Rs_C : BYTE;   (* registr C (chitaet emulyator) *)
+    Rs_D : BYTE;   (* registr D (chitaet emulyator) *)
+    Rs_E : BYTE;   (* registr E (chitaet emulyator) *)
+    Rs_H : BYTE;   (* registr H (chitaet emulyator) *)
+    Rs_L : BYTE;   (* registr L (chitaet emulyator) *)
+    Rs_F : BYTE;   (* registr F (chitaet emulyator) *)
+    Rs_Sa : BYTE;   (* registr Sa (chitaet emulyator) *)
+    Rs_Sb : BYTE;   (* registr Sb (chitaet emulyator) *)
+    Rs_Sc : BYTE;   (* registr Sc (chitaet emulyator) *)
+    Rs_Sd : BYTE;   (* registr Sd (chitaet emulyator) *)
+    Rs_Se : BYTE;   (* registr Se (chitaet emulyator) *)
+    Rs_Sh : BYTE;   (* registr Sh (chitaet emulyator) *)
+    Rs_Sl : BYTE;   (* registr Sl (chitaet emulyator) *)
+    Rs_Sf : BYTE;   (* registr Sf (chitaet emulyator) *)
+    Nx_A : BYTE;   (* on zhe posle pereschyota *)
+    Nx_B : BYTE;   (* on zhe posle pereschyota *)
+    Nx_C : BYTE;   (* on zhe posle pereschyota *)
+    Nx_D : BYTE;   (* on zhe posle pereschyota *)
+    Nx_E : BYTE;   (* on zhe posle pereschyota *)
+    Nx_H : BYTE;   (* on zhe posle pereschyota *)
+    Nx_L : BYTE;   (* on zhe posle pereschyota *)
+    Nx_F : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Sa : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Sb : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Sc : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Sd : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Se : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Sh : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Sl : BYTE;   (* on zhe posle pereschyota *)
+    Nx_Sf : BYTE;   (* on zhe posle pereschyota *)
+    Rs_R : BYTE;   (* schetchik obrashchenij k pamyati (proshlyj skan) *)
+    Nx_R : BYTE;   (* on zhe posle pereschyota *)
+
+    (*  S Ch E T Ch I K  K O M A N D  i  U K A Z A T E L  S T E K A.
+        Oni tozhe kol co ("chitaetsya zdes, pishetsya zdes"), poetomu zhivut
+        po tem zhe pravilam, chto i registry. *)
+    Rs_PC : WORD;   (* adres tekushchej komandy *)
+    Nx_PC : WORD;   (* on zhe posle vypolneniya *)
+    Rs_SP : WORD;   (* ukazatel steka *)
+    Nx_SP : WORD;   (* on zhe posle vypolneniya *)
+END_VAR
+'''
+
+def mk_gvl_regs():
+    return F.Gvl(u"GVL_Regs", ST_GVL_REGS)
 
 
 def mk_gvl_tests():
@@ -3399,6 +3772,7 @@ def mk_gvl_visu():
     IY     : WORD;
     I      : BYTE;
     R_Reg  : BYTE;
+    Reg_Checksum : BYTE;   (* kontrolnaya summa registrov, schitaet PRG_RegLatch *)
     IR     : BYTE;
     Halted : BOOL;
 
@@ -3584,6 +3958,88 @@ def mk_always_true():
     return p
 
 
+def mk_prg_reglatch():
+    u"""PRG_RegLatch -- Z A Shch E L K A  S O S T O Ya N I Ya  R E G I S T R O V.
+
+    Zachem otdelnaya programma, a ne set' v PLC_PRG.
+
+    Registrovyj fajl obrazuet kol co: vhod ALU (A) -> rezul tat (vY) ->
+    zapis v registr -> snova vhod ALU. Pokuda i chtenie, i zapis' velis
+    v odnoj programme, CODESYS schital takoe kol co algebraicheskoj petlej i
+    podstavlyal v nego N O L', a ne znachenie proshlogo skana. Izmereno na
+    progone: posle vernoj initsializacii (A = 0Fh) v sleduyushchem skane
+    registr stanovilsya 0, i komanda INC A davala 1 vmesto 10h.
+
+    Reshenie -- razryv petli N A  G R A N I C E  P O U:
+        PLC_PRG       chitaet GVL_Regs.Rs_* i pishet GVL_Regs.Nx_*;
+        PRG_RegLatch  perenosit Nx_* v Rs_* i zapushchena POZzhe v zadache.
+    Vnutri kazhdoj programmy petli net, poetomu nikakoj Neyavnoj pamyati ne
+    trebuetsya, a poryadok skanov ostaetsya predskazuemym.
+
+    Zdes' zhe obnovlyaetsya zerkalo GVL_PLCVisu dlya vizualizacii:
+    Rs_* i zerkalo poluchayut odno i to zhe znachenie Nx_*.
+    """
+    MIRROR = ((u"A", u"A"), (u"B", u"B"), (u"C", u"C"), (u"D", u"D"),
+              (u"E", u"E"), (u"H", u"H"), (u"L", u"L"), (u"F", u"F"),
+              (u"Sa", u"AltA"), (u"Sb", u"AltB"), (u"Sc", u"AltC"),
+              (u"Sd", u"AltD"), (u"Se", u"AltE"), (u"Sh", u"AltH"),
+              (u"Sl", u"AltL"), (u"Sf", u"AltF"))
+    p = F.Pou(u"PRG_RegLatch", u"program",
+              u"ZAshchelka sostoyaniya registrov: Nx_* -> Rs_* i zerkalo HMI.\n"
+              u"Rabotaet POSLE PLC_PRG, poetomu razryvaet kol co "
+              u"'registry -> ALU -> registry' na granice POU.")
+    p.var(u"vReg_Checksum", u"BYTE",
+          u"kontrol'naya summa registrov dlya HMI (set' LATCH 3)")
+    y = 30
+    nx = p.network(u"LATCH 1: sleduyushchee sostoyanie stanovitsya tekushchim")
+    for pin, visu in MIRROR:
+        nx.outvar(u"GVL_Regs.Rs_" + pin, nx.invar(u"GVL_Regs.Nx_" + pin, y=y),
+                  x=F.COL_OUT, y=y)
+        y += 34
+    nx.outvar(u"GVL_Regs.Rs_R", nx.invar(u"GVL_Regs.Nx_R", y=y),
+              x=F.COL_OUT, y=y)
+    y += 34
+    nx.outvar(u"GVL_Regs.Rs_PC", nx.invar(u"GVL_Regs.Nx_PC", y=y),
+              x=F.COL_OUT, y=y)
+    y += 34
+    nx.outvar(u"GVL_Regs.Rs_SP", nx.invar(u"GVL_Regs.Nx_SP", y=y),
+              x=F.COL_OUT, y=y)
+
+    y = 30
+    hm = p.network(u"LATCH 2: zerkalo dlya vizualizacii (HMI)")
+    for pin, visu in MIRROR:
+        hm.outvar(u"GVL_PLCVisu." + visu, hm.invar(u"GVL_Regs.Nx_" + pin, y=y),
+                  x=F.COL_OUT, y=y)
+        y += 34
+    hm.outvar(u"GVL_PLCVisu.R_Reg", hm.invar(u"GVL_Regs.Nx_R", y=y),
+              x=F.COL_OUT, y=y)
+    y += 34
+    #  PC i SP tozhe zerkalim dlya HMI i dlya testov: ranshe ih pisali seti
+    #  PLC_PRG 13 i 11, teper oni zhivut v GVL_Regs i zerkaliruyutsya zdes'.
+    hm.outvar(u"GVL_PLCVisu.PC", hm.invar(u"GVL_Regs.Nx_PC", y=y),
+              x=F.COL_OUT, y=y)
+    y += 34
+    hm.outvar(u"GVL_PLCVisu.SP", hm.invar(u"GVL_Regs.Nx_SP", y=y),
+              x=F.COL_OUT, y=y)
+
+    #  U set' 3 net vnutrennego sostoyaniya: ona tol ko chitaet Nx_* i dayot
+    #  odno chislo. Eto kontrol naya summa registrov dlya HMI -- po nej vidno,
+    #  chto zashchelka zhiva i chto imenno v nej sejchas lezhit.
+    ALLP = [p0 for p0, _v in MIRROR] + [u"R"]
+    chk = p.network(u"LATCH 3: kontrol'naya summa registrov (XOR)")
+    prev = chk.invar(u"GVL_Regs.Nx_" + ALLP[0], y=30)
+    yy = 30
+    for pin in ALLP[1:]:
+        cur = chk.invar(u"GVL_Regs.Nx_" + pin, y=yy + 34)
+        prev = chk.block(u"XOR", [(PIN1, prev), (PIN2, cur)], [POUT],
+                         x=F.COL_BLK + 40, y=yy)
+        yy += 46
+    chk.outvar(u"vReg_Checksum", prev, x=F.COL_OUT, y=30)
+    chk.outvar(u"GVL_PLCVisu.Reg_Checksum",
+               chk.invar(u"vReg_Checksum", y=70), x=F.COL_OUT, y=70)
+    return p
+
+
 def mk_plc_prg():
     u"""PLC_PRG -- GLAVNAYa SHEMA: konveer emulyatora.
 
@@ -3601,8 +4057,6 @@ def mk_plc_prg():
               u"Poryadok setey sootvetstvuet poryadku ispolneniya.")
     p.var(u"fbClock", u"FB_Clock", u"dvuhfaznyj takt")
     p.var(u"fbAlways", u"FB_AlwaysTrue", u"signal novyj skan")
-    p.var(u"fbPC", u"FB_PC_Z80", u"schetchik komand")
-    p.var(u"fbPCLatch", u"FB_Reg16", u"zashchelka PC")
     p.var(u"fbIR", u"FB_Reg8Latch", u"registr komandy")
     p.var(u"fbDec", u"FB_DecoderZ80", u"dekoder")
     p.var(u"fbRF", u"FB_RegFileZ80", u"registrovaya chast'")
@@ -3610,7 +4064,6 @@ def mk_plc_prg():
     p.var(u"fbMem", u"FB_Memory64K", u"pamyat' 64 KB")
     p.var(u"fbALU", u"FB_ALU_Z80", u"ALU")
     p.var(u"fbFlags", u"FB_FlagsRegZ80", u"registr flagov")
-    p.var(u"fbSP", u"FB_SP_StackZ80", u"stek")
     p.var(u"fbCtl", u"FB_ControlUnit", u"upravlenie potokom")
     p.var(u"fbR", u"FB_Reg8", u"registr R")
     p.var(u"vRun", u"BOOL", u"razreshenie raboty")
@@ -3624,19 +4077,33 @@ def mk_plc_prg():
     p.var(u"vPCLoad", u"BOOL", u"zagruzit' PC")
     p.var(u"vPCNew", u"WORD", u"novoe znachenie PC")
     p.var(u"vIncBy", u"BYTE", u"dlina komandy")
-    #  S I N H R O N I Z A C I Ya  D V U H  E K Z E M P L Ya R O V  R E G I S T R O V.
-    #  V proekte dva ekzemplyara FB_RegFileZ80: fbRF (zapis) i fbRFRd (chtenie).
-    #  Eto razdelenie bylo sdelano, chtoby vyhody odnogo FB ne chitat v odnoj
-    #  seti neskolko raz. No u kazhdogo ekzemplyara S V O I  V N U T R E N N I E
-    #  registry! V itoge zapis popadala v fbRF, a ALU chital fbRFRd, kotoryj
-    #  ostavalsya s nulyami: izmereno sim_one (test T13 INC A) --
-    #      GVL_PLCVisu.A = 0Fh (fbRF verno), a PLC_PRG.vY = 1 vmesto 10h,
-    #  potomu chto ALU poluchal A = 0 i schital 0 + 1.
-    #  Teper oba ekzemplyara poluchayut ODINAKOVYE vhody (nabor vInitWr/vWrEn/
-    #  vClkWr), znachit i sostoyanie u nih odinakovoe.
-    p.var(u"vInitWr", u"BYTE", u"znachenie dlya zapisi v registr (dlya oboih ekzemplyarov)")
-    p.var(u"vWrEn", u"BOOL", u"razreshenie zapisi (dlya oboih ekzemplyarov)")
+    #  D V A  E K Z E M P L Ya R A  R E G I S T R O V O G O  F A J L A.
+    #  V proekte dva ekzemplyara FB_RegFileZ80, i u nih RAZNYE roli:
+    #      fbRFRd -- T O L ' K O  Ch T E N I E (Wr_En = FALSE, Clk = FALSE).
+    #                Ego vyhody ravny vhodam: A = GVL_Regs.Rs_A i t.d.
+    #                Ego Src_Val i Addr_HL -- vyborka operanda i para HL.
+    #      fbRF   -- Z A P I S ' (Wr_En, Clk, Init_En podayutsya nastoyashchie).
+    #  P O Ch E M U  u chitayushchego Wr_En = FALSE. Ran'she oba ekzemplyara
+    #  poluchali odinakovye vhody, i togda vyhod A u chitayushchego stanovilsya
+    #  raven Wr_Val, to est vY -- a ALU chitaet imenno A. Voznikalo kolco
+    #  ALU -> Wr_Val -> A -> ALU, kotoroe CODESYS razryvaet N U L E M.
+    #  Izmereno na progone (sim_dump_cpu): pri Init_A = 0Fh komanda INC A
+    #  davala A = 0 vmesto 10h, a vse 32 proverki s ALU, pamyat'yu i perehodami
+    #  padali, hotya initsializatsiya prohodila verno.
+    p.var(u"vInitWr", u"BYTE", u"znachenie dlya zapisi v registr")
+    p.var(u"vWrEn", u"BOOL", u"razreshenie zapisi")
     p.var(u"vClkWr", u"BOOL", u"takt zapisi: Clk_Exec ili Init_En")
+    #  S N I M K I  R E G I S T R O V  iz vyhoda FB.
+    #  Z A Ch E M  O T D E L N O  O T  GVL_PLCVisu. Vhod FB (A_In ...) chitaet
+    #  GVL_PLCVisu, a tut zhe v seti stoit zapis v to zhe imya -- eto
+    #  kolco po imeni peremennoj, i CODESYS razryvaet ego kak pridetsya.
+    #  Izmereno: posle uspeshnoj initsializacii (A = 0Fh) registr A
+    #  obnulyalsya pered vypolneniem, i INC A daval 1 vmesto 10h.
+    #  Teper snyatok idet v otdelnye imena, a v GVL_PLCVisu oni
+    #  perenosyatsya SLEDUYushchey setyu.
+    for _rn in (u"A", u"B", u"C", u"D", u"E", u"H", u"L",
+                u"Sa", u"Sb", u"Sc", u"Sd", u"Se", u"Sh", u"Sl", u"Sf"):
+        p.var(u"vReg_" + _rn, u"BYTE", u"snyatok registra " + _rn)
     p.var(u"vY", u"BYTE", u"rezul'tat ALU")
     p.var(u"vF", u"BYTE", u"registr flagov")
     #  TIP WORD, a ne BYTE: vyhod SP_Out u FB_Memory64K -- WORD (snyatoe so
@@ -3732,7 +4199,18 @@ def mk_plc_prg():
     p.var(u"vBiosOut", u"BYTE", u"simvol konsoli ot BIOS")
     p.var(u"vBiosWr", u"BOOL", u"strob vyvoda BIOS")
     p.var(u"vBiosRd", u"BOOL", u"zapros vvoda BIOS")
-    p.var(u"vPCNext", u"WORD", u"PC posle inkrementa")
+    p.var(u"vPC_Inc", u"WORD", u"PC + dlina komandy")
+    p.var(u"vSP_Addr", u"WORD", u"adres obrashcheniya k steku")
+    p.var(u"vSP_Dec", u"WORD", u"SP - 2")
+    p.var(u"vSP_Inc", u"WORD", u"SP + 2")
+    p.var(u"vSP_Next", u"WORD", u"SP posle operacii")
+    p.var(u"vRetAddr", u"WORD", u"adres vozvrata dlya CALL")
+    p.var(u"vOpWord", u"WORD", u"operand nn iz pamyati")
+    p.var(u"vDstVal", u"BYTE", u"znachenie registra-priemnika")
+    p.var(u"vDstValW", u"BYTE", u"to zhe u ekzemplyara zapisi (ne ispol zuetsya)")
+    p.var(u"vALU_A", u"BYTE", u"pervyj operand ALU")
+    p.var(u"vMemWrStb", u"BOOL", u"strob zapisi pamyati (s taktom)")
+    p.var(u"vPushStb", u"BOOL", u"strob zapisi steka (s taktom)")
 
     # ================= 1. TAkT =================
     #  P A R A M E T R  I Z  Z A D A N I Ya: skolko komand za skan.
@@ -3791,7 +4269,7 @@ def mk_plc_prg():
 
     # ================= 2. PC =================
     n2 = p.network(u"SET 2: PC: adres tekushchej komandy na shinu")
-    c_pc = n2.invar(u"fbPCLatch.Q", y=30)
+    c_pc = n2.invar(u"GVL_Regs.Rs_PC", y=30)
     #  O D N A  Z A P I S',  A  N E  D V E.
     #  Ran'she zdes' stoYAli DVA outvar v odno i to zhe imya:
     #      outvar GVL_Bus.Bus_Addr <- fbPCLatch.Q   (y=30)
@@ -3858,47 +4336,65 @@ def mk_plc_prg():
     n5.block(u"FB_RegFileZ80",
               [  #  T E K U Shch I E  Z N A Ch E N I Ya  R E G I S T R O V: hranenie
               #  zhivet v GVL_PLCVisu, FB lish vozvrat dayot novye znacheniya.
-              (u"A_In", n5.invar(u"GVL_PLCVisu.A", y=30)),
-              (u"B_In", n5.invar(u"GVL_PLCVisu.B", y=30)),
-              (u"C_In", n5.invar(u"GVL_PLCVisu.C", y=30)),
-              (u"D_In", n5.invar(u"GVL_PLCVisu.D", y=30)),
-              (u"E_In", n5.invar(u"GVL_PLCVisu.E", y=30)),
-              (u"H_In", n5.invar(u"GVL_PLCVisu.H", y=30)),
-              (u"L_In", n5.invar(u"GVL_PLCVisu.L", y=30)),
-              (u"F_In", n5.invar(u"GVL_PLCVisu.F", y=30)),
-              (u"Sa_In", n5.invar(u"GVL_PLCVisu.AltA", y=30)),
-              (u"Sb_In", n5.invar(u"GVL_PLCVisu.AltB", y=30)),
-              (u"Sc_In", n5.invar(u"GVL_PLCVisu.AltC", y=30)),
-              (u"Sd_In", n5.invar(u"GVL_PLCVisu.AltD", y=30)),
-              (u"Se_In", n5.invar(u"GVL_PLCVisu.AltE", y=30)),
-              (u"Sh_In", n5.invar(u"GVL_PLCVisu.AltH", y=30)),
-              (u"Sl_In", n5.invar(u"GVL_PLCVisu.AltL", y=30)),
-              (u"Sf_In", n5.invar(u"GVL_PLCVisu.AltF", y=30)),
+              (u"A_In", n5.invar(u"GVL_Regs.Rs_A", y=30)),
+              (u"B_In", n5.invar(u"GVL_Regs.Rs_B", y=30)),
+              (u"C_In", n5.invar(u"GVL_Regs.Rs_C", y=30)),
+              (u"D_In", n5.invar(u"GVL_Regs.Rs_D", y=30)),
+              (u"E_In", n5.invar(u"GVL_Regs.Rs_E", y=30)),
+              (u"H_In", n5.invar(u"GVL_Regs.Rs_H", y=30)),
+              (u"L_In", n5.invar(u"GVL_Regs.Rs_L", y=30)),
+              (u"F_In", n5.invar(u"GVL_Regs.Rs_F", y=30)),
+              (u"Sa_In", n5.invar(u"GVL_Regs.Rs_Sa", y=30)),
+              (u"Sb_In", n5.invar(u"GVL_Regs.Rs_Sb", y=30)),
+              (u"Sc_In", n5.invar(u"GVL_Regs.Rs_Sc", y=30)),
+              (u"Sd_In", n5.invar(u"GVL_Regs.Rs_Sd", y=30)),
+              (u"Se_In", n5.invar(u"GVL_Regs.Rs_Se", y=30)),
+              (u"Sh_In", n5.invar(u"GVL_Regs.Rs_Sh", y=30)),
+              (u"Sl_In", n5.invar(u"GVL_Regs.Rs_Sl", y=30)),
+              (u"Sf_In", n5.invar(u"GVL_Regs.Rs_Sf", y=30)),
              (u"Sel_Dst", n5.invar(u"vCtl_Sel_Dst", y=30)),
               (u"Sel_Src", n5.invar(u"vCtl_Sel_Src", y=70)),
                (u"Wr_Val", n5.invar(u"vInitWr", y=110)),
-               (u"Wr_En", n5.invar(u"vWrEn", y=150)),
-               (u"Clk", n5.invar(u"vClkWr", y=190)),
-              (u"CLR", n5.invar(u"GVL_Control.Emu_Reset", y=230)),
+               #  R E Zh I M  T O L ' K O  Ch T E N I E. Esli podat syuda
+               #  nastoyashchie Wr_En i Clk, kak bylo ran'she, to pri rabote
+               #  emulyatora vyhod A etogo ekzemplyara stanovitsya raven
+               #  Wr_Val, to est vY -- a ALU chitaet imenno vyhod A. Poluchaetsya
+               #  kol co ALU -> Wr_Val -> A -> ALU, i CODESYS razryvaet ego
+               #  N U L E M: izmereno na progone -- pri Init_A = 0Fh i komande
+               #  INC A (3Ch) rezul tat A stanovilsya 0 vmesto 10h, i nikakoj
+               #  test s pamyat'yu ili perehodom tozhe ne prohodil.
+               #  Wr_En = FALSE delat vyhod ravnym vhodu: ekzemplyar tol ko
+               #  chitaet GVL_Regs.Rs_*, nichego ne menyaya.
+               (u"Wr_En", n5.const(u"FALSE", y=150)),
+               (u"Clk", n5.const(u"FALSE", y=190)),
+               (u"CLR", n5.invar(u"GVL_Control.Emu_Reset", y=230)),
               (u"Mem_Rd", n5.invar(u"vMemDrv", y=270)),
               (u"Imm", n5.invar(u"vImm", y=310)),
               (u"Init_En", n5.invar(u"GVL_InitRegs.Init_En", y=350)),
               (u"Init_Sel_Dst", n5.invar(u"GVL_InitRegs.Init_Sel_Dst", y=390))],
-             [u"Src_Val", u"A", u"B", u"C", u"D", u"E", u"H", u"L", u"F",
-              u"Sa", u"Sb", u"Sc", u"Sd", u"Se", u"Sh", u"Sl", u"Sf",
-              u"Addr_HL"],
+             [u"Src_Val", u"Dst_Val", u"A", u"B", u"C", u"D", u"E", u"H",
+              u"L", u"F", u"Sa", u"Sb", u"Sc", u"Sd", u"Se", u"Sh", u"Sl",
+              u"Sf", u"Addr_HL"],
              x=F.COL_BLK2, y=30, instance=u"fbRFRd")
+    n5.outvar(u"vDstVal", n5.invar(u"fbRFRd.Dst_Val", y=30))
     n5.outvar(u"vRFRd_Addr_HL", n5.invar(u"fbRFRd.Addr_HL", y=30))
     n5.outvar(u"GVL_Bus.Bus_Addr_HL", n5.invar(u"vRFRd_Addr_HL", y=60),
               x=F.COL_OUT + 600, y=550)
 
     # ================= 6. ADRES OPERANDA =================
-    n6 = p.network(u"SET 6: ADRES OPERANDA: (HL) ili nn")
+    #  A D R E S  O P E R A N D A.
+    #  B Y L O  T A K: v rezhime "operand iz koda" adresom operanda schitalsya
+    #  sam nn, to est vybrannyj uzhe adres perehoda, a starshij bajt nn brali
+    #  iz vyhoda STEKA. Poluchalos kolco: chtoby uznat nn, nado prochitat
+    #  pamyat po nn, a tam eshche nichego ne zapisano. Izmereno na progone:
+    #  u teste T17 ("JP 2000h") PC ostavalsya ravnym 0.
+    #  T E P E R': operand vsegda chitaetsya s PC+1 (on idet srazu za kodom
+    #  komandy), a dlya kosvennoj adresacii -- s HL. Oba bajta nn sobiraet
+    #  vyhod Op_Word u FB_Memory64K.
+    n6 = p.network(u"SET 6: ADRES OPERANDA: (HL) ili PC+1")
     c_imm = n6.invar(u"vCtl_Imm_Mode", y=30)
     c_hl = n6.invar(u"fbRFRd.Addr_HL", y=70)
-    c_nlo = n6.invar(u"fbMem.Rd_Data", y=110)
-    c_nhi = n6.invar(u"fbMem.SP_Out", y=150)
-    c_pcn = n6.invar(u"fbPCLatch.Q", y=190)
+    c_pcn = n6.invar(u"GVL_Regs.Rs_PC", y=190)
     #  S T A R Sh I J  B A J T  ADRESA nn.
     #  Vazhno: SP_Out imeet tip WORD, poetomu prezhde chem sdvigat ego na 8,
     #  nado suzit ego do bajta. Ran'she zdes stoyalo
@@ -3907,7 +4403,6 @@ def mk_plc_prg():
     #  Pervaya zhe konversiya poluchala WORD tam, gde ozhidaetsya BYTE, i
     #  kompilyator daval "C32: WORD v BYTE". Teper' berem uzhe suzhennoe
     #  znachenie vNnHi (WORD_TO_BYTE) i sdvigaem ego kak BYTE.
-    n6.outvar(u"vNnHi", b_w2b(n6, F.COL_BLK, 150, c_nhi), x=F.COL_OUT, y=150)
     pc1 = b_add(n6, F.COL_BLK, 190, c_pcn, n6.const(u"WORD#1", y=204))
     n6.outvar(u"GVL_Bus.Bus_Addr_Op", pc1, x=F.COL_OUT, y=190)
     #  S D V I G  D E L A E T S Ya  P O  S L O V U,  A  N E  P O  B A J T U.
@@ -3922,27 +4417,74 @@ def mk_plc_prg():
     #      vybiraet USINT dlya vsej cepochki. Eto i davalo pary
     #      "BOOL <-> USINT", kotorye nikak ne svyazat s POU.
     #  P R A V I L' N O: snachala rasshirit' bajt do slova, potom sdvigat.
-    wh = b_b2w(n6, F.COL_BLK2, 150, n6.invar(u"vNnHi", y=150))
-    sh = b_shl(n6, F.COL_BLK2 + 160, 150, wh, n6.const(u"8", y=164))
-    wl = b_b2w(n6, F.COL_BLK2, 110, c_nlo)
-    nn = n6.block(u"OR", [(PIN1, sh), (PIN2, wl)], [POUT],
-                  x=F.COL_BLK2 + 320, y=130)
-    asel = b_sel(n6, F.COL_BLK2 + 480, 100, c_imm, c_hl, nn)
+    asel = b_sel(n6, F.COL_BLK2 + 480, 100, c_imm, c_hl,
+                 n6.invar(u"GVL_Bus.Bus_Addr_Op", y=104))
     n6.outvar(u"vAddr", asel, x=F.COL_OUT + 300, y=100)
 
+    # ================= 6b. STEK =================
+    #  P O Ch E M U  S E T'  S T O I T  Z D E S'. Adres obrashcheniya k steku
+    #  nuzhen uzhe pri vyzove pamyati (port 3), to est nizhe. Sostoyanie --
+    #  GVL_Regs.Rs_SP, sleduyushchee -- GVL_Regs.Nx_SP; perenosit ih
+    #  PRG_RegLatch, kak i registry.
+    #  B Y L O  T A K: etim zanimalas' set' 11, kotoraya stoit POZzhe pamyati,
+    #  i FB_SP_StackZ80 chital svoy zhe vyhod SP (kolco).
+    n11 = p.network(u"SET 6b: STEK: SP i adres obrashcheniya")
+    c_sp = n11.invar(u"GVL_Regs.Rs_SP", y=30)
+    c_push = n11.invar(u"vCtl_Is_CALL", y=70)
+    c_pop = n11.invar(u"vCtl_Is_RET", y=110)
+    c_pcsp = n11.invar(u"GVL_Regs.Rs_PC", y=150)
+    sp_dec = b_sub(n11, F.COL_BLK, 30, c_sp, n11.const(u"WORD#2", y=44))
+    sp_inc = b_add(n11, F.COL_BLK, 70, c_sp, n11.const(u"WORD#2", y=84))
+    n11.outvar(u"vSP_Dec", sp_dec, x=F.COL_OUT, y=30)
+    n11.outvar(u"vSP_Inc", sp_inc, x=F.COL_OUT, y=90)
+    #  pri CALL adres zapisi = SP-2, pri RET adres chteniya = SP
+    n11.outvar(u"vSP_Addr", b_sel(n11, F.COL_BLK2, 30, c_push, c_sp,
+                                  n11.invar(u"vSP_Dec", y=44)),
+               x=F.COL_OUT, y=150)
+    after_pop = b_sel(n11, F.COL_BLK2, 110, c_pop, c_sp,
+                      n11.invar(u"vSP_Inc", y=124))
+    n11.outvar(u"vSP_Next", b_sel(n11, F.COL_BLK2 + 320, 70, c_push, after_pop,
+                                  n11.invar(u"vSP_Dec", y=64)),
+               x=F.COL_OUT, y=210)
+    #  sBros obnulyaet i ukazatel steka
+    c_rst11 = n11.invar(u"GVL_Control.Emu_Reset", y=300)
+    n11.outvar(u"GVL_Regs.Nx_SP",
+               b_sel(n11, F.COL_BLK2 + 480, 270, c_rst11,
+                     n11.invar(u"vSP_Next", y=270),
+                     n11.const(u"WORD#0", y=284)),
+               x=F.COL_OUT, y=270)
+    #  adres vozvrata dlya CALL: sleduyushchaya komanda posle trehbajtovoj
+    n11.outvar(u"vRetAddr", b_add(n11, F.COL_BLK2, 190, c_pcsp,
+                                  n11.const(u"WORD#3", y=204)),
+               x=F.COL_OUT, y=330)
+
     # ================= 7. PORT OPERANDA =================
-    n7 = p.network(u"SET 7: PORT OPERANDA: chtenie/zapis' po vychislennomu adresu")
+    n7 = p.network(u"SET 7: PORT OPERANDA: chtenie/zapis po vychislennomu adresu")
+    #  S T R O B  Z A P I S I  =  Ctl_Mem_Wr  I  T A K T  V Y P O L N E N I Ya.
+    #  B E Z  T A K T A  pamyat pishetsya K A Zh D Y J  S K A N, poka IR derzhit
+    #  komandu zapisi: pri perebore registrov (Init_En) IR eshche staryj, HL = 0,
+    #  i v Yachejku 0 zapisyvaetsya D_Bus = 0 -- to est unichtozhaetsya kod
+    #  komandy, kotoruyu kak raz podgotovil TEST_Z80_PREP. Izmereno na progone:
+    #  u teste T06 (LD A,(HL)) A i IR byli nulevymi, hotya pamyat podgotovlena.
+    c7_wr = n7.invar(u"vCtl_Mem_Wr", y=150)
+    c7_we = n7.invar(u"fbClock.Clk_Exec", y=430)
+    c7_push = n7.invar(u"vCtl_Is_CALL", y=310)
+    c7_pe = n7.invar(u"fbClock.Clk_Exec", y=470)
+    wr_stb = b_and(n7, F.COL_BLK, 430, c7_wr, c7_we)
+    push_stb = b_and(n7, F.COL_BLK, 470, c7_push, c7_pe)
+    n7.outvar(u"vMemWrStb", wr_stb, x=F.COL_OUT, y=430)
+    n7.outvar(u"vPushStb", push_stb, x=F.COL_OUT, y=470)
     n7.block(u"FB_Memory64K",
-             [(u"PC", n7.invar(u"fbPCLatch.Q", y=30)),
+             [(u"PC", n7.invar(u"GVL_Regs.Rs_PC", y=30)),
               (u"Addr", n7.invar(u"vAddr", y=70)),
               (u"Rd", n7.invar(u"vCtl_Mem_Rd", y=110)),
-              (u"Wr", n7.invar(u"vCtl_Mem_Wr", y=150)),
+              (u"Wr", n7.invar(u"vMemWrStb", y=150)),
               (u"D_Bus", n7.invar(u"GVL_Bus.Bus_Data", y=190)),
-              (u"SP_Addr", n7.invar(u"fbSP.SP", y=230)),
+              (u"SP_Addr", n7.invar(u"vSP_Addr", y=230)),
               (u"SP_Rd", n7.invar(u"vCtl_Is_RET", y=270)),
-              (u"SP_Wr", n7.invar(u"vCtl_Is_CALL", y=310)),
-              (u"SP_Data", n7.invar(u"fbPCLatch.Q", y=350))],
-             [u"D_Out", u"Rd_Data", u"SP_Out", u"Bus_Drv"],
+              (u"SP_Wr", n7.invar(u"vPushStb", y=310)),
+              (u"SP_Data", n7.invar(u"vRetAddr", y=350))],
+             [u"D_Out", u"Rd_Data", u"Op_Word", u"SP_Out", u"Bus_Drv"],
              x=F.COL_BLK2, y=30, instance=u"fbMem")
     n7.outvar(u"vMem_D_Out", n7.invar(u"fbMem.D_Out", y=30))
     n7.outvar(u"vFetch", n7.invar(u"vMem_D_Out", y=60), x=F.COL_OUT, y=400)
@@ -3950,6 +4492,7 @@ def mk_plc_prg():
     n7.outvar(u"vMemDrv", n7.invar(u"vMem_Bus_Drv", y=60), x=F.COL_OUT, y=440)
     n7.outvar(u"vMem_Rd_Data", n7.invar(u"fbMem.Rd_Data", y=30))
     n7.outvar(u"vImm", n7.invar(u"vMem_Rd_Data", y=60), x=F.COL_OUT, y=480)
+    n7.outvar(u"vOpWord", n7.invar(u"fbMem.Op_Word", y=30))
     n7.outvar(u"vMem_SP_Out", n7.invar(u"fbMem.SP_Out", y=30))
     n7.outvar(u"vSpRd", n7.invar(u"vMem_SP_Out", y=60), x=F.COL_OUT, y=520)
 
@@ -3962,18 +4505,43 @@ def mk_plc_prg():
     #  kompilyator soobshchal "Nevozmozhno konvertirovat tip 'BOOL' v tip
     #  'USINT'". Smysl vetki: esli operand beretsya iz IR (Ctl_Imm_Mode),
     #  berem src1, inache -- konstantu 1 (dlya INC/DEC).
-    c_iv = n8.invar(u"vCtl_Imm_Mode", y=150)
-    c_one = n8.const(u"1", y=190)
-    c_zero = n8.const(u"0", y=230)
-    c_f = n8.invar(u"fbRF.F", y=270)
-    src1 = b_sel(n8, F.COL_BLK, 70, c_rd8, c_sv, c_mv)
+    #  Ch T O  B Y L O  N E  T A K. Vtoraya stroka vybora pereputala vetki:
+    #      c_iv = Ctl_Imm_Mode;  src2 = SEL(c_iv, src1, 1)
+    #  dlya INC/DEC (Imm_Mode = FALSE) podavalsya registr, a dlya komand s
+    #  operandom iz koda -- edinica. To est INC A schital "A + A", a LD A,n
+    #  pisal edinicu. Izmereno: u T13 (INC A, A = 0Fh) poluchalos 1Eh.
+    #  T E P E R': pervyj vybor -- otkuda vz yat operand (pamyat / IR / registr),
+    #  vtoroj -- podmenit li ego edinicej (tol ko dlya INC/DEC).
+    c_iv = n8.invar(u"vCtl_IncDec", y=150)
+    c_mi = n8.invar(u"vCtl_Imm_Mode", y=330)
+    #  K A Zh D O E  P O T R E B L E N I E -- S V O Ya  K O N S T A N T A.
+    #  Odna konstanta na tri vhoda daet fan-out, a u klona, kak vyyasneno
+    #  eksperimentom s importom, mozhet ostat'sya nepodklyuchennyj vhod.
+    c_one = n8.const(u"BYTE#1", y=190)
+    c_one_b = n8.const(u"BYTE#1", y=390)
+    c_one_c = n8.const(u"BYTE#1", y=430)
+    c_f = n8.invar(u"GVL_Regs.Rs_F", y=270)
+    #  Ctl_Mem_Rd ILI Ctl_Imm_Mode -- priznak "operand ne iz registra"
+    c_src_mem = b_or(n8, F.COL_BLK, 330, c_rd8, c_mi)
+    src1 = b_sel(n8, F.COL_BLK, 70, c_src_mem, c_sv, c_mv)
     src2 = b_sel(n8, F.COL_BLK2, 120, c_iv, src1, c_one)
     n8.outvar(u"vSrc", src2, x=F.COL_OUT, y=120)
-    cbit = n8.block(u"AND", [(PIN1, c_f), (PIN2, c_one)], [POUT],
+    cbit = n8.block(u"AND", [(PIN1, c_f), (PIN2, c_one_b)], [POUT],
                     x=F.COL_BLK, y=270)
-    cin_b = b_eq(n8, F.COL_BLK2, 250, cbit, c_one)
+    cin_b = b_eq(n8, F.COL_BLK2, 250, cbit, c_one_c)
+    #  P E R V Y J  O P E R A N D  A L U.
+    #  B Y L O: vhod A zhestko podklyuchen k registru A. Dlya "INC B" eto
+    #  neverno (schitalos A+1 i pisalos v B), a dlya "LD r,r'" eshche i
+    #  liwno: nuzhno Y = perenosimoe znachenie, a ne A + perenosimoe.
+    #  T E P E R': dlya komand, kotorye menyayut flagi (gruppa ALU i INC/DEC),
+    #  ALU schitaet ot registra-priemnika (port Dst_Val), a dlya vseh ostal nyh
+    #  pervyj operand = 0, i ALU rabotaet povtoritelem: Y = operand.
+    c8_fe = n8.invar(u"vCtl_Flags_En", y=500)
+    c8_dv = n8.invar(u"vDstVal", y=540)
+    alu_a = b_sel(n8, F.COL_BLK, 500, c8_fe, n8.const(u"BYTE#0", y=514), c8_dv)
+    n8.outvar(u"vALU_A", alu_a, x=F.COL_OUT, y=500)
     n8.block(u"FB_ALU_Z80",
-             [(u"A", n8.invar(u"fbRFRd.A", y=310)),
+             [(u"A", n8.invar(u"vALU_A", y=310)),
               (u"B", n8.invar(u"vSrc", y=460)),
               (u"Op", n8.invar(u"vCtl_ALU_Op", y=350)),
               (u"Carry_In", cin_b),
@@ -3989,12 +4557,24 @@ def mk_plc_prg():
 
     # ================= 9. FLAGI =================
     n9 = p.network(u"SET 9: REGISTR FLAGOV")
+    #  F 5  i  F 3 -- neoficial nyj, no real nyj bait registra F: oni
+    #  berutsya iz rezul tata operacii (bity 5 i 3). Stoyali zhestko FALSE.
+    c9_y = n9.invar(u"vY", y=470)
+    f5 = b_eq(n9, F.COL_BLK, 470,
+              n9.block(u"AND", [(PIN1, c9_y), (PIN2, n9.const(u"16#20", y=484))],
+                       [POUT], x=F.COL_BLK - 100, y=470),
+              n9.const(u"16#20", y=520))
+    f3 = b_eq(n9, F.COL_BLK, 550,
+              n9.block(u"AND", [(PIN1, n9.invar(u"vY", y=564)),
+                                (PIN2, n9.const(u"16#08", y=578))],
+                       [POUT], x=F.COL_BLK - 100, y=550),
+              n9.const(u"16#08", y=610))
     n9.block(u"FB_FlagsRegZ80",
              [(u"Flag_S", n9.invar(u"fbALU.Flag_S", y=30)),
               (u"Flag_Z", n9.invar(u"fbALU.Flag_Z", y=70)),
-              (u"F5", n9.const(u"FALSE", y=110)),
+              (u"F5", f5),
               (u"Flag_H", n9.invar(u"fbALU.Flag_H", y=150)),
-              (u"F3", n9.const(u"FALSE", y=190)),
+              (u"F3", f3),
               (u"Flag_PV", n9.invar(u"fbALU.Flag_PV", y=230)),
               (u"Flag_N", n9.invar(u"fbALU.Flag_N", y=270)),
               (u"Flag_C", n9.invar(u"fbALU.Flag_C", y=310)),
@@ -4004,7 +4584,7 @@ def mk_plc_prg():
              [u"F"], x=F.COL_BLK2, y=30, instance=u"fbFlags")
     n9.outvar(u"vFlags_F", n9.invar(u"fbFlags.F", y=30))
     n9.outvar(u"vF", n9.invar(u"vFlags_F", y=60), x=F.COL_OUT, y=390)
-    n9.outvar(u"GVL_PLCVisu.F", n9.invar(u"vFlags_F", y=90), x=F.COL_OUT, y=430)
+    n9.outvar(u"GVL_Regs.Nx_F", n9.invar(u"vFlags_F", y=90), x=F.COL_OUT, y=430)
 
     # ================= 10. ZAPIS' V REGISTRY =================
     n10 = p.network(u"SET 10: ZAPIS' REZUL'TATA v registr")
@@ -4047,22 +4627,22 @@ def mk_plc_prg():
     n10.block(u"FB_RegFileZ80",
               [  #  T E K U Shch I E  Z N A Ch E N I Ya  R E G I S T R O V: hranenie
               #  zhivet v GVL_PLCVisu, FB lish vozvrat dayot novye znacheniya.
-              (u"A_In", n10.invar(u"GVL_PLCVisu.A", y=30)),
-              (u"B_In", n10.invar(u"GVL_PLCVisu.B", y=30)),
-              (u"C_In", n10.invar(u"GVL_PLCVisu.C", y=30)),
-              (u"D_In", n10.invar(u"GVL_PLCVisu.D", y=30)),
-              (u"E_In", n10.invar(u"GVL_PLCVisu.E", y=30)),
-              (u"H_In", n10.invar(u"GVL_PLCVisu.H", y=30)),
-              (u"L_In", n10.invar(u"GVL_PLCVisu.L", y=30)),
-              (u"F_In", n10.invar(u"GVL_PLCVisu.F", y=30)),
-              (u"Sa_In", n10.invar(u"GVL_PLCVisu.AltA", y=30)),
-              (u"Sb_In", n10.invar(u"GVL_PLCVisu.AltB", y=30)),
-              (u"Sc_In", n10.invar(u"GVL_PLCVisu.AltC", y=30)),
-              (u"Sd_In", n10.invar(u"GVL_PLCVisu.AltD", y=30)),
-              (u"Se_In", n10.invar(u"GVL_PLCVisu.AltE", y=30)),
-              (u"Sh_In", n10.invar(u"GVL_PLCVisu.AltH", y=30)),
-              (u"Sl_In", n10.invar(u"GVL_PLCVisu.AltL", y=30)),
-              (u"Sf_In", n10.invar(u"GVL_PLCVisu.AltF", y=30)),
+              (u"A_In", n10.invar(u"GVL_Regs.Rs_A", y=30)),
+              (u"B_In", n10.invar(u"GVL_Regs.Rs_B", y=30)),
+              (u"C_In", n10.invar(u"GVL_Regs.Rs_C", y=30)),
+              (u"D_In", n10.invar(u"GVL_Regs.Rs_D", y=30)),
+              (u"E_In", n10.invar(u"GVL_Regs.Rs_E", y=30)),
+              (u"H_In", n10.invar(u"GVL_Regs.Rs_H", y=30)),
+              (u"L_In", n10.invar(u"GVL_Regs.Rs_L", y=30)),
+              (u"F_In", n10.invar(u"GVL_Regs.Rs_F", y=30)),
+              (u"Sa_In", n10.invar(u"GVL_Regs.Rs_Sa", y=30)),
+              (u"Sb_In", n10.invar(u"GVL_Regs.Rs_Sb", y=30)),
+              (u"Sc_In", n10.invar(u"GVL_Regs.Rs_Sc", y=30)),
+              (u"Sd_In", n10.invar(u"GVL_Regs.Rs_Sd", y=30)),
+              (u"Se_In", n10.invar(u"GVL_Regs.Rs_Se", y=30)),
+              (u"Sh_In", n10.invar(u"GVL_Regs.Rs_Sh", y=30)),
+              (u"Sl_In", n10.invar(u"GVL_Regs.Rs_Sl", y=30)),
+              (u"Sf_In", n10.invar(u"GVL_Regs.Rs_Sf", y=30)),
               (u"Sel_Dst", n10.invar(u"vCtl_Sel_Dst", y=30)),
                (u"Sel_Src", n10.invar(u"vCtl_Sel_Src", y=70)),
                 #  Z D E S  --  P R Ya M O J  signal wr_val: eto rezul tat ALU
@@ -4078,10 +4658,12 @@ def mk_plc_prg():
                (u"Imm", n10.invar(u"vImm", y=310)),
                (u"Init_En", n10.invar(u"GVL_InitRegs.Init_En", y=350)),
                (u"Init_Sel_Dst", n10.invar(u"GVL_InitRegs.Init_Sel_Dst", y=390))],
-              [u"Src_Val", u"A", u"B", u"C", u"D", u"E", u"H", u"L", u"F",
-               u"Sa", u"Sb", u"Sc", u"Sd", u"Se", u"Sh", u"Sl", u"Sf",
-               u"Addr_HL"],
+              [u"Src_Val", u"Dst_Val", u"A", u"B", u"C", u"D", u"E", u"H",
+               u"L", u"F", u"Sa", u"Sb", u"Sc", u"Sd", u"Se", u"Sh", u"Sl",
+               u"Sf", u"Addr_HL"],
               x=F.COL_BLK2, y=30, instance=u"fbRF")
+    n10.outvar(u"vDstValW", n10.invar(u"fbRF.Dst_Val", y=520),
+               x=F.COL_OUT + 600, y=520)
     for pin, dst in ((u"A", u"GVL_PLCVisu.A"), (u"B", u"GVL_PLCVisu.B"),
                      (u"C", u"GVL_PLCVisu.C"), (u"D", u"GVL_PLCVisu.D"),
                      (u"E", u"GVL_PLCVisu.E"), (u"H", u"GVL_PLCVisu.H"),
@@ -4091,20 +4673,22 @@ def mk_plc_prg():
                      (u"Se", u"GVL_PLCVisu.AltE"), (u"Sh", u"GVL_PLCVisu.AltH"),
                      (u"Sl", u"GVL_PLCVisu.AltL"),
                      (u"Sf", u"GVL_PLCVisu.AltF")):
-        n10.outvar(dst, n10.invar(u"fbRF." + pin, y=400), x=F.COL_OUT + 600, y=400)
+        n10.outvar(u"vReg_" + pin, n10.invar(u"fbRF." + pin, y=400),
+                   x=F.COL_OUT + 600, y=400)
+    #  P E R E N O S  S N I M K O V  V  Z E R K A L O -- O T D E L N O J  S E T' Yu.
+    n10b = p.network(u"SET 10b: sleduyushchee sostoyanie registrov -> GVL_Regs")
+    #  Registr F vedet FB_FlagsRegZ80 (set' 9), poetomu zdes ego N E T:
+    #  inache u Nx_F bylo by dva pisatelya.
+    for pin in (u"A", u"B", u"C", u"D", u"E", u"H", u"L",
+                u"Sa", u"Sb", u"Sc", u"Sd", u"Se", u"Sh", u"Sl", u"Sf"):
+        n10b.outvar(u"GVL_Regs.Nx_" + pin,
+                    n10b.invar(u"vReg_" + pin, y=30), x=F.COL_OUT, y=30)
 
     # ================= 11. STEK =================
-    n11 = p.network(u"SET 11: STEK: SP i obmen s pamyat'yu")
-    n11.block(u"FB_SP_StackZ80",
-              [(u"Push", n11.invar(u"vCtl_Is_CALL", y=30)),
-               (u"Pop", n11.invar(u"vCtl_Is_RET", y=70)),
-               (u"Val_In", n11.invar(u"fbPCLatch.Q", y=110)),
-               (u"Mem_Rd", n11.invar(u"vSpRd", y=150))],
-              [u"SP", u"Val_Out", u"Addr", u"D_Out", u"Wr", u"Rd"],
-              x=F.COL_BLK2, y=30, instance=u"fbSP")
-    n11.outvar(u"vSP_SP", n11.invar(u"fbSP.SP", y=30))
-    n11.outvar(u"GVL_PLCVisu.SP", n11.invar(u"vSP_SP", y=60),
-               x=F.COL_OUT, y=400)
+    #  S A M A  L O G I K A  S T E K A  perenesena v set' 6b: adres
+    #  obrashcheniya k steku nuzhen ran she, chem idet vyzov pamyati.
+    #  Zdes' ostaetsya tol'ko poyasnenie, chtoby nomeraciya setej sovpadala
+    #  s dokumentaciej.
 
     # ================= 12. UPRAVLENIE POTOKOM =================
     n12 = p.network(u"SET 12: UPRAVLENIE: JP / CALL / RET / DJNZ / HALT")
@@ -4112,13 +4696,25 @@ def mk_plc_prg():
     #  uchastvovala: uslovie perehoda schitaetsya nizhe iz flagov (bit 6
     #  registra F -- eto Z). No imenno iz-za nee kompilyator soobshchal
     #  "C32: Nevozmozhno konvertirovat tip 'USINT' v tip 'BOOL'".
-    c_f12 = n12.invar(u"vF", y=70)
+    #  U S L O V I E  P E R E H O D A. Ctl_Cond trehznachnyj:
+    #      0 = NZ (idem, kogda Z sbroshen), 1 = Z (idem, kogda Z ustanovlen),
+    #      2 = bezuslovno (JP nn, CALL nn).
+    #  B Y L O: uslovie schitalos tol ko iz flaga Z, poetomu bezuslovnyj
+    #  "JP 2000h" ne vypolnyalsya pri Z = 0 (izmereno: T17, PC ostavalsya 0).
+    c_cc = n12.invar(u"vCtl_Cond", y=30)
+    c_f12 = n12.invar(u"GVL_Regs.Rs_F", y=70)
     c_40 = n12.const(u"16#40", y=110)
     c_0 = n12.const(u"0", y=150)
     fz = n12.block(u"AND", [(PIN1, c_f12), (PIN2, c_40)], [POUT],
                    x=F.COL_BLK, y=70)
-    zset = b_eq(n12, F.COL_BLK, 150, fz, c_0)
-    n12.outvar(u"vCond", b_not(n12, F.COL_BLK2, 150, zset), x=F.COL_OUT, y=150)
+    #  flag Z ustanovlen
+    zf = b_eq(n12, F.COL_BLK, 150, fz, c_40)
+    is_z = b_eq(n12, F.COL_BLK, 190, c_cc, n12.const(u"16#01", y=204))
+    always = b_eq(n12, F.COL_BLK, 230, c_cc, n12.const(u"16#02", y=244))
+    take_cc = b_sel(n12, F.COL_BLK2, 150, is_z,
+                    b_not(n12, F.COL_BLK, 300, zf), zf)
+    n12.outvar(u"vCond", b_or(n12, F.COL_BLK2 + 160, 190,
+                              always, take_cc), x=F.COL_OUT, y=150)
     c_b12 = n12.invar(u"fbRF.B", y=190)
     n12.outvar(u"vBZero", b_eq(n12, F.COL_BLK, 190, c_b12, c_0),
                x=F.COL_OUT, y=190)
@@ -4132,10 +4728,14 @@ def mk_plc_prg():
                (u"Is_HALT", n12.invar(u"vCtl_Is_HALT", y=470)),
                (u"Imm", n12.invar(u"vAddr", y=510)),
                (u"Ret_Addr", n12.invar(u"vSpRd", y=550)),
-               (u"PC_Cur", n12.invar(u"fbPCLatch.Q", y=590)),
-               (u"PC_Next", n12.invar(u"fbPC.PC_Next", y=630)),
+               (u"PC_Cur", n12.invar(u"GVL_Regs.Rs_PC", y=590)),
+               #  PC_Next nuzhen tol ko vetke "perehod ne vypolnyaetsya", gde
+               #  PC_Load = FALSE i znachenie ignoriiruetsya. Poeticheski
+               #  podaem tekushchij PC -- nikakih skrytyh smyslov.
+               (u"PC_Next", n12.invar(u"GVL_Regs.Rs_PC", y=630)),
                (u"B_Zero", n12.invar(u"vBZero", y=670)),
-               (u"Emu_Reset", n12.invar(u"GVL_Control.Emu_Reset", y=710))],
+               (u"Emu_Reset", n12.invar(u"GVL_Control.Emu_Reset", y=710)),
+               (u"En", n12.invar(u"fbClock.Clk_Exec", y=750))],
               [u"PC_New", u"PC_Load", u"Halted", u"Inc_By"],
               x=F.COL_BLK2 + 160, y=30, instance=u"fbCtl")
     n12.outvar(u"vCtl_PC_New", n12.invar(u"fbCtl.PC_New", y=30))
@@ -4149,53 +4749,41 @@ def mk_plc_prg():
                x=F.COL_OUT, y=870)
 
     # ================= 13. PC =================
+    #  S Ch E T Ch I K  K O M A N D. Sostoyanie -- GVL_Regs.Rs_PC,
+    #  sleduyushchee -- GVL_Regs.Nx_PC; perenosit ih PRG_RegLatch.
+    #  Prioritet: Init_En (zagruzka startovogo adresa) > zavershenie perehoda
+    #  > inkrement v fa ze vypolneniya.
+    #
+    #  B Y L O  T A K: ekzemplyar FB_PC_Z80, kotoryj chital SVOY ZhE vyhod
+    #  ("Addr") chtoby prinyat reshenie o sleduyushchem znachenii. Eto to zhe
+    #  kolco "vyhod pitayot svoy vhod", iz-za kotorogo registrovaya chast
+    #  kogda-to chitala nuli. Teper cepochka kombinacionnaya i bez ekzemplyara.
     n13 = p.network(u"SET 13: PC: sleduyushchaya komanda")
-    #  ============ Z A G R U Z K A  N A Ch A L N O G O  P C  ============
-    #  B Y L O  T A K: na vhody FB_PC_Z80 podavalis tolko vPCLoad i vPCNew
-    #  (upravlenie potokom: JP / CALL / RET / DJNZ). A GVL_InitRegs.Init_PC,
-    #  kuda programma testov kladet startovyj adres, N E  Ch I T A L S Ya
-    #  N I G D E v PLC_PRG -- provereno poiskom po vsemu generatoru.
-    #  Posledstvie na real nom progone: kazhdyj test nachinalsya s PC = 0,
-    #  a ne s Init_PC (dlya testov s Init_PC = 0120h i 0140h eto oshibka
-    #  v samom nachale), i vse 40 proverok valilis.
-    #  T E P E R': pri Init_En schetchik gruzit Init_PC, i etot zhe Init_En
-    #  razreshaet zapis' v zashchelku, chtoby novoe znachenie popalo tuda
-    #  srazu, a ne zhdat fazy vykonaniya.
+    c_pc = n13.invar(u"GVL_Regs.Rs_PC", y=30)
     c_load = n13.invar(u"vPCLoad", y=70)
-    c_new = n13.invar(u"vPCNew", y=30)
-    c_init_ld = n13.invar(u"GVL_InitRegs.Init_En", y=390)
-    c_init_sel = n13.invar(u"GVL_InitRegs.Init_En", y=430)
-    c_ipc = n13.invar(u"GVL_InitRegs.Init_PC", y=470)
-    #  gruzit' = (upravlenie potokom) ILI (initsializatsiya)
-    load_all = b_or(n13, F.COL_BLK2 + 160, 390, c_load, c_init_ld)
-    #  chto gruzit': pri Init_En -- Init_PC, inache -- vPCNew
-    val_all = b_sel(n13, F.COL_BLK2 + 320, 430, c_init_sel, c_new, c_ipc)
-    pc = n13.block(u"FB_PC_Z80",
-                   [(u"Load_Val", val_all),
-                    (u"Load", load_all),
-                    #  I N K R E M E N T -- T O L K O  V  F A Z E  V Y P O L N E N I Ya.
-                    #  Bylo const(TRUE): schetchik prirashchivalsya K A Zh D Y J  S K A N,
-                    #  a komanda zanimaet DVA skana (dekodirovanie i vypolnenie).
-                    #  Znachit za odnu komandu PC uskakal na dve pozicii i pereskakival
-                    #  bajty -- v tom chisle HALT. Izmereno: programma "4 NOP i HALT
-                    #  po adresu 4" nikogda ne ostanavlivalas'.
-                    (u"Inc", n13.invar(u"fbClock.Clk_Exec", y=110)),
-                    (u"Inc_By", n13.invar(u"vIncBy", y=150))],
-                   [u"Addr", u"PC_Next"], x=F.COL_BLK + 160, y=30,
-                   instance=u"fbPC")
-    #  zapis' v zashchelku: po faze vykonaniya ILI poInit_En
+    c_new = n13.invar(u"vPCNew", y=110)
+    c_by = n13.invar(u"vIncBy", y=150)
     c_exec = n13.invar(u"fbClock.Clk_Exec", y=190)
-    c_init_lat = n13.invar(u"GVL_InitRegs.Init_En", y=510)
-    lat_en = b_or(n13, F.COL_BLK2 + 480, 510, c_exec, c_init_lat)
-    latch = n13.block(u"FB_Reg16",
-                      [(u"D", pc.out(u"Addr")),
-                       (u"EN", lat_en),
-                       (u"CLR", n13.invar(u"GVL_Control.Emu_Reset", y=230))],
-                      [u"Q"], x=F.COL_BLK2 + 640, y=30, instance=u"fbPCLatch")
-    n13.outvar(u"GVL_PLCVisu.PC", latch, x=F.COL_OUT + 300, y=30)
-    n13.outvar(u"vPC_PC_Next", n13.invar(u"fbPC.PC_Next", y=30))
-    n13.outvar(u"vPCNext", n13.invar(u"vPC_PC_Next", y=60),
-               x=F.COL_OUT, y=70)
+    c_inite = n13.invar(u"GVL_InitRegs.Init_En", y=230)
+    c_initpc = n13.invar(u"GVL_InitRegs.Init_PC", y=270)
+    by_w = n13.block(u"BYTE_TO_WORD", [(PINU, c_by)], [POUT],
+                     x=F.COL_BLK, y=150)
+    pc_inc = b_add(n13, F.COL_BLK2, 30, c_pc, by_w)
+    n13.outvar(u"vPC_Inc", pc_inc, x=F.COL_OUT, y=30)
+    #  inkrement -- tol ko v fa ze vypolneniya, inache schetchik bezhal by
+    #  na kazhdom skane, vklyuchaya ostanovki
+    take = b_sel(n13, F.COL_BLK2 + 160, 70, c_exec, c_pc,
+                 n13.invar(u"vPC_Inc", y=84))
+    ld = b_sel(n13, F.COL_BLK2 + 320, 70, c_load, take, c_new)
+    fin = b_sel(n13, F.COL_BLK2 + 480, 70, c_inite, ld, c_initpc)
+    #  S B R O S  P R I O R I T E T N E E  V S E G O: posle reseta PC = 0,
+    #  kak u real nogo Z80. B E Z  E T O G O sBros ne vozvrashchal PC v nachalo:
+    #  posle komandy T05 (LD (HL),A) PC ostavalsya raven 1, sleduyushchij test
+    #  vybirat kod komandy iz Yachejki 1 (tam nol), i dekoder poluchal IR = 0.
+    c_rst = n13.invar(u"GVL_Control.Emu_Reset", y=310)
+    fin2 = b_sel(n13, F.COL_BLK2 + 640, 70, c_rst, fin,
+                 n13.const(u"WORD#0", y=84))
+    n13.outvar(u"GVL_Regs.Nx_PC", fin2, x=F.COL_OUT, y=110)
 
     # ================= 15. APPARATNYY VVOD/VYVOD PLK =================
     # ZACheM otdel nye seti na kazhdyy vyhod: sm. poyasnenie v
@@ -4304,7 +4892,7 @@ def mk_plc_prg():
 
     # ================= 17. BIOS =================
     n17 = p.network(u"SET 17: BIOS: zona adresov i konsol")
-    c_pc17 = n17.invar(u"fbPCLatch.Q", y=30)
+    c_pc17 = n17.invar(u"GVL_Regs.Rs_PC", y=30)
     is_bios = n17.block(u"GE", [(PIN1, c_pc17),
                                 (PIN2, n17.const(u"WORD#16#FA00", y=44))],
                         [POUT], x=F.COL_BLK2, y=30)
@@ -4333,7 +4921,7 @@ def mk_plc_prg():
     # na shinu adresa popadaet 0F000h, i my eto vidim.
     n18 = p.network(u"SET 18: PEREKhVAT BDOS: PC = 0F000h")
     is_bdos = b_eq(n18, F.COL_BLK2, 30,
-                   n18.invar(u"fbPCLatch.Q", y=30),
+                   n18.invar(u"GVL_Regs.Rs_PC", y=30),
                    n18.const(u"WORD#16#F000", y=44))
     #  Vyvodim v GVL, a ne v lokalnuyu peremennuyu: etot zhe signal nuzhen
     #  programme PRG_CPM_BDOS, a lokalnye peremennye odnoj programmy
@@ -4350,7 +4938,7 @@ def mk_plc_prg():
     #  ni v odnoj GVL, i kompilyator soobshchal
     #  "C4: 'R' ne yavlyaetsya komponentom 'GVL_PLCVisu'".
     r_inc = b_add(n14, F.COL_BLK, 30,
-                  b_b2w(n14, F.COL_BLK, 30, n14.invar(u"GVL_PLCVisu.R_Reg", y=30)),
+                  b_b2w(n14, F.COL_BLK, 30, n14.invar(u"GVL_Regs.Rs_R", y=30)),
                   n14.const(u"WORD#1", y=44))
     r_next = b_w2b(n14, F.COL_BLK + 160, 30, r_inc)
     n14.block(u"FB_Reg8",
@@ -4359,7 +4947,7 @@ def mk_plc_prg():
                (u"CLR", n14.invar(u"GVL_Control.Emu_Reset", y=110))],
               [u"Q"], x=F.COL_BLK2, y=30, instance=u"fbR")
     n14.outvar(u"vR_Q", n14.invar(u"fbR.Q", y=30))
-    n14.outvar(u"GVL_PLCVisu.R_Reg", n14.invar(u"vR_Q", y=60),
+    n14.outvar(u"GVL_Regs.Nx_R", n14.invar(u"vR_Q", y=60),
                x=F.COL_OUT, y=150)
     #  O G R A N I Ch E N I E  Ch I S L A  S E T E J  D L Ya  B I S E K C I I.
     #  Z80_PLC_NETS=N ostawlyaet tolko pervye N setej PLC_PRG. Nuzhno, chtoby
@@ -5240,12 +5828,14 @@ BUILDERS = [
     (u"PRG_CPM_BDOS", mk_prg_cpm_bdos),
     (u"GVL_Tests_CPM", mk_gvl_tests_cpm),
     (u"TEST_Z80_CPM", mk_test_z80_cpm),
+    (u"GVL_Regs", mk_gvl_regs),
     (u"GVL_Tests", mk_gvl_tests),
     (u"TEST_Z80_PREP", mk_test_z80_prep),
     (u"TEST_Z80", mk_test_z80),
     # glavnaya shema i vspomogatelnye
     (u"FB_AlwaysTrue", mk_always_true),
     (u"PLC_PRG", mk_plc_prg),
+    (u"PRG_RegLatch", mk_prg_reglatch),
 ]
 
 

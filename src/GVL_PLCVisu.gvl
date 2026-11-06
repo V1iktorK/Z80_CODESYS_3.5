@@ -26,6 +26,7 @@ VAR_GLOBAL
     IY     : WORD;
     I      : BYTE;
     R_Reg  : BYTE;
+    Reg_Checksum : BYTE;   (* kontrolnaya summa registrov, schitaet PRG_RegLatch *)
     IR     : BYTE;
     Halted : BOOL;
 
