@@ -111,12 +111,17 @@ def run_case(op, a, b, f_in, hl):
 
     hi2 = op & 0xC0
     if hi2 == 0x40:                                   # LD r,r' / LD (HL),r
-        dst, src = reg_of((op >> 3) & 7), reg_of(op & 7)
-        if dst == 6 and (op & 7) == 6:
+        #  V A Zh N O: kod registra Z80 (6 = (HL)) i nomer registra v proekte
+        #  (0=A,1=B...) -- raznye veshi. Sravnivat' s shesterkoy nuzhno KOD,
+        #  a ne perevedennyj nomer: inache "LD L,n" schitaetsya zapis'yu
+        #  v pamyat' i model ozhidaet zapis' po adresu 1234h.
+        zr_dst, zr_src = (op >> 3) & 7, op & 7
+        dst, src = reg_of(zr_dst), reg_of(zr_src)
+        if zr_dst == 6 and zr_src == 6:
             pass
-        elif (op >> 3) & 7 == 6:
-            mw = (hl, regs[src] if src in regs else None)
-        elif (op & 7) == 6:
+        elif zr_dst == 6:
+            mw = (hl, regs.get(src, 0))
+        elif zr_src == 6:
             regs[dst] = mem.get(hl, 0)
         else:
             regs[dst] = regs.get(src, 0)
@@ -131,15 +136,18 @@ def run_case(op, a, b, f_in, hl):
         regs[0] = mem[1]
         pc = 2
     elif (op & 0xC7) == 0x06:                         # LD r,n
-        dst = reg_of((op >> 3) & 7)
-        if dst == 6:
+        zr_dst = (op >> 3) & 7
+        dst = reg_of(zr_dst)
+        if zr_dst == 6:
             mw = (hl, mem[1])
         else:
             regs[dst] = mem[1]
         pc = 2
     elif hi2 == 0x80:                                 # gruppa ALU
-        src = reg_of(op & 7)
-        v = mem.get(hl, 0) if src == 6 else regs.get(src, 0)
+        zr_src = op & 7
+        src = reg_of(zr_src)
+        #  (HL) -- eto KOD 6 v kode komandy, a ne nomer 6 v proekte (tam eto L).
+        v = mem.get(hl, 0) if zr_src == 6 else regs.get(src, 0)
         grp = (op >> 3) & 7
         if grp == 0:
             y = (regs[0] + v) & 0xFF
@@ -167,8 +175,9 @@ def run_case(op, a, b, f_in, hl):
         pc = 1
     elif (op & 0xC7) == 0x04 or (op & 0xC7) == 0x05:   # INC r / DEC r
         is_dec = (op & 0xC7) == 0x05
-        dst = reg_of((op >> 3) & 7)
-        if dst == 6:
+        zr_dst = (op >> 3) & 7
+        dst = reg_of(zr_dst)
+        if zr_dst == 6:
             pass
         else:
             a0 = regs.get(dst, 0)

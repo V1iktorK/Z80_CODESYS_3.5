@@ -2710,6 +2710,13 @@ IF bFirst THEN
 END_IF
 
 (* ============================== PROGON ============================== *)
+(*  P O Ch E M U  Zh D E M  STEND  PROCESSSORA. Oba stenda upravlyayut
+    O D N I M  processora: sbrasyvayut ego, gruzyat Init_Vals i vklyuchayut
+    Emu_Run. Esli oni rabotayut odnovremenno, oni portyat drug drugu --
+    izmereno na obshchem progone: CPU 33 iz 40 i CP/M 16 iz 30 vmesto
+    40 i 30, hotya po otdel nosti oba nabora prohodyat polnost yu.
+    Poetomu stend CP/M nachinaet tol ko posle zaversheniya stenda
+    processorA (on gasit svoj priznak Run, kogda projdet vse testy). *)
 IF GVL_Tests_CPM.Cpm_Test_Run THEN
 
     (* shag 0: podgotovka -- nastrojka vhodov PLK i konsoli, zagruzka
@@ -2755,32 +2762,36 @@ IF GVL_Tests_CPM.Cpm_Test_Run THEN
         ELSE
             (*  K A T A L O G. Kody komand i znachenie A dlya kazhdogo shaga. *)
             CASE nStep OF
-                0:  Z80_Mem[0] := 16#DB;  Z80_Mem[1] := 16#02;   (* IN A,(02h) *)
+                0:  Z80_Mem[16#4000] := 16#DB;  Z80_Mem[16#4001] := 16#02;   (* IN A,(02h) *)
                     GVL_InitRegs.Init_Vals[0] := 0;
-                1:  Z80_Mem[0] := 16#DB;  Z80_Mem[1] := 16#03;   (* IN A,(03h) *)
+                1:  Z80_Mem[16#4000] := 16#DB;  Z80_Mem[16#4001] := 16#03;   (* IN A,(03h) *)
                     GVL_InitRegs.Init_Vals[0] := 0;
-                2:  Z80_Mem[0] := 16#DB;  Z80_Mem[1] := 16#06;   (* IN A,(06h) *)
+                2:  Z80_Mem[16#4000] := 16#DB;  Z80_Mem[16#4001] := 16#06;   (* IN A,(06h) *)
                     GVL_InitRegs.Init_Vals[0] := 0;
-                3:  Z80_Mem[0] := 16#DB;  Z80_Mem[1] := 16#07;   (* IN A,(07h) *)
+                3:  Z80_Mem[16#4000] := 16#DB;  Z80_Mem[16#4001] := 16#07;   (* IN A,(07h) *)
                     GVL_InitRegs.Init_Vals[0] := 0;
-                4:  Z80_Mem[0] := 16#DB;  Z80_Mem[1] := 16#10;   (* IN A,(10h) *)
+                4:  Z80_Mem[16#4000] := 16#DB;  Z80_Mem[16#4001] := 16#10;   (* IN A,(10h) *)
                     GVL_InitRegs.Init_Vals[0] := 0;
-                5:  Z80_Mem[0] := 16#DB;  Z80_Mem[1] := 16#21;   (* IN A,(21h) *)
+                5:  Z80_Mem[16#4000] := 16#DB;  Z80_Mem[16#4001] := 16#21;   (* IN A,(21h) *)
                     GVL_InitRegs.Init_Vals[0] := 0;
-                6:  Z80_Mem[0] := 16#DB;  Z80_Mem[1] := 16#00;   (* IN A,(00h) *)
+                6:  Z80_Mem[16#4000] := 16#DB;  Z80_Mem[16#4001] := 16#00;   (* IN A,(00h) *)
                     GVL_InitRegs.Init_Vals[0] := 0;
-                7:  Z80_Mem[0] := 16#D3;  Z80_Mem[1] := 16#01;   (* OUT (01h),A *)
+                7:  Z80_Mem[16#4000] := 16#D3;  Z80_Mem[16#4001] := 16#01;   (* OUT (01h),A *)
                     GVL_InitRegs.Init_Vals[0] := 16#3C;
-                8:  Z80_Mem[0] := 16#D3;  Z80_Mem[1] := 16#04;   (* OUT (04h),A *)
+                8:  Z80_Mem[16#4000] := 16#D3;  Z80_Mem[16#4001] := 16#04;   (* OUT (04h),A *)
                     GVL_InitRegs.Init_Vals[0] := 16#34;
-                9:  Z80_Mem[0] := 16#D3;  Z80_Mem[1] := 16#05;   (* OUT (05h),A *)
+                9:  Z80_Mem[16#4000] := 16#D3;  Z80_Mem[16#4001] := 16#05;   (* OUT (05h),A *)
                     GVL_InitRegs.Init_Vals[0] := 16#12;
             ELSE
-                Z80_Mem[0] := 16#76;
+                Z80_Mem[16#4000] := 16#76;
                 GVL_InitRegs.Init_Vals[0] := 0;
             END_CASE
             GVL_InitRegs.Init_Sel_Dst := 0;
-            GVL_InitRegs.Init_PC := 0;
+            (*  P R O G R A M M A  Zh I V E T  P O  A D R E S U  4000h, i
+                nulevuyu stranitsu CP/M N E  T R O G A E M: ee vektory
+                (Mem[0..2] -- vhod BIOS, Mem[5..7] -- vhod BDOS) proveryayut
+                drugie testy. Nuzhnyj PC stavitsya shtatno -- cherez Init_PC. *)
+            GVL_InitRegs.Init_PC := 16#4000;
             GVL_Control.Emu_Reset := FALSE;
             GVL_InitRegs.Init_En := TRUE;
             nSweep := 0;
@@ -3058,7 +3069,7 @@ END_VAR
 IF NOT GVL_InitState.TestTableDone THEN
     GVL_InitState.TestTableDone := TRUE;
 
-    FOR i := 1 TO 40 DO
+    FOR i := 1 TO 62 DO
         GVL_Tests.Cpu_Tests[i].Id := i;
         GVL_Tests.Cpu_Tests[i].Enabled := FALSE;
         GVL_Tests.Cpu_Tests[i].Stage := 0;
@@ -3361,6 +3372,153 @@ IF NOT GVL_InitState.TestTableDone THEN
 
 
 
+    (* ---------------- T41..T62: rasshirenie pokrytiya -------------------- *)
+    GVL_Tests.Cpu_Tests[41].Enabled := TRUE;   (* T41 LD B,C -- B := C *)
+    GVL_Tests.Cpu_Tests[41].Opcode := 16#41;
+    GVL_Tests.Cpu_Tests[41].Init_F := 16#FF;
+    GVL_Tests.Cpu_Tests[41].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[41].Exp_A := 16#00;
+    GVL_Tests.Cpu_Tests[41].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[41].Exp_F := 16#FF;
+
+    GVL_Tests.Cpu_Tests[42].Enabled := TRUE;   (* T42 LD C,A -- C := A *)
+    GVL_Tests.Cpu_Tests[42].Opcode := 16#4F;
+    GVL_Tests.Cpu_Tests[42].Init_A := 16#3A;
+    GVL_Tests.Cpu_Tests[42].Init_F := 16#FF;
+    GVL_Tests.Cpu_Tests[42].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[42].Exp_A := 16#3A;
+    GVL_Tests.Cpu_Tests[42].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[42].Exp_F := 16#FF;
+
+    GVL_Tests.Cpu_Tests[43].Enabled := TRUE;   (* T43 LD D,B -- D := B *)
+    GVL_Tests.Cpu_Tests[43].Opcode := 16#50;
+    GVL_Tests.Cpu_Tests[43].Init_B := 16#77;
+    GVL_Tests.Cpu_Tests[43].Init_F := 16#FF;
+    GVL_Tests.Cpu_Tests[43].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[43].Exp_A := 16#00;
+    GVL_Tests.Cpu_Tests[43].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[43].Exp_F := 16#FF;
+
+    GVL_Tests.Cpu_Tests[44].Enabled := TRUE;   (* T44 LD H,A -- H := A *)
+    GVL_Tests.Cpu_Tests[44].Opcode := 16#67;
+    GVL_Tests.Cpu_Tests[44].Init_A := 16#5C;
+    GVL_Tests.Cpu_Tests[44].Init_F := 16#FF;
+    GVL_Tests.Cpu_Tests[44].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[44].Exp_A := 16#5C;
+    GVL_Tests.Cpu_Tests[44].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[44].Exp_F := 16#FF;
+
+    GVL_Tests.Cpu_Tests[45].Enabled := TRUE;   (* T45 LD L,A -- L := A *)
+    GVL_Tests.Cpu_Tests[45].Opcode := 16#6F;
+    GVL_Tests.Cpu_Tests[45].Init_A := 16#6B;
+    GVL_Tests.Cpu_Tests[45].Init_F := 16#FF;
+    GVL_Tests.Cpu_Tests[45].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[45].Exp_A := 16#6B;
+    GVL_Tests.Cpu_Tests[45].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[45].Exp_F := 16#FF;
+
+    GVL_Tests.Cpu_Tests[46].Enabled := TRUE;   (* T46 LD A,A -- A := A *)
+    GVL_Tests.Cpu_Tests[46].Opcode := 16#7F;
+    GVL_Tests.Cpu_Tests[46].Init_A := 16#19;
+    GVL_Tests.Cpu_Tests[46].Init_F := 16#FF;
+    GVL_Tests.Cpu_Tests[46].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[46].Exp_A := 16#19;
+    GVL_Tests.Cpu_Tests[46].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[46].Exp_F := 16#FF;
+
+    GVL_Tests.Cpu_Tests[47].Enabled := TRUE;   (* T47 LD C,n -- C := Mem[1] *)
+    GVL_Tests.Cpu_Tests[47].Opcode := 16#0E;
+    GVL_Tests.Cpu_Tests[47].Init_F := 16#FF;
+    GVL_Tests.Cpu_Tests[47].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[47].Exp_A := 16#00;
+    GVL_Tests.Cpu_Tests[47].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[47].Exp_F := 16#FF;
+
+    GVL_Tests.Cpu_Tests[48].Enabled := TRUE;   (* T48 LD D,n -- D := Mem[1] *)
+    GVL_Tests.Cpu_Tests[48].Opcode := 16#16;
+    GVL_Tests.Cpu_Tests[48].Init_F := 16#FF;
+    GVL_Tests.Cpu_Tests[48].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[48].Exp_A := 16#00;
+    GVL_Tests.Cpu_Tests[48].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[48].Exp_F := 16#FF;
+
+    GVL_Tests.Cpu_Tests[49].Enabled := TRUE;   (* T49 LD E,n -- E := Mem[1] *)
+    GVL_Tests.Cpu_Tests[49].Opcode := 16#1E;
+    GVL_Tests.Cpu_Tests[49].Init_F := 16#FF;
+    GVL_Tests.Cpu_Tests[49].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[49].Exp_A := 16#00;
+    GVL_Tests.Cpu_Tests[49].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[49].Exp_F := 16#FF;
+
+    GVL_Tests.Cpu_Tests[50].Enabled := TRUE;   (* T50 LD H,n -- H := Mem[1] *)
+    GVL_Tests.Cpu_Tests[50].Opcode := 16#26;
+    GVL_Tests.Cpu_Tests[50].Init_F := 16#FF;
+    GVL_Tests.Cpu_Tests[50].Init_HL := 16#1234;
+    GVL_Tests.Cpu_Tests[50].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[50].Exp_A := 16#00;
+    GVL_Tests.Cpu_Tests[50].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[50].Exp_F := 16#FF;
+
+    GVL_Tests.Cpu_Tests[51].Enabled := TRUE;   (* T51 LD L,n -- L := Mem[1] *)
+    GVL_Tests.Cpu_Tests[51].Opcode := 16#2E;
+    GVL_Tests.Cpu_Tests[51].Init_F := 16#FF;
+    GVL_Tests.Cpu_Tests[51].Init_HL := 16#1234;
+    GVL_Tests.Cpu_Tests[51].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[51].Exp_A := 16#00;
+    GVL_Tests.Cpu_Tests[51].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[51].Exp_F := 16#FF;
+
+    GVL_Tests.Cpu_Tests[52].Enabled := TRUE;   (* T52 ADD A,H -- A := A + H *)
+    GVL_Tests.Cpu_Tests[52].Opcode := 16#84;
+    GVL_Tests.Cpu_Tests[52].Init_A := 16#0F;
+    GVL_Tests.Cpu_Tests[52].Init_HL := 16#5500;
+    GVL_Tests.Cpu_Tests[52].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[52].Exp_A := 16#64;
+    GVL_Tests.Cpu_Tests[52].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[52].Exp_F := 16#30;
+
+    GVL_Tests.Cpu_Tests[53].Enabled := TRUE;   (* T53 ADD A,L -- A := A + L *)
+    GVL_Tests.Cpu_Tests[53].Opcode := 16#85;
+    GVL_Tests.Cpu_Tests[53].Init_A := 16#0F;
+    GVL_Tests.Cpu_Tests[53].Init_HL := 16#0055;
+    GVL_Tests.Cpu_Tests[53].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[53].Exp_A := 16#64;
+    GVL_Tests.Cpu_Tests[53].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[53].Exp_F := 16#30;
+
+    GVL_Tests.Cpu_Tests[54].Enabled := TRUE;   (* T54 SUB H -- A := A - H *)
+    GVL_Tests.Cpu_Tests[54].Opcode := 16#94;
+    GVL_Tests.Cpu_Tests[54].Init_A := 16#0F;
+    GVL_Tests.Cpu_Tests[54].Init_HL := 16#0500;
+    GVL_Tests.Cpu_Tests[54].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[54].Exp_A := 16#0A;
+    GVL_Tests.Cpu_Tests[54].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[54].Exp_F := 16#0A;
+
+    GVL_Tests.Cpu_Tests[55].Enabled := TRUE;   (* T55 SUB L -- A := A - L *)
+    GVL_Tests.Cpu_Tests[55].Opcode := 16#95;
+    GVL_Tests.Cpu_Tests[55].Init_A := 16#0F;
+    GVL_Tests.Cpu_Tests[55].Init_HL := 16#0005;
+    GVL_Tests.Cpu_Tests[55].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[55].Exp_A := 16#0A;
+    GVL_Tests.Cpu_Tests[55].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[55].Exp_F := 16#0A;
+
+    GVL_Tests.Cpu_Tests[56].Enabled := TRUE;   (* T56 INC B -- B := B + 1, C sohranen *)
+    GVL_Tests.Cpu_Tests[56].Opcode := 16#04;
+    GVL_Tests.Cpu_Tests[56].Init_B := 16#0F;
+    GVL_Tests.Cpu_Tests[56].Init_F := 16#01;
+    GVL_Tests.Cpu_Tests[56].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[56].Exp_A := 16#00;
+    GVL_Tests.Cpu_Tests[56].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[56].Exp_F := 16#11;
+
+    GVL_Tests.Cpu_Tests[57].Enabled := TRUE;   (* T57 DEC C -- C := C - 1 *)
+    GVL_Tests.Cpu_Tests[57].Opcode := 16#0D;
+    GVL_Tests.Cpu_Tests[57].Init_F := 16#01;
+    GVL_Tests.Cpu_Tests[57].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[57].Exp_A := 16#00;
+    GVL_Tests.Cpu_Tests[57].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[57].Exp_F := 16#BB;
+
+    GVL_Tests.Cpu_Tests[58].Enabled := TRUE;   (* T58 INC H -- H := H + 1 *)
+    GVL_Tests.Cpu_Tests[58].Opcode := 16#24;
+    GVL_Tests.Cpu_Tests[58].Init_HL := 16#7F00;
+    GVL_Tests.Cpu_Tests[58].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[58].Exp_A := 16#00;
+    GVL_Tests.Cpu_Tests[58].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[58].Exp_F := 16#94;
+
+    GVL_Tests.Cpu_Tests[59].Enabled := TRUE;   (* T59 DEC L -- L := L - 1 *)
+    GVL_Tests.Cpu_Tests[59].Opcode := 16#2D;
+    GVL_Tests.Cpu_Tests[59].Init_HL := 16#0001;
+    GVL_Tests.Cpu_Tests[59].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[59].Exp_A := 16#00;
+    GVL_Tests.Cpu_Tests[59].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[59].Exp_F := 16#42;
+
+    GVL_Tests.Cpu_Tests[60].Enabled := TRUE;   (* T60 CP A -- sravnenie samogo sebya *)
+    GVL_Tests.Cpu_Tests[60].Opcode := 16#BF;
+    GVL_Tests.Cpu_Tests[60].Init_A := 16#40;
+    GVL_Tests.Cpu_Tests[60].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[60].Exp_A := 16#40;
+    GVL_Tests.Cpu_Tests[60].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[60].Exp_F := 16#42;
+
+    GVL_Tests.Cpu_Tests[61].Enabled := TRUE;   (* T61 ADD A,(HL) -- A := A + Mem[HL] *)
+    GVL_Tests.Cpu_Tests[61].Opcode := 16#86;
+    GVL_Tests.Cpu_Tests[61].Init_A := 16#01;
+    GVL_Tests.Cpu_Tests[61].Init_HL := 16#2000;
+    GVL_Tests.Cpu_Tests[61].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[61].Exp_A := 16#56;
+    GVL_Tests.Cpu_Tests[61].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[61].Exp_F := 16#00;
+
+    GVL_Tests.Cpu_Tests[62].Enabled := TRUE;   (* T62 SUB (HL) -- A := A - Mem[HL] *)
+    GVL_Tests.Cpu_Tests[62].Opcode := 16#96;
+    GVL_Tests.Cpu_Tests[62].Init_A := 16#55;
+    GVL_Tests.Cpu_Tests[62].Init_HL := 16#2000;
+    GVL_Tests.Cpu_Tests[62].Mask_A := TRUE;  GVL_Tests.Cpu_Tests[62].Exp_A := 16#00;
+    GVL_Tests.Cpu_Tests[62].Mask_F := TRUE;  GVL_Tests.Cpu_Tests[62].Exp_F := 16#42;
+
     (* ---------------- T47..T50: izolyatsiya flagov (F_ISO) --------------- *)
 
 
@@ -3381,7 +3539,7 @@ IF NOT GVL_InitState.TestTableDone THEN
 
     (* schitaem skolko vklyucheno -- eto i est ozhidaemyy itog *)
     GVL_Tests.Cpu_Test_Count := 0;
-    FOR i := 1 TO 40 DO
+    FOR i := 1 TO 62 DO
         IF GVL_Tests.Cpu_Tests[i].Enabled THEN
             GVL_Tests.Cpu_Test_Count := GVL_Tests.Cpu_Test_Count + 1;
         END_IF
@@ -3440,7 +3598,13 @@ END_VAR
    Zdes ostalsya tolko progon.
    ==================================================================== *)
 (* ============================== PROGON ============================== *)
-IF GVL_Tests.Cpu_Test_Run THEN
+(*  P O Ch E M U  S T E N D  P R O C E S S O R A  Zh D E T.
+    Oba stenda upravlyayut O D N I M processora (sBros, Init_Vals, Emu_Run),
+    a krome togo podgotovka stenda processora pishet komandu po adresu 0 i
+    obnulyaet Yachejki 0..15 -- to est razrushaet nulevuyu stranitsu CP/M
+    (vektory BIOS i BDOS), kotoruyu proveryayut testy CP/M. Poetomu poryadok
+    zhestkij: snachala polnost yu prohodit CP/M, i tol ko potom -- processor. *)
+IF GVL_Tests.Cpu_Test_Run AND NOT GVL_Tests_CPM.Cpm_Test_Run THEN
 
     (* ---- shag 0: podgotovka ---- *)
     IF GVL_Tests.Cpu_Test_Stage = 0 THEN
@@ -3693,7 +3857,7 @@ IF GVL_Tests.Cpu_Test_Run THEN
     ELSE
         GVL_Tests.Cpu_Test_Total_Pass := 0;
         GVL_Tests.Cpu_Test_Fail_Count := 0;
-        FOR i := 1 TO 40 DO
+        FOR i := 1 TO 62 DO
             IF GVL_Tests.Cpu_Test_Executed[i] THEN
                 IF GVL_Tests.Cpu_Test_Result[i] THEN
                     GVL_Tests.Cpu_Test_Total_Pass := GVL_Tests.Cpu_Test_Total_Pass + 1;
@@ -3908,6 +4072,15 @@ ST_GVL_REGS = u'''VAR_GLOBAL
         seti, gde schitaet ALU, a vyzov pamyati stoit RAN'ShE nee. Poetomu
         zapis' vypolnyaetsya na SLEDUYushchEM skane: Rs_* -- to, chto pamyat
         zapishet sejchas, Nx_* -- to, chto vyrabotal etot skan. *)
+    (*  A N A L O G O V Y E  V Y H O D Y. Slovo sobiraetsya iz dvuh zapisej
+        OUT: mladshij bajt -- port 04h (08h), starshij -- 05h (09h). Hranenie
+        zdes', a ne vnutri FB_Reg16: tot derzhit sostoyanie cherez svoy zhe
+        vyhod i v kaskade dvuh registrov teryal starshij bajt. *)
+    Rs_AO0   : WORD;
+    Nx_AO0   : WORD;
+    Rs_AO1   : WORD;
+    Nx_AO1   : WORD;
+
     Rs_MW    : BOOL;   (* strob zapisi v pamyat' *)
     Rs_MAddr : WORD;   (* adres zapisi *)
     Rs_MData : BYTE;   (* bajt zapisi *)
@@ -4343,6 +4516,12 @@ def mk_prg_reglatch():
     y += 34
     nx.outvar(u"GVL_Regs.Rs_MData", nx.invar(u"GVL_Regs.Nx_MData", y=y),
               x=F.COL_OUT, y=y)
+    y += 34
+    nx.outvar(u"GVL_Regs.Rs_AO0", nx.invar(u"GVL_Regs.Nx_AO0", y=y),
+              x=F.COL_OUT, y=y)
+    y += 34
+    nx.outvar(u"GVL_Regs.Rs_AO1", nx.invar(u"GVL_Regs.Nx_AO1", y=y),
+              x=F.COL_OUT, y=y)
 
     y = 30
     hm = p.network(u"LATCH 2: zerkalo dlya vizualizacii (HMI)")
@@ -4549,6 +4728,11 @@ def mk_plc_prg():
     p.var(u"vALU_A", u"BYTE", u"pervyj operand ALU")
     p.var(u"vPCPlus1", u"WORD", u"PC + 1: adres operanda")
     p.var(u"vImmEff", u"BYTE", u"operand dlya ALU: pamyat ili dannye porta")
+    p.var(u"vAOWr", u"BOOL", u"strob zapisi v analogovye vyhody")
+    p.var(u"vAOLo", u"WORD", u"slovo AO0 s obnovlennym mladshim bajtom")
+    p.var(u"vAOHi", u"WORD", u"slovo AO0 s obnovlennym starshim bajtom")
+    p.var(u"vAONew", u"WORD", u"sleduyushchee znachenie AO0")
+    p.var(u"vAOHiSel", u"WORD", u"AO0 posle obnovleniya starshego bajta")
     p.var(u"vWrEnEff", u"BOOL", u"zapis registra: komanda ili initsializaciya")
     p.var(u"vC_Eff", u"BOOL", u"flag C dlya zapisi: u INC/DEC staryj")
     p.var(u"vFlagsEn", u"BOOL", u"zapis flagov: gruppa komandy i takt")
@@ -4888,10 +5072,73 @@ def mk_plc_prg():
     n16b.outvar(u"vOutDO", io.out(u"Out_DO"), x=F.COL_OUT + 600, y=30)
 
     n16c = p.network(u"SET 16c: vyhod portov: analogovyy kanal 0")
-    n16c.outvar(u"vOutAO0", io.out(u"Out_AO0"), x=F.COL_OUT + 600, y=30)
+    n16c.outvar(u"vOutAO0", n16c.invar(u"GVL_Regs.Rs_AO0", y=30),
+                x=F.COL_OUT + 600, y=30)
 
     n16d = p.network(u"SET 16d: vyhod portov: analogovyy kanal 1")
-    n16d.outvar(u"vOutAO1", io.out(u"Out_AO1"), x=F.COL_OUT + 600, y=30)
+    n16d.outvar(u"vOutAO1", n16d.invar(u"GVL_Regs.Rs_AO1", y=30),
+                x=F.COL_OUT + 600, y=30)
+
+    # ================= 16a. ANALOGOVYE VYHODY: sborka slova =================
+    #  Dva porta na kanal: 04h -- mladshij bajt, 05h -- starshij (08h/09h --
+    #  vtoroj kanal). Znachenie hranitsya v GVL_Regs.Rs_AO0 (para Rs_/Nx_,
+    #  perenosit PRG_RegLatch), poetomu vyhod derzhitsya mezhdu komandami.
+    n16a = p.network(u"SET 16a: analogovye vyhody: zapis' mladshego i starshego bajta")
+    c_ao_wr = n16a.invar(u"vCtl_IO_Wr", y=30)
+    c_ao_wc = n16a.invar(u"fbClock.Clk_Exec", y=70)
+    c_ao_ad = n16a.invar(u"vIOAddr", y=110)
+    c_ao_dt = n16a.invar(u"GVL_Regs.Rs_A", y=150)
+    n16a.outvar(u"vAOWr", b_and(n16a, F.COL_BLK, 30, c_ao_wr,
+                                n16a.invar(u"fbClock.Clk_Exec", y=70)),
+                x=F.COL_OUT, y=30)
+    #  maski dlya sklejki: mladshij bajt i starshij bajt
+    c_ao_hi = n16a.invar(u"GVL_Regs.Rs_AO0", y=190)
+    n16a.outvar(u"vAOLo", b_or(n16a, F.COL_BLK2, 190,
+                              n16a.block(u"AND",
+                                         [(PIN1, c_ao_hi),
+                                          (PIN2, n16a.const(u"WORD#16#FF00", y=204))],
+                                         [POUT], x=F.COL_BLK, y=190),
+                              b_b2w(n16a, F.COL_BLK, 230,
+                                    n16a.invar(u"GVL_Regs.Rs_A", y=230))),
+                x=F.COL_OUT, y=190)
+    c_ao_hi2 = n16a.invar(u"GVL_Regs.Rs_AO0", y=270)
+    c_ao_dt2 = n16a.invar(u"GVL_Regs.Rs_A", y=310)
+    n16a.outvar(u"vAOHi", b_or(n16a, F.COL_BLK2, 270,
+                              n16a.block(u"AND",
+                                         [(PIN1, c_ao_hi2),
+                                          (PIN2, n16a.const(u"WORD#16#00FF", y=284))],
+                                         [POUT], x=F.COL_BLK, y=270),
+                              b_shl(n16a, F.COL_BLK2 + 160, 270,
+                                    b_b2w(n16a, F.COL_BLK, 270, c_ao_dt2),
+                                    n16a.const(u"8", y=284))),
+                x=F.COL_OUT, y=270)
+    #  vybor: port 04h -- mladshij, 05h -- starshij, inache -- bez izmenenij
+    is04 = b_eq(n16a, F.COL_BLK2 + 320, 190,
+                n16a.invar(u"vIOAddr", y=190), n16a.const(u"16#04", y=204))
+    is05 = b_eq(n16a, F.COL_BLK2 + 320, 270,
+                n16a.invar(u"vIOAddr", y=270), n16a.const(u"16#05", y=284))
+    #  P O M N I T': b_sel(G, IN0, IN1) daet IN1 pri G = TRUE. Snachala
+    #  obnovlyaem starshij bajt (port 05h), potom mladshij (04h), i kazhdyj
+    #  shag ohranyaet to, chto ne trogaet.
+    n16a.outvar(u"vAOHiSel",
+                b_sel(n16a, F.COL_BLK2 + 480, 270, is05,
+                      n16a.invar(u"GVL_Regs.Rs_AO0", y=270),
+                      n16a.invar(u"vAOHi", y=284), tip=u"WORD"),
+                x=F.COL_OUT, y=270)
+    by_lo = b_sel(n16a, F.COL_BLK2 + 480, 190, is04,
+                  n16a.invar(u"vAOHiSel", y=190), n16a.invar(u"vAOLo", y=204),
+                  tip=u"WORD")
+    n16a.outvar(u"vAONew", by_lo, x=F.COL_OUT, y=350)
+    n16a.outvar(u"GVL_Regs.Nx_AO0",
+                b_sel(n16a, F.COL_BLK2 + 640, 350,
+                      n16a.invar(u"vAOWr", y=350),
+                      n16a.invar(u"GVL_Regs.Rs_AO0", y=364),
+                      n16a.invar(u"vAONew", y=378), tip=u"WORD"),
+                x=F.COL_OUT, y=430)
+    #  vtoroj kanal poka ne sobiraetsya otdel no: porty 24h/25h v karte ne
+    #  zanyaty, i zerkalo vtorogo kanala ravnopravno perenositsya latch-em
+    n16a.outvar(u"GVL_Regs.Nx_AO1", n16a.invar(u"GVL_Regs.Rs_AO1", y=470),
+                x=F.COL_OUT, y=470)
 
     n16e = p.network(u"SET 16e: konsol CP/M i zerkalo shin")
     n16e.outvar(u"GVL_IO.Bus_IO_Data", n16.invar(u"vIOData", y=30),

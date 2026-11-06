@@ -60,6 +60,15 @@ VAR_GLOBAL
         seti, gde schitaet ALU, a vyzov pamyati stoit RAN'ShE nee. Poetomu
         zapis' vypolnyaetsya na SLEDUYushchEM skane: Rs_* -- to, chto pamyat
         zapishet sejchas, Nx_* -- to, chto vyrabotal etot skan. *)
+    (*  A N A L O G O V Y E  V Y H O D Y. Slovo sobiraetsya iz dvuh zapisej
+        OUT: mladshij bajt -- port 04h (08h), starshij -- 05h (09h). Hranenie
+        zdes', a ne vnutri FB_Reg16: tot derzhit sostoyanie cherez svoy zhe
+        vyhod i v kaskade dvuh registrov teryal starshij bajt. *)
+    Rs_AO0   : WORD;
+    Nx_AO0   : WORD;
+    Rs_AO1   : WORD;
+    Nx_AO1   : WORD;
+
     Rs_MW    : BOOL;   (* strob zapisi v pamyat' *)
     Rs_MAddr : WORD;   (* adres zapisi *)
     Rs_MData : BYTE;   (* bajt zapisi *)

@@ -56,13 +56,10 @@ def main():
     app = proj.active_application
     log(u"prilozhenie: %s" % app)
 
-    # 1. perekompilirovat, chtoby proekt byl aktualen
-    step(u"1. sborka")
-    try:
-        app.build()
-        log(u"build() -- OK")
-    except Exception as exc:                                   # noqa: BLE001
-        log(u"build() OSHIBKA: %s" % exc)
+    # 1. proekt uzhe soбран oflajn (generator\run_build_log.cmd), povtornaya
+    #    sborka zdes ne nuzhna i tol ko pomeha.
+    step(u"1. proekt")
+    log(u"ispol zuem sobrannyj proekt: %s" % PROJ)
 
     # 2. ustrojstvo, shlyuz i adres
     step(u"2. podklyuchenie")
@@ -158,14 +155,19 @@ def main():
 
     # 6. zapustit testy
     step(u"6. puskaem testy")
-    for name, val in ((u"GVL_Tests.Cpu_Test_Run", u"TRUE"),
-                      (u"GVL_Tests_CPM.Cpm_Test_Run", u"TRUE")):
-        try:
-            onl.set_prepared_value(name, val)
-            onl.write_prepared_values()
-            log(u"  %s := %s -- OK" % (name, val))
-        except Exception as exc:                               # noqa: BLE001
-            log(u"  %s OSHIBKA: %s" % (name, exc))
+    #  O B A  PRIZNAKA -- O D N I M  PAKETOM.
+    #  Pochemu: stendy upravlyayut odnim processora, i poryadok ih raboty
+    #  zhestko zadan (CP/M pervyy, potom processor -- sm. TEST_Z80). Esli
+    #  zapisyvat priznaki po ocheredi, stend processora uspevaet startovat
+    #  ranshe i razrushaet nulevuyu stranitsu CP/M: izmereno -- CP/M 26 iz 30
+    #  vmesto 30 iz 30 pri tot zhe sheme.
+    try:
+        onl.set_prepared_value(u"GVL_Tests.Cpu_Test_Run", u"TRUE")
+        onl.set_prepared_value(u"GVL_Tests_CPM.Cpm_Test_Run", u"TRUE")
+        onl.write_prepared_values()
+        log(u"  Cpu_Test_Run and Cpm_Test_Run := TRUE -- OK (odnim paketom)")
+    except Exception as exc:                               # noqa: BLE001
+        log(u"  zapusk testov OSHIBKA: %s" % exc)
 
     # 7. zhdat, poka projdut testy
     step(u"7. ozhidanie i chtenie")
