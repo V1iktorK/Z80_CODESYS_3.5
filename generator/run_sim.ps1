@@ -12,13 +12,39 @@
 param(
     [string]$Script = 'tools\run_simulation.py',
     [int]$TimeoutSec = 600,
-    [string]$Profile = 'CODESYS V3.5 SP17 Patch 3'
+    [string]$Profile = 'CODESYS V3.5 SP17 Patch 3',
+    [string]$Exe = ''
 )
 
 $ErrorActionPreference = 'Continue'
 $gen = Split-Path -Parent $MyInvocation.MyCommand.Path
 $root = Split-Path -Parent $gen
-$exe = 'C:\Program Files (x86)\CODESYS 3.5.17.30\CODESYS\Common\CODESYS.exe'
+
+# ---------------------------------------------------------------- CODESYS.exe
+#  Poisk ispolnyaemogo fajla: parametr -Exe, peremennaya CODESYS_EXE,
+#  standartnyj katalog, zatem lyubaya ustanovlennaya versiya.
+function Find-Codesys {
+    param([string]$Hint)
+    if ($Hint -and (Test-Path $Hint)) { return $Hint }
+    if ($env:CODESYS_EXE -and (Test-Path $env:CODESYS_EXE)) { return $env:CODESYS_EXE }
+    $known = 'C:\Program Files (x86)\CODESYS 3.5.17.30\CODESYS\Common\CODESYS.exe'
+    if (Test-Path $known) { return $known }
+    foreach ($r in @('C:\Program Files (x86)', 'C:\Program Files')) {
+        if (-not (Test-Path $r)) { continue }
+        $f = Get-ChildItem -Path $r -Filter 'CODESYS.exe' -Recurse -Depth 4 `
+                -ErrorAction SilentlyContinue |
+             Where-Object { $_.FullName -like '*CODESYS*\Common\CODESYS.exe' } |
+             Select-Object -First 1
+        if ($f) { return $f.FullName }
+    }
+    return ''
+}
+
+$exe = Find-Codesys -Hint $Exe
+if (-not $exe) {
+    Write-Host '[sim] NE NAJDEN CODESYS.exe. Ukazhite -Exe ili peremennuyu CODESYS_EXE.'
+    exit 2
+}
 $script = Join-Path $gen $Script
 $proj = Join-Path $root 'build\Z80_EMU.project'
 

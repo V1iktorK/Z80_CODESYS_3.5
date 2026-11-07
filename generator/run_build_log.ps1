@@ -21,13 +21,46 @@
 #  (CPU stoit, vyvod pust). Bez tajmauta sborka visela by do beskonechnosti.
 param(
     [int]$TimeoutSec = 900,
-    [string]$Profile = 'CODESYS V3.5 SP17 Patch 3'
+    [string]$Profile = 'CODESYS V3.5 SP17 Patch 3',
+    [string]$Exe = ''
 )
 
 $ErrorActionPreference = 'Continue'
 $gen = Split-Path -Parent $MyInvocation.MyCommand.Path
 $root = Split-Path -Parent $gen
-$exe = 'C:\Program Files (x86)\CODESYS 3.5.17.30\CODESYS\Common\CODESYS.exe'
+
+# ---------------------------------------------------------------- CODESYS.exe
+#  I S K A T '  C O D E S Y S,  A  N E  Z H D A T'  N U Zh N O J  V E R S I I.
+#  Ran'she put' byla zhestko propisana, i na lyuboj drugoj mashine skript
+#  molcha ne zapuskalsya. Poryadok poiska:
+#    1) parametr -Exe '...\CODESYS.exe';
+#    2) peremennaya okruzheniya CODESYS_EXE;
+#    3) standartnyj katalog tekushchej versii (3.5.17.30);
+#    4) poisk lyuboj ustanovlennoj versii v Program Files.
+function Find-Codesys {
+    param([string]$Hint)
+    if ($Hint -and (Test-Path $Hint)) { return $Hint }
+    if ($env:CODESYS_EXE -and (Test-Path $env:CODESYS_EXE)) { return $env:CODESYS_EXE }
+    $known = 'C:\Program Files (x86)\CODESYS 3.5.17.30\CODESYS\Common\CODESYS.exe'
+    if (Test-Path $known) { return $known }
+    foreach ($r in @('C:\Program Files (x86)', 'C:\Program Files')) {
+        if (-not (Test-Path $r)) { continue }
+        $f = Get-ChildItem -Path $r -Filter 'CODESYS.exe' -Recurse -Depth 4 `
+                -ErrorAction SilentlyContinue |
+             Where-Object { $_.FullName -like '*CODESYS*\Common\CODESYS.exe' } |
+             Select-Object -First 1
+        if ($f) { return $f.FullName }
+    }
+    return ''
+}
+
+$exe = Find-Codesys -Hint $Exe
+if (-not $exe) {
+    Write-Host '[build] NE NAJDEN CODESYS.exe.'
+    Write-Host '[build] Ukazhite put: generator\run_build_log.cmd -Exe "C:\...\CODESYS.exe"'
+    Write-Host '[build] ili zadajte peremennuyu okruzheniya CODESYS_EXE.'
+    exit 2
+}
 $script = Join-Path $gen 'build.py'
 #  U N I K A L' N Y E  I M E N A  F A J L O V  P E R E Kh V A T A  N A  K A Zh D Y J  Z A P U S K.
 #  P O Ch E M U. Pri postoyannyh imenah byvalo tak: predydushchij (uzhe
@@ -82,7 +115,7 @@ foreach ($f in @($out, $err)) {
 #  build.py udalyaet tolko "Z80_EMU.project*" i "*.precompilecache", a fajly
 #  *.opt ostayutsya. S nimi sleduyushchij zapusk CODESYS padal na pervom zhe
 #  shage ("sozdanie proekta s ustrojstvom") i M O L Ch A: ni oshibki,
-#  ni itoga v konsoli, a v build.log -- odna stroka. Vyяснено opytom:
+#  ni itoga v konsoli, a v build.log -- odna stroka. Vyyasneno opytom:
 #  posle polnoj ochistki kataloga ta zhe sborka prohodit.
 $buildDir = Join-Path $root 'build'
 if (Test-Path $buildDir) {
@@ -123,7 +156,7 @@ taskkill /IM CODESYS.exe /F 2>&1 | Out-Null
 Start-Sleep -Seconds 2
 
 #  K O D I R O V K A  V Y V O D A.
-#  Proverено na etoj mashine: CODESYS 3.5 SP17 pishet konsol v UTF-8.
+#  Provereno na etoj mashine: CODESYS 3.5 SP17 pishet konsol v UTF-8.
 #  Poetomu snachala probuem UTF-8 V  S T R O G O M  rezhime (on padaet na
 #  nevalidnyh posledovatel nostyah), i tolko esli ne vyshlo -- cp866.
 #  P E R V A Ya  V E R S I Ya  etogo fajla dekodirovala vsegda v cp866 i tem
