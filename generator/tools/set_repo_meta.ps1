@@ -54,7 +54,7 @@ if ($Description) {
 if ($Topics) {
     #  V A Zh N O: names dolzhen byt PLOSKIJ massiv strok. Esli massiv
     #  sobran cherez ",@(...)", poluchaetsya vlozhennyj [["z80"]], i GitHub
-    #  otvechaet 422 Unprocessable Entity (proverено: imenno v etom bylo delo).
+    #  otvechaet 422 Unprocessable Entity (provereno: imenno v etom bylo delo).
     $names = @()
     foreach ($x in ($Topics -split ',')) {
         $nm = $x.Trim().ToLower()
